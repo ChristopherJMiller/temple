@@ -1,0 +1,10 @@
+(
+  KeyboardKeys: {
+    W: "UP",
+    D: "RIGHT",
+    A: "LEFT",
+    S: "DOWN",
+    Space: "JUMP",
+    Escape: "MENU"
+  }
+)
