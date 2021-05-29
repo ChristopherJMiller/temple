@@ -1,0 +1,11 @@
+version = 1
+
+[[types]]
+id = "solid"
+attributes = [
+  "solid"
+]
+
+[[types]]
+id = "passthrough"
+attributes = []

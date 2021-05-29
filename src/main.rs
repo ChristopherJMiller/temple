@@ -1,8 +1,11 @@
+use crate::sprite::SpritePlugin;
 use bevy::prelude::*;
 
 use crate::input::InputPlugin;
 
 pub mod input;
+pub mod game;
+pub mod sprite;
 
 fn main() {
   App::build()
@@ -15,5 +18,6 @@ fn main() {
     })
     .add_plugins(DefaultPlugins)
     .add_plugin(InputPlugin)
+    .add_plugin(SpritePlugin)
     .run();
 }
