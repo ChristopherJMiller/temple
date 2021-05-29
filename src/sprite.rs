@@ -98,6 +98,11 @@ fn load_sprites(
         for sprite in sprites.sprites.iter() {
           if let Some(sprite_type) = sprite_types.get(&sprite.sprite_type) {
             let full_path = Path::new("textures").join(sprite.texture.as_str());
+
+            if !Path::new("assets").join(full_path.clone()).is_file() {
+              panic!("File not found when registering {}: {}", sprite.name, full_path.to_str().unwrap());
+            }
+
             let texture_handle = asset_server.load(full_path.to_str().unwrap());
 
             let full_sprite = Sprite {
