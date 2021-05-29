@@ -1,10 +1,10 @@
-use crate::sprite::SpritePlugin;
 use bevy::prelude::*;
 
 use crate::input::InputPlugin;
+use crate::sprite::SpritePlugin;
 
-pub mod input;
 pub mod game;
+pub mod input;
 pub mod sprite;
 
 fn main() {
