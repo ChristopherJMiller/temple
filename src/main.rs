@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::render::camera::{ScalingMode, OrthographicProjection};
 
 use crate::input::InputPlugin;
 use crate::level::{LoadLevel, LevelLoadComplete, LevelPlugin, UnloadLevel};
@@ -13,8 +14,8 @@ fn main() {
   App::build()
     .insert_resource(WindowDescriptor {
       title: "Temple".to_string(),
-      width: 1600.,
-      height: 900.,
+      width: 1170.,
+      height: 1024.,
       vsync: true,
       ..Default::default()
     })
