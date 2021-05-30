@@ -13,8 +13,9 @@ use crate::sprite::{SpritePluginSteps, TempleSprite};
 
 pub struct LoadLevel(pub u32);
 pub struct LevelLoadComplete;
+pub struct UnloadLevel;
 
-pub struct LevelLoaded;
+pub struct LevelLoadedSprite;
 
 pub const SPRITE_SIZE: u32 = 16;
 
@@ -33,12 +34,23 @@ fn load_level(mut commands: Commands, query: Query<(Entity, &LoadLevel), Without
         material: sprite_data.texture.clone(),
         transform: transform,
         ..Default::default()
-      }).insert(LevelLoaded);
+      }).insert(LevelLoadedSprite);
     }
 
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);
   });
+}
+
+fn unload_level(mut commands: Commands, query: Query<Entity, (With<LevelLoadComplete>, With<UnloadLevel>)>, level_sprites_query: Query<Entity, With<LevelLoadedSprite>>) {
+  query.for_each(|e| {
+    info!(target: "unload_level", "Unloading level...");
+    level_sprites_query.for_each(|sprite| {
+      commands.entity(sprite).despawn();
+    });
+
+    commands.entity(e).despawn();
+  })
 }
 
 // Level File Loading
@@ -164,6 +176,7 @@ impl Plugin for LevelPlugin {
       .insert_resource::<LevelFileVersion>(LevelFileVersion(1))
       .init_resource::<HashMap<u32, Level>>()
       .add_startup_system(load_level_files.system().after(SpritePluginSteps::LoadSprites))
-      .add_system(load_level.system());
+      .add_system(load_level.system())
+      .add_system(unload_level.system());
   }
 }
