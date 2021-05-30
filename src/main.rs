@@ -1,8 +1,7 @@
 use bevy::prelude::*;
-use bevy::render::camera::{ScalingMode, OrthographicProjection};
 
 use crate::input::InputPlugin;
-use crate::level::{LoadLevel, LevelLoadComplete, LevelPlugin, UnloadLevel};
+use crate::level::{LevelLoadComplete, LevelPlugin, LoadLevel, UnloadLevel};
 use crate::sprite::SpritePlugin;
 
 pub mod game;
@@ -37,7 +36,11 @@ fn dev_load_level(mut commands: Commands) {
   commands.spawn().insert(LoadLevel(0));
 }
 
-fn dev_toggle_level_load(mut commands: Commands, query: Query<Entity, With<LevelLoadComplete>>, input: Res<Input<KeyCode>>) {
+fn dev_toggle_level_load(
+  mut commands: Commands,
+  query: Query<Entity, With<LevelLoadComplete>>,
+  input: Res<Input<KeyCode>>,
+) {
   if input.just_pressed(KeyCode::Space) {
     if query.iter().collect::<Vec<_>>().len() > 0 {
       commands.entity(query.single().unwrap()).insert(UnloadLevel);

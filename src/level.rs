@@ -19,22 +19,34 @@ pub struct LevelLoadedSprite;
 
 pub const SPRITE_SIZE: u32 = 16;
 
-fn load_level(mut commands: Commands, query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>, sprites: Res<HashMap<u32, TempleSprite>>, levels: Res<HashMap<u32, Level>>) {
+fn load_level(
+  mut commands: Commands,
+  query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>,
+  sprites: Res<HashMap<u32, TempleSprite>>,
+  levels: Res<HashMap<u32, Level>>,
+) {
   query.for_each(|(e, load_level)| {
     let level_id = load_level.0;
 
-    let level = levels.get(&level_id).expect(format!("Attempted to load invalid level id {}", level_id).as_str());
+    let level = levels
+      .get(&level_id)
+      .expect(format!("Attempted to load invalid level id {}", level_id).as_str());
 
     for sprite in level.sprites.iter() {
-      let sprite_data: &TempleSprite = sprites.get(&sprite.id).expect(format!("Attempted to load invalid sprite id {}", sprite.id).as_str());
+      let sprite_data: &TempleSprite = sprites
+        .get(&sprite.id)
+        .expect(format!("Attempted to load invalid sprite id {}", sprite.id).as_str());
 
-      let transform = Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
+      let transform =
+        Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
 
-      commands.spawn_bundle(SpriteBundle {
-        material: sprite_data.texture.clone(),
-        transform: transform,
-        ..Default::default()
-      }).insert(LevelLoadedSprite);
+      commands
+        .spawn_bundle(SpriteBundle {
+          material: sprite_data.texture.clone(),
+          transform,
+          ..Default::default()
+        })
+        .insert(LevelLoadedSprite);
     }
 
     info!(target: "load_level", "Loaded Level {}", level_id);
@@ -42,7 +54,11 @@ fn load_level(mut commands: Commands, query: Query<(Entity, &LoadLevel), Without
   });
 }
 
-fn unload_level(mut commands: Commands, query: Query<Entity, (With<LevelLoadComplete>, With<UnloadLevel>)>, level_sprites_query: Query<Entity, With<LevelLoadedSprite>>) {
+fn unload_level(
+  mut commands: Commands,
+  query: Query<Entity, (With<LevelLoadComplete>, With<UnloadLevel>)>,
+  level_sprites_query: Query<Entity, With<LevelLoadedSprite>>,
+) {
   query.for_each(|e| {
     info!(target: "unload_level", "Unloading level...");
     level_sprites_query.for_each(|sprite| {
