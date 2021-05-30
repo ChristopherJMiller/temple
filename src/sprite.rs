@@ -38,12 +38,12 @@ struct SpriteEntry {
 
 #[derive(Debug, Clone, Default)]
 pub struct TempleSprite {
-  id: u32,
-  name: String,
-  offset_x: u32,
-  offset_y: u32,
-  texture: Handle<ColorMaterial>,
-  attributes: Vec<String>,
+  pub id: u32,
+  pub name: String,
+  pub offset_x: u32,
+  pub offset_y: u32,
+  pub texture: Handle<ColorMaterial>,
+  pub attributes: Vec<String>,
 }
 
 fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<HashMap<String, SpriteType>>) {

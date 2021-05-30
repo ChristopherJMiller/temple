@@ -11,11 +11,35 @@ use crate::sprite::{SpritePluginSteps, TempleSprite};
 
 // Level System Loading
 
-pub struct LoadLevel(u32);
+pub struct LoadLevel(pub u32);
+pub struct LevelLoadComplete;
 
 pub struct LevelLoaded;
 
-fn load_level(mut commands: Commands, sprites: Res<HashMap<u32, TempleSprite>>, levels: Res<HashMap<u32, Level>>) {}
+pub const SPRITE_SIZE: u32 = 16;
+
+fn load_level(mut commands: Commands, query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>, sprites: Res<HashMap<u32, TempleSprite>>, levels: Res<HashMap<u32, Level>>) {
+  query.for_each(|(e, load_level)| {
+    let level_id = load_level.0;
+
+    let level = levels.get(&level_id).expect(format!("Attempted to load invalid level id {}", level_id).as_str());
+
+    for sprite in level.sprites.iter() {
+      let sprite_data: &TempleSprite = sprites.get(&sprite.id).expect(format!("Attempted to load invalid sprite id {}", sprite.id).as_str());
+
+      let transform = Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
+
+      commands.spawn_bundle(SpriteBundle {
+        material: sprite_data.texture.clone(),
+        transform: transform,
+        ..Default::default()
+      }).insert(LevelLoaded);
+    }
+
+    info!(target: "load_level", "Loaded Level {}", level_id);
+    commands.entity(e).insert(LevelLoadComplete);
+  });
+}
 
 // Level File Loading
 
@@ -84,8 +108,8 @@ fn load_level_files(
                   continue;
                 }
 
-                let x = i as u32 % info.width;
-                let y = i as u32 / info.width;
+                let x = (i / 4) as u32 % info.width;
+                let y = (i / 4) as u32 / info.width;
 
                 let r: u32 = buf[i] as u32;
                 let g: u32 = buf[i + 1] as u32;
@@ -119,7 +143,7 @@ fn load_level_files(
           }
         }
 
-        info!(target: "load_levels", "{} levels registered", level_list.levels.len());
+        info!(target: "load_level_files", "{} levels registered", level_list.levels.len());
       },
       Err(err) => {
         panic!("Failed to parse sprite types file: {}", err);
