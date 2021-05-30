@@ -37,7 +37,7 @@ struct SpriteEntry {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct Sprite {
+pub struct TempleSprite {
   id: u32,
   name: String,
   offset_x: u32,
@@ -78,7 +78,7 @@ fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<H
 
 fn load_sprites(
   version: Res<SpriteFileVersion>,
-  mut sprite_map: ResMut<HashMap<u32, Sprite>>,
+  mut sprite_map: ResMut<HashMap<u32, TempleSprite>>,
   sprite_types: Res<HashMap<String, SpriteType>>,
   asset_server: Res<AssetServer>,
   mut materials: ResMut<Assets<ColorMaterial>>,
@@ -100,12 +100,16 @@ fn load_sprites(
             let full_path = Path::new("textures").join(sprite.texture.as_str());
 
             if !Path::new("assets").join(full_path.clone()).is_file() {
-              panic!("File not found when registering {}: {}", sprite.name, full_path.to_str().unwrap());
+              panic!(
+                "File not found when registering {}: {}",
+                sprite.name,
+                full_path.to_str().unwrap()
+              );
             }
 
             let texture_handle = asset_server.load(full_path.to_str().unwrap());
 
-            let full_sprite = Sprite {
+            let full_sprite = TempleSprite {
               id: sprite.color,
               name: sprite.name.clone(),
               attributes: sprite_type.attributes.clone(),
@@ -149,7 +153,7 @@ impl Plugin for SpritePlugin {
     app
       .insert_resource::<SpriteFileVersion>(SpriteFileVersion(1))
       .init_resource::<HashMap<String, SpriteType>>()
-      .init_resource::<HashMap<u32, Sprite>>()
+      .init_resource::<HashMap<u32, TempleSprite>>()
       .add_startup_system(load_sprite_types.system().label(SpritePluginSteps::LoadSpriteTypes))
       .add_startup_system(
         load_sprites

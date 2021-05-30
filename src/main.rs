@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 
 use crate::input::InputPlugin;
+use crate::level::LevelPlugin;
 use crate::sprite::SpritePlugin;
 
 pub mod game;
 pub mod input;
+pub mod level;
 pub mod sprite;
 
 fn main() {
@@ -19,5 +21,6 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(InputPlugin)
     .add_plugin(SpritePlugin)
+    .add_plugin(LevelPlugin)
     .run();
 }

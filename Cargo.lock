@@ -3732,6 +3732,7 @@ dependencies = [
  "bevy_rapier2d",
  "bevy_tilemap",
  "kurinji",
+ "png",
  "serde",
  "toml",
 ]

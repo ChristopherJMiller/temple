@@ -1,0 +1,5 @@
+version = 1
+
+[[levels]]
+id = 0
+sprite_map = "levels/0.png"
