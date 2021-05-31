@@ -3,10 +3,12 @@ use std::fs;
 use std::path::Path;
 use std::vec::Vec;
 
+use bevy::ecs::component::Component;
 use bevy::prelude::*;
 use png::{BitDepth, ColorType, Decoder};
 use serde::Deserialize;
 
+use crate::game::attributes::*;
 use crate::sprite::{SpritePluginSteps, TempleSprite};
 
 // Level System Loading
@@ -18,6 +20,15 @@ pub struct UnloadLevel;
 pub struct LevelLoadedSprite;
 
 pub const SPRITE_SIZE: u32 = 16;
+
+fn add_component_by_attribute_name(commands: &mut Commands, entity: Entity, name: String) {
+  match name.as_str() {
+    "solid" => {
+      commands.entity(entity).insert(Solid);
+    },
+    _ => panic!("Attempted to load invalid attribute with name {}", name),
+  }
+}
 
 fn load_level(
   mut commands: Commands,
@@ -40,13 +51,18 @@ fn load_level(
       let transform =
         Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
 
-      commands
+      let entity = commands
         .spawn_bundle(SpriteBundle {
           material: sprite_data.texture.clone(),
           transform,
           ..Default::default()
         })
-        .insert(LevelLoadedSprite);
+        .insert(LevelLoadedSprite)
+        .id();
+
+      for attribute in sprite_data.attributes.iter() {
+        add_component_by_attribute_name(&mut commands, entity, attribute.clone());
+      }
     }
 
     info!(target: "load_level", "Loaded Level {}", level_id);
