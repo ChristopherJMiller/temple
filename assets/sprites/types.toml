@@ -9,3 +9,9 @@ attributes = [
 [[types]]
 id = "passthrough"
 attributes = []
+
+[[types]]
+id = "player"
+attributes = [
+  "player"
+]

@@ -26,6 +26,9 @@ fn add_component_by_attribute_name(commands: &mut Commands, entity: Entity, name
     "solid" => {
       commands.entity(entity).insert(Solid);
     },
+    "player" => {
+      commands.entity(entity).insert(Player);
+    },
     _ => panic!("Attempted to load invalid attribute with name {}", name),
   }
 }
@@ -153,7 +156,7 @@ fn load_level_files(
                 }
 
                 let x = (i / 4) as u32 % info.width;
-                let y = (i / 4) as u32 / info.width;
+                let y = info.height - ((i / 4) as u32 / info.width);
 
                 let r: u32 = buf[i] as u32;
                 let g: u32 = buf[i + 1] as u32;

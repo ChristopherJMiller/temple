@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::game::GamePlugins;
 use crate::input::InputPlugin;
 use crate::level::{LevelLoadComplete, LevelPlugin, LoadLevel, UnloadLevel};
 use crate::sprite::SpritePlugin;
@@ -23,6 +24,7 @@ fn main() {
     .add_plugin(InputPlugin)
     .add_plugin(SpritePlugin)
     .add_plugin(LevelPlugin)
+    .add_plugins(GamePlugins)
     .add_startup_system(dev_load_level.system())
     .add_system(dev_toggle_level_load.system())
     .run();
