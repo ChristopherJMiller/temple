@@ -3,7 +3,6 @@ use std::fs;
 use std::path::Path;
 use std::vec::Vec;
 
-use bevy::ecs::component::Component;
 use bevy::prelude::*;
 use png::{BitDepth, ColorType, Decoder};
 use serde::Deserialize;
@@ -44,12 +43,12 @@ fn load_level(
 
     let level = levels
       .get(&level_id)
-      .expect(format!("Attempted to load invalid level id {}", level_id).as_str());
+      .unwrap_or_else(|| panic!("Attempted to load invalid level id {}", level_id));
 
     for sprite in level.sprites.iter() {
       let sprite_data: &TempleSprite = sprites
         .get(&sprite.id)
-        .expect(format!("Attempted to load invalid sprite id {}", sprite.id).as_str());
+        .unwrap_or_else(|| panic!("Attempted to load invalid sprite id {}", sprite.id));
 
       let transform =
         Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
@@ -110,6 +109,7 @@ pub struct LevelSprite {
 }
 
 pub struct Level {
+  #[allow(dead_code)]
   id: u32,
   sprites: Vec<LevelSprite>,
 }
@@ -155,14 +155,14 @@ fn load_level_files(
                   continue;
                 }
 
-                let x = (i / 4) as u32 % info.width;
-                let y = info.height - ((i / 4) as u32 / info.width);
+                let level_x = (i / 4) as u32 % info.width;
+                let level_y = info.height - ((i / 4) as u32 / info.width);
 
-                let r: u32 = buf[i] as u32;
-                let g: u32 = buf[i + 1] as u32;
-                let b: u32 = buf[i + 2] as u32;
+                let tile_r: u32 = buf[i] as u32;
+                let tile_g: u32 = buf[i + 1] as u32;
+                let tile_b: u32 = buf[i + 2] as u32;
 
-                let sprite_id: u32 = (r << 8) | (g << 4) | (b << 0);
+                let sprite_id: u32 = (tile_r << 8) | (tile_g << 4) | tile_b;
 
                 if !sprites.contains_key(&sprite_id) {
                   panic!("Attempted to register level with invalid sprite id {}", sprite_id);
@@ -170,7 +170,7 @@ fn load_level_files(
 
                 level_sprites.push(LevelSprite {
                   id: sprite_id,
-                  pos: UVec2::new(x, y),
+                  pos: UVec2::new(level_x, level_y),
                 });
               }
 
@@ -179,7 +179,7 @@ fn load_level_files(
                 sprites: level_sprites,
               };
 
-              if let Some(_) = levels.insert(level.id, level_obj) {
+              if levels.insert(level.id, level_obj).is_some() {
                 panic!("Conflicting level definitions for id {}", level.id);
               }
             } else {

@@ -60,7 +60,7 @@ fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<H
         }
 
         for sprite_type in types.types.iter() {
-          if let Some(_) = sprite_types.insert(sprite_type.id.clone(), sprite_type.clone()) {
+          if sprite_types.insert(sprite_type.id.clone(), sprite_type.clone()).is_some() {
             panic!("Conflicting type definitions for id {}", sprite_type.id);
           }
         }
@@ -118,7 +118,7 @@ fn load_sprites(
               texture: materials.add(texture_handle.into()),
             };
 
-            if let Some(_) = sprite_map.insert(sprite.color, full_sprite) {
+            if sprite_map.insert(sprite.color, full_sprite).is_some() {
               panic!("Conflicting type definitions for color id {}", sprite.color);
             }
           } else {

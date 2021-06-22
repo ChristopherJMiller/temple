@@ -44,7 +44,7 @@ fn dev_toggle_level_load(
   input: Res<Input<KeyCode>>,
 ) {
   if input.just_pressed(KeyCode::Space) {
-    if query.iter().collect::<Vec<_>>().len() > 0 {
+    if query.iter().next().is_some() {
       commands.entity(query.single().unwrap()).insert(UnloadLevel);
     } else {
       commands.spawn().insert(LoadLevel(0));
