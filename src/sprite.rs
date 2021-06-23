@@ -6,6 +6,8 @@ use std::vec::Vec;
 use bevy::prelude::*;
 use serde::Deserialize;
 
+use crate::util::files::{SPRITE_FILE_PATH, SPRITE_TYPE_FILE_PATH};
+
 pub type SpriteId = u32;
 pub type SpriteTypeMap = HashMap<String, SpriteType>;
 pub type SpriteMap = HashMap<SpriteId, TempleSprite>;
@@ -53,7 +55,7 @@ pub struct TempleSprite {
 fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<SpriteTypeMap>) {
   let version_num = version.0;
 
-  if let Ok(file) = fs::read_to_string("assets/sprites/types.toml") {
+  if let Ok(file) = fs::read_to_string(SPRITE_TYPE_FILE_PATH) {
     match toml::from_str::<SpriteTypesFile>(file.as_str()) {
       Ok(types) => {
         if types.version != version_num {
@@ -89,7 +91,7 @@ fn load_sprites(
 ) {
   let version_num = version.0;
 
-  if let Ok(file) = fs::read_to_string("assets/sprites/sprites.toml") {
+  if let Ok(file) = fs::read_to_string(SPRITE_FILE_PATH) {
     match toml::from_str::<SpriteFile>(file.as_str()) {
       Ok(sprites) => {
         if sprites.version != version_num {

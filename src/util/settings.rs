@@ -2,12 +2,13 @@ use std::vec::Vec;
 use std::fs;
 use serde::{Serialize, Deserialize};
 use crate::level::LevelId;
+use crate::util::files::GAME_SETTING_PATH;
 
 #[derive(Serialize, Deserialize)]
-struct GameFile {
-  title: String,
-  authors: Vec<String>,
-  starting_level: LevelId
+pub struct GameFile {
+  pub title: String,
+  pub authors: Vec<String>,
+  pub starting_level: LevelId
 }
 
 pub fn gen_default_game_file() -> bool {
@@ -18,5 +19,16 @@ pub fn gen_default_game_file() -> bool {
   };
 
   let toml = toml::to_string_pretty(&default).unwrap();
-  fs::write("assets/game.toml", toml).is_ok()
+  fs::write(GAME_SETTING_PATH, toml).is_ok()
+}
+
+pub fn get_game_file() -> GameFile {
+  if let Ok(file) = fs::read_to_string(GAME_SETTING_PATH) {
+    match toml::from_str::<GameFile>(file.as_str()) {
+      Ok(game_file) => game_file,
+      Err(err) => panic!("Error while loading game file: {}", err)
+    }
+  } else {
+    panic!(format!("Failed to find game file at path {}", GAME_SETTING_PATH));
+  }
 }

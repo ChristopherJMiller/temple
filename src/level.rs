@@ -9,6 +9,7 @@ use serde::Deserialize;
 
 use crate::game::attributes::*;
 use crate::sprite::{SpritePluginSteps, TempleSprite, SpriteMap};
+use crate::util::files::LEVEL_FILE_PATH;
 
 pub type LevelId = u32;
 pub type LevelMap = HashMap<LevelId, Level>;
@@ -124,7 +125,7 @@ fn load_level_files(
 ) {
   let version_num = version.0;
 
-  if let Ok(file) = fs::read_to_string("assets/levels.toml") {
+  if let Ok(file) = fs::read_to_string(LEVEL_FILE_PATH) {
     match toml::from_str::<LevelFile>(file.as_str()) {
       Ok(level_list) => {
         if level_list.version != version_num {
