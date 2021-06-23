@@ -8,11 +8,14 @@ use png::{BitDepth, ColorType, Decoder};
 use serde::Deserialize;
 
 use crate::game::attributes::*;
-use crate::sprite::{SpritePluginSteps, TempleSprite};
+use crate::sprite::{SpritePluginSteps, TempleSprite, SpriteMap};
+
+pub type LevelId = u32;
+pub type LevelMap = HashMap<LevelId, Level>;
 
 // Level System Loading
 
-pub struct LoadLevel(pub u32);
+pub struct LoadLevel(pub LevelId);
 pub struct LevelLoadComplete;
 pub struct UnloadLevel;
 
@@ -35,8 +38,8 @@ fn add_component_by_attribute_name(commands: &mut Commands, entity: Entity, name
 fn load_level(
   mut commands: Commands,
   query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>,
-  sprites: Res<HashMap<u32, TempleSprite>>,
-  levels: Res<HashMap<u32, Level>>,
+  sprites: Res<SpriteMap>,
+  levels: Res<LevelMap>,
 ) {
   query.for_each(|(e, load_level)| {
     let level_id = load_level.0;
@@ -99,7 +102,7 @@ struct LevelFile {
 
 #[derive(Deserialize)]
 struct LevelDefinition {
-  id: u32,
+  id: LevelId,
   sprite_map: String,
 }
 
@@ -110,14 +113,14 @@ pub struct LevelSprite {
 
 pub struct Level {
   #[allow(dead_code)]
-  id: u32,
+  id: LevelId,
   sprites: Vec<LevelSprite>,
 }
 
 fn load_level_files(
   version: Res<LevelFileVersion>,
-  sprites: Res<HashMap<u32, TempleSprite>>,
-  mut levels: ResMut<HashMap<u32, Level>>,
+  sprites: Res<SpriteMap>,
+  mut levels: ResMut<LevelMap>,
 ) {
   let version_num = version.0;
 
@@ -209,7 +212,7 @@ impl Plugin for LevelPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
       .insert_resource::<LevelFileVersion>(LevelFileVersion(1))
-      .init_resource::<HashMap<u32, Level>>()
+      .init_resource::<LevelMap>()
       .add_startup_system(load_level_files.system().after(SpritePluginSteps::LoadSprites))
       .add_system(load_level.system())
       .add_system(unload_level.system());

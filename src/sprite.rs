@@ -6,6 +6,10 @@ use std::vec::Vec;
 use bevy::prelude::*;
 use serde::Deserialize;
 
+pub type SpriteId = u32;
+pub type SpriteTypeMap = HashMap<String, SpriteType>;
+pub type SpriteMap = HashMap<SpriteId, TempleSprite>;
+
 struct SpriteFileVersion(u32);
 
 #[derive(Deserialize)]
@@ -22,7 +26,7 @@ pub struct SpriteType {
 
 #[derive(Deserialize)]
 struct SpriteFile {
-  version: u32,
+  version: SpriteId,
   sprites: Vec<SpriteEntry>,
 }
 
@@ -38,7 +42,7 @@ struct SpriteEntry {
 
 #[derive(Debug, Clone, Default)]
 pub struct TempleSprite {
-  pub id: u32,
+  pub id: SpriteId,
   pub name: String,
   pub offset_x: u32,
   pub offset_y: u32,
@@ -46,7 +50,7 @@ pub struct TempleSprite {
   pub attributes: Vec<String>,
 }
 
-fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<HashMap<String, SpriteType>>) {
+fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<SpriteTypeMap>) {
   let version_num = version.0;
 
   if let Ok(file) = fs::read_to_string("assets/sprites/types.toml") {
@@ -78,8 +82,8 @@ fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<H
 
 fn load_sprites(
   version: Res<SpriteFileVersion>,
-  mut sprite_map: ResMut<HashMap<u32, TempleSprite>>,
-  sprite_types: Res<HashMap<String, SpriteType>>,
+  mut sprite_map: ResMut<SpriteMap>,
+  sprite_types: Res<SpriteTypeMap>,
   asset_server: Res<AssetServer>,
   mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
@@ -152,8 +156,8 @@ impl Plugin for SpritePlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
       .insert_resource::<SpriteFileVersion>(SpriteFileVersion(1))
-      .init_resource::<HashMap<String, SpriteType>>()
-      .init_resource::<HashMap<u32, TempleSprite>>()
+      .init_resource::<SpriteTypeMap>()
+      .init_resource::<SpriteMap>()
       .add_startup_system(load_sprite_types.system().label(SpritePluginSteps::LoadSpriteTypes))
       .add_startup_system(
         load_sprites
