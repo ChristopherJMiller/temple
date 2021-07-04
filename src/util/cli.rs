@@ -30,7 +30,7 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
     None
   };
 
-  return CliArgs {
+  CliArgs {
     load_level: level_load_arg
-  };
+  }
 }
