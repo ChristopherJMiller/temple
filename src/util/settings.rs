@@ -4,12 +4,14 @@ use serde::{Serialize, Deserialize};
 use crate::level::LevelId;
 use crate::util::files::GAME_SETTING_PATH;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct GameFile {
   pub title: String,
   pub authors: Vec<String>,
   pub starting_level: LevelId
 }
+
+pub struct Version(pub String);
 
 pub fn gen_default_game_file() -> bool {
   let default = GameFile {
@@ -29,6 +31,6 @@ pub fn get_game_file() -> GameFile {
       Err(err) => panic!("Error while loading game file: {}", err)
     }
   } else {
-    panic!(format!("Failed to find game file at path {}", GAME_SETTING_PATH));
+    panic!("Failed to find game file at path {}", GAME_SETTING_PATH);
   }
 }

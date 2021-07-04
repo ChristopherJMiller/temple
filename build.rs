@@ -13,7 +13,7 @@ fn get_version_tag() -> String {
   let system_time = SystemTime::now();
   let datetime: DateTime<Utc> = system_time.into();
 
-  return datetime.format("%y%m%d%H%M%S").to_string();
+  return format!("dev-{}", datetime.format("%y%m%d%H%M%S").to_string());
 }
 
 fn main() {

@@ -71,6 +71,11 @@ fn load_level(
       }
     }
 
+    let mut camera = OrthographicCameraBundle::new_2d();
+    camera.orthographic_projection.scale = 1.0 / 4.0;
+  
+    commands.spawn_bundle(camera).insert(LevelLoadedSprite);
+
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);
   });
