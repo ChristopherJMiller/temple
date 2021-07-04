@@ -6,6 +6,7 @@ use crate::level::{LevelPlugin, LoadLevel};
 use crate::sprite::SpritePlugin;
 use crate::util::cli::{CliArgs, get_cli_args};
 use crate::util::settings::{Version, get_game_file};
+use crate::util::files::verify_files;
 
 pub mod game;
 pub mod input;
@@ -15,6 +16,7 @@ pub mod util;
 
 fn main() {
   let version = String::from(env!("VERSION"));
+  verify_files();
   let game_file = get_game_file();
   let cli_args = get_cli_args(version.clone(), &game_file);
 

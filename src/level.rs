@@ -101,7 +101,7 @@ fn unload_level(
 struct LevelFileVersion(u32);
 
 #[derive(Deserialize)]
-struct LevelFile {
+pub struct LevelFile {
   version: u32,
   levels: Vec<LevelDefinition>,
 }

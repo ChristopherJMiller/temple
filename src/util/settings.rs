@@ -1,14 +1,12 @@
 use std::vec::Vec;
 use std::fs;
 use serde::{Serialize, Deserialize};
-use crate::level::LevelId;
 use crate::util::files::GAME_SETTING_PATH;
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct GameFile {
   pub title: String,
-  pub authors: Vec<String>,
-  pub starting_level: LevelId
+  pub authors: Vec<String>
 }
 
 pub struct Version(pub String);
@@ -17,7 +15,6 @@ pub fn gen_default_game_file() -> bool {
   let default = GameFile {
     title: String::from("Temple"),
     authors: vec!(String::from("ALUMUX (Chris M.)")),
-    starting_level: 0
   };
 
   let toml = toml::to_string_pretty(&default).unwrap();

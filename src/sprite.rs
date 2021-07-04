@@ -15,7 +15,7 @@ pub type SpriteMap = HashMap<SpriteId, TempleSprite>;
 struct SpriteFileVersion(u32);
 
 #[derive(Deserialize)]
-struct SpriteTypesFile {
+pub struct SpriteTypesFile {
   version: u32,
   types: Vec<SpriteType>,
 }
@@ -27,7 +27,7 @@ pub struct SpriteType {
 }
 
 #[derive(Deserialize)]
-struct SpriteFile {
+pub struct SpriteFile {
   version: SpriteId,
   sprites: Vec<SpriteEntry>,
 }
