@@ -20,11 +20,7 @@ fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
 
 struct DevToggleCursor(pub bool);
 
-fn dev_toggle_cursor(
-  input: Res<Kurinji>,
-  mut cursor_flag: ResMut<DevToggleCursor>,
-  mut windows: ResMut<Windows>
-) {
+fn dev_toggle_cursor(input: Res<Kurinji>, mut cursor_flag: ResMut<DevToggleCursor>, mut windows: ResMut<Windows>) {
   if input.is_action_active(MENU) && !cursor_flag.0 {
     cursor_flag.0 = true;
     let window = windows.get_primary_mut().unwrap();

@@ -1,4 +1,3 @@
-
 pub mod cli;
-pub mod settings;
 pub mod files;
+pub mod settings;

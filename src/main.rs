@@ -1,12 +1,13 @@
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 use crate::game::GamePlugins;
 use crate::input::InputPlugin;
 use crate::level::{LevelPlugin, LoadLevel};
 use crate::sprite::SpritePlugin;
-use crate::util::cli::{CliArgs, get_cli_args};
-use crate::util::settings::{Version, get_game_file};
+use crate::util::cli::{get_cli_args, CliArgs};
 use crate::util::files::verify_files;
+use crate::util::settings::{get_game_file, Version};
 
 pub mod game;
 pub mod input;
@@ -28,11 +29,13 @@ fn main() {
       vsync: true,
       ..Default::default()
     })
-    .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+    .insert_resource(ClearColor(Color::rgb(1.0, 0.0, 0.0)))
     .insert_resource(Version(version))
     .insert_resource(game_file)
     .insert_resource(cli_args)
     .add_plugins(DefaultPlugins)
+    .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+    .add_plugin(RapierRenderPlugin)
     .add_plugin(InputPlugin)
     .add_plugin(SpritePlugin)
     .add_plugin(LevelPlugin)
@@ -41,10 +44,7 @@ fn main() {
     .run();
 }
 
-fn handle_cli_args(
-  mut commands: Commands,
-  cli_args: Res<CliArgs>,
-) {
+fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
   if let Some(level) = cli_args.load_level {
     commands.spawn().insert(LoadLevel(level));
   }

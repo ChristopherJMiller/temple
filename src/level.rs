@@ -4,11 +4,14 @@ use std::path::Path;
 use std::vec::Vec;
 
 use bevy::prelude::*;
+use bevy_rapier2d::physics::TimestepMode;
+use bevy_rapier2d::prelude::*;
 use png::{BitDepth, ColorType, Decoder};
 use serde::Deserialize;
 
 use crate::game::attributes::*;
-use crate::sprite::{SpritePluginSteps, TempleSprite, SpriteMap};
+use crate::game::collision_groups::*;
+use crate::sprite::{SpriteMap, SpritePluginSteps, TempleSprite};
 use crate::util::files::LEVEL_FILE_PATH;
 
 pub type LevelId = u32;
@@ -24,13 +27,62 @@ pub struct LevelLoadedSprite;
 
 pub const SPRITE_SIZE: u32 = 16;
 
-fn add_component_by_attribute_name(commands: &mut Commands, entity: Entity, name: String) {
+fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
+  rapier_config.scale = 1.0;
+  rapier_config.timestep_mode = TimestepMode::FixedTimestep;
+}
+
+fn add_component_by_attribute_name(commands: &mut Commands, entity: Entity, transform: Transform, name: String) {
+  let position = Vec2::new(transform.translation.x, transform.translation.y);
+
   match name.as_str() {
     "solid" => {
-      commands.entity(entity).insert(Solid);
+      let collider = ColliderBundle {
+        position: position.into(),
+        shape: ColliderShape::cuboid(SPRITE_SIZE as f32 / 2.0, SPRITE_SIZE as f32 / 2.0),
+        material: ColliderMaterial::default(),
+        flags: ColliderFlags {
+          collision_groups: SOLID_GROUP,
+          solver_groups: SOLID_GROUP,
+          ..Default::default()
+        },
+        ..Default::default()
+      };
+
+      commands
+        .entity(entity)
+        .insert(Solid)
+        .insert_bundle(collider)
+        .insert(ColliderPositionSync::Discrete);
     },
     "player" => {
-      commands.entity(entity).insert(Player);
+      let rigid_body = RigidBodyBundle {
+        position: position.into(),
+        mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
+        forces: RigidBodyForces {
+          gravity_scale: 1.0,
+          ..Default::default()
+        },
+        ..Default::default()
+      };
+
+      let collider = ColliderBundle {
+        position: position.into(),
+        shape: ColliderShape::ball(SPRITE_SIZE as f32 / 2.0),
+        flags: ColliderFlags {
+          collision_groups: PLAYER_GROUP,
+          solver_groups: PLAYER_GROUP,
+          ..Default::default()
+        },
+        ..Default::default()
+      };
+
+      commands
+        .entity(entity)
+        .insert(Player::default())
+        .insert_bundle(rigid_body)
+        .insert_bundle(collider)
+        .insert(ColliderPositionSync::Discrete);
     },
     _ => panic!("Attempted to load invalid attribute with name {}", name),
   }
@@ -67,13 +119,13 @@ fn load_level(
         .id();
 
       for attribute in sprite_data.attributes.iter() {
-        add_component_by_attribute_name(&mut commands, entity, attribute.clone());
+        add_component_by_attribute_name(&mut commands, entity, transform, attribute.clone());
       }
     }
 
     let mut camera = OrthographicCameraBundle::new_2d();
-    camera.orthographic_projection.scale = 1.0 / 4.0;
-  
+    camera.orthographic_projection.scale = 1.0 / 3.0;
+
     commands.spawn_bundle(camera).insert(LevelLoadedSprite);
 
     info!(target: "load_level", "Loaded Level {}", level_id);
@@ -123,11 +175,7 @@ pub struct Level {
   sprites: Vec<LevelSprite>,
 }
 
-fn load_level_files(
-  version: Res<LevelFileVersion>,
-  sprites: Res<SpriteMap>,
-  mut levels: ResMut<LevelMap>,
-) {
+fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>, mut levels: ResMut<LevelMap>) {
   let version_num = version.0;
 
   if let Ok(file) = fs::read_to_string(LEVEL_FILE_PATH) {
@@ -219,6 +267,7 @@ impl Plugin for LevelPlugin {
     app
       .insert_resource::<LevelFileVersion>(LevelFileVersion(1))
       .init_resource::<LevelMap>()
+      .add_startup_system(configure_rapier.system())
       .add_startup_system(load_level_files.system().after(SpritePluginSteps::LoadSprites))
       .add_system(load_level.system())
       .add_system(unload_level.system());

@@ -66,7 +66,10 @@ fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<S
         }
 
         for sprite_type in types.types.iter() {
-          if sprite_types.insert(sprite_type.id.clone(), sprite_type.clone()).is_some() {
+          if sprite_types
+            .insert(sprite_type.id.clone(), sprite_type.clone())
+            .is_some()
+          {
             panic!("Conflicting type definitions for id {}", sprite_type.id);
           }
         }
