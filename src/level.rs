@@ -10,7 +10,6 @@ use png::{BitDepth, ColorType, Decoder};
 use serde::Deserialize;
 
 use crate::game::attributes::*;
-use crate::game::collision_groups::*;
 use crate::sprite::{SpriteMap, SpritePluginSteps, TempleSprite};
 use crate::util::files::LEVEL_FILE_PATH;
 
@@ -30,62 +29,6 @@ pub const SPRITE_SIZE: u32 = 16;
 fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
   rapier_config.scale = 1.0;
   rapier_config.timestep_mode = TimestepMode::FixedTimestep;
-}
-
-fn add_component_by_attribute_name(commands: &mut Commands, entity: Entity, transform: Transform, name: String) {
-  let position = Vec2::new(transform.translation.x, transform.translation.y);
-
-  match name.as_str() {
-    "solid" => {
-      let collider = ColliderBundle {
-        position: position.into(),
-        shape: ColliderShape::cuboid(SPRITE_SIZE as f32 / 2.0, SPRITE_SIZE as f32 / 2.0),
-        material: ColliderMaterial::default(),
-        flags: ColliderFlags {
-          collision_groups: SOLID_GROUP,
-          solver_groups: SOLID_GROUP,
-          ..Default::default()
-        },
-        ..Default::default()
-      };
-
-      commands
-        .entity(entity)
-        .insert(Solid)
-        .insert_bundle(collider)
-        .insert(ColliderPositionSync::Discrete);
-    },
-    "player" => {
-      let rigid_body = RigidBodyBundle {
-        position: position.into(),
-        mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
-        forces: RigidBodyForces {
-          gravity_scale: 1.0,
-          ..Default::default()
-        },
-        ..Default::default()
-      };
-
-      let collider = ColliderBundle {
-        position: position.into(),
-        shape: ColliderShape::ball(SPRITE_SIZE as f32 / 2.0),
-        flags: ColliderFlags {
-          collision_groups: PLAYER_GROUP,
-          solver_groups: PLAYER_GROUP,
-          ..Default::default()
-        },
-        ..Default::default()
-      };
-
-      commands
-        .entity(entity)
-        .insert(Player::default())
-        .insert_bundle(rigid_body)
-        .insert_bundle(collider)
-        .insert(ColliderPositionSync::Discrete);
-    },
-    _ => panic!("Attempted to load invalid attribute with name {}", name),
-  }
 }
 
 fn load_level(
@@ -119,7 +62,8 @@ fn load_level(
         .id();
 
       for attribute in sprite_data.attributes.iter() {
-        add_component_by_attribute_name(&mut commands, entity, transform, attribute.clone());
+        let position = Vec2::new(transform.translation.x, transform.translation.y);
+        build_attribute(attribute.clone(), &mut commands, entity, position);
       }
     }
 

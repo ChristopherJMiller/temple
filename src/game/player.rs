@@ -8,15 +8,18 @@ use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::level::SPRITE_SIZE;
 
+const PLAYER_MOVE_SPEED: i8 = 12;
+const PLAYER_JUMP_FORCE: u8 = 120;
+
 fn handle_player_movement(
   input: Res<Kurinji>,
   mut player_force: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps), With<Player>>,
 ) {
   if let Some((mut vel, props)) = player_force.iter_mut().next() {
     let x_imp = if input.is_action_active(RIGHT) {
-      SPRITE_SIZE as f32 * 24.0
+      SPRITE_SIZE as f32 * PLAYER_MOVE_SPEED as f32
     } else if input.is_action_active(LEFT) {
-      SPRITE_SIZE as f32 * -24.0
+      SPRITE_SIZE as f32 * -PLAYER_MOVE_SPEED as f32
     } else {
       0.0
     };
@@ -42,9 +45,9 @@ fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>) {
 fn handle_player_hover(
   query_pipeline: Res<QueryPipeline>,
   collider_query: QueryPipelineColliderComponentsQuery,
-  mut player: Query<(&Transform, &Player, &mut RigidBodyVelocity)>,
+  mut player: Query<(&Transform, &mut Player, &mut RigidBodyVelocity)>,
 ) {
-  if let Some((trans, player_c, mut vel)) = player.iter_mut().next() {
+  if let Some((trans, mut player_c, mut vel)) = player.iter_mut().next() {
     let collider_set = QueryPipelineColliderComponentsSet(&collider_query);
 
     let origin = Vec2::new(trans.translation.x, trans.translation.y - (SPRITE_SIZE as f32 / 2.0));
@@ -63,27 +66,41 @@ fn handle_player_hover(
       let mag = distance_vec.length();
 
       if mag.abs() < player_c.height_adjust.abs() * 1.25 {
-        let height_ratio = mag / player_c.height_adjust;
+        player_c.outside_ground_bounds = false;
+        if !player_c.jump_in_progress {
+          player_c.grounded = true;
+        }
 
+        player_c.outside_ground_bounds = false;
+
+        let height_ratio = mag / player_c.height_adjust;
+  
         let adjust_i = impulse_coeff * (1.0 - height_ratio);
 
         let imp: Vector2<Real> = Vec2::new(0.0, adjust_i).into();
 
         vel.linvel.y = vel.linvel.y.max(imp.y);
+      } else {
+        player_c.outside_ground_bounds = true;
       }
     }
   }
 }
 
-fn handle_player_jump(input: Res<Kurinji>, mut player: Query<(&Transform, &Player, &mut RigidBodyVelocity)>) {
-  if let Some((trans, player_c, mut vel)) = player.iter_mut().next() {
-    if input.is_action_active(JUMP) {
-      vel.linvel.y = 40.0;
+fn handle_player_jump(input: Res<Kurinji>, mut player: Query<(&mut Player, &mut RigidBodyVelocity)>) {
+  if let Some((mut player_c, mut vel)) = player.iter_mut().next() {
+    if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
+      player_c.jump_in_progress = true;
+      player_c.grounded = false;
+
+      vel.linvel.y = PLAYER_JUMP_FORCE as f32;
+    }
+    
+    if !input.is_action_active(JUMP) && player_c.outside_ground_bounds {
+      player_c.jump_in_progress = false;
     }
   }
 }
-
-pub struct PlayerHeightAdjust(f32);
 
 pub struct PlayerPlugin;
 
