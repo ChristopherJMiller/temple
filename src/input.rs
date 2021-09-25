@@ -10,6 +10,7 @@ pub const DOWN: &str = "DOWN";
 pub const JUMP: &str = "JUMP";
 pub const MENU: &str = "MENU";
 
+/// Loads Kurinji config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
   if let Ok(bindings) = fs::read_to_string("assets/inputs/keyboard.ron") {
     kurinji.set_bindings_with_ron(&bindings);
@@ -18,6 +19,7 @@ fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
   }
 }
 
+// TODO: Replace with menu-based cursor toggling
 struct DevToggleCursor(pub bool);
 
 fn dev_toggle_cursor(input: Res<Kurinji>, mut cursor_flag: ResMut<DevToggleCursor>, mut windows: ResMut<Windows>) {
@@ -31,14 +33,18 @@ fn dev_toggle_cursor(input: Res<Kurinji>, mut cursor_flag: ResMut<DevToggleCurso
   }
 }
 
+/// The InputPlugin handles all player inputs within Bevy ECS
 pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .insert_resource(DevToggleCursor(false))
+      // Kurinji Input Boostrapping
       .add_plugin(KurinjiPlugin)
       .add_startup_system(setup_inputs.system())
+
+      // Dev Systems
+      .insert_resource(DevToggleCursor(false))
       .add_system(dev_toggle_cursor.system());
   }
 }

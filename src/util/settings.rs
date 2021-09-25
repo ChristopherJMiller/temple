@@ -11,15 +11,21 @@ pub struct GameFile {
   pub authors: Vec<String>,
 }
 
+impl Default for GameFile {
+  fn default() -> Self {
+    Self {
+      title: String::from("Temple"),
+      authors: vec![String::from("ALUMUX (Chris M.)")],
+    }
+  }
+}
+
 pub struct Version(pub String);
 
+/// Generates a default game file
+#[allow(dead_code)]
 pub fn gen_default_game_file() -> bool {
-  let default = GameFile {
-    title: String::from("Temple"),
-    authors: vec![String::from("ALUMUX (Chris M.)")],
-  };
-
-  let toml = toml::to_string_pretty(&default).unwrap();
+  let toml = toml::to_string_pretty(&GameFile::default()).unwrap();
   fs::write(GAME_SETTING_PATH, toml).is_ok()
 }
 

@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::game::collision_groups::*;
-use crate::level::SPRITE_SIZE;
 
 use super::Attribute;
+use crate::game::collision_groups::*;
+use crate::sprite::SPRITE_SIZE;
 
 pub struct Solid;
 

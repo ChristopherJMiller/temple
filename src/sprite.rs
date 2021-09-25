@@ -8,42 +8,51 @@ use serde::Deserialize;
 
 use crate::util::files::{SPRITE_FILE_PATH, SPRITE_TYPE_FILE_PATH};
 
+/// Constant sprite size
+pub const SPRITE_SIZE: u32 = 16;
+
 pub type SpriteId = u32;
 pub type SpriteTypeMap = HashMap<String, SpriteType>;
-pub type SpriteMap = HashMap<SpriteId, TempleSprite>;
+pub type SpriteMap = HashMap<SpriteId, GameSprite>;
 
 struct SpriteFileVersion(u32);
 
+/// Object of sprites/types.toml
 #[derive(Deserialize)]
 pub struct SpriteTypesFile {
   version: u32,
   types: Vec<SpriteType>,
 }
 
+/// Type Object within sprites/types.toml
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct SpriteType {
   id: String,
   attributes: Vec<String>,
 }
 
+/// Object of sprites/sprites.toml
 #[derive(Deserialize)]
 pub struct SpriteFile {
   version: SpriteId,
   sprites: Vec<SpriteEntry>,
 }
 
+/// Sprite Object within sprites/sprites.toml
 #[derive(Deserialize, Debug, Clone, Default)]
 struct SpriteEntry {
   name: String,
-  color: u32, // 24-bit RGB
+  /// 24-bit RGB
+  color: u32,
   sprite_type: String,
   offset_x: u32,
   offset_y: u32,
   texture: String,
 }
 
+/// Sprite definition to be used in game
 #[derive(Debug, Clone, Default)]
-pub struct TempleSprite {
+pub struct GameSprite {
   pub id: SpriteId,
   pub name: String,
   pub offset_x: u32,
@@ -52,12 +61,14 @@ pub struct TempleSprite {
   pub attributes: Vec<String>,
 }
 
+/// Loads all sprite types into memory map
 fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<SpriteTypeMap>) {
   let version_num = version.0;
 
   if let Ok(file) = fs::read_to_string(SPRITE_TYPE_FILE_PATH) {
     match toml::from_str::<SpriteTypesFile>(file.as_str()) {
       Ok(types) => {
+        // Ensure is same version number as sprites definition file
         if types.version != version_num {
           panic!(
             "Incorrect file version, should be {} but found {}",
@@ -85,15 +96,17 @@ fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<S
   }
 }
 
+/// Loads all sprites and sprite textures into memory
 fn load_sprites(
   version: Res<SpriteFileVersion>,
-  mut sprite_map: ResMut<SpriteMap>,
   sprite_types: Res<SpriteTypeMap>,
   asset_server: Res<AssetServer>,
+  mut sprite_map: ResMut<SpriteMap>,
   mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
   let version_num = version.0;
 
+  // Load Sprite File
   if let Ok(file) = fs::read_to_string(SPRITE_FILE_PATH) {
     match toml::from_str::<SpriteFile>(file.as_str()) {
       Ok(sprites) => {
@@ -116,9 +129,11 @@ fn load_sprites(
               );
             }
 
+            // Load all sprite textures into bevy AssetServer
             let texture_handle = asset_server.load(full_path.to_str().unwrap());
 
-            let full_sprite = TempleSprite {
+            // Build Sprite definition
+            let full_sprite = GameSprite {
               id: sprite.color,
               name: sprite.name.clone(),
               attributes: sprite_type.attributes.clone(),
@@ -155,6 +170,8 @@ pub enum SpritePluginSteps {
   LoadSprites,
 }
 
+/// SpritePlugin for handling loading sprite config files (attribute and sprite
+/// definitions)
 pub struct SpritePlugin;
 
 impl Plugin for SpritePlugin {

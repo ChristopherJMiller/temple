@@ -15,3 +15,11 @@ sprite_type = "player"
 offset_x = 0
 offset_y = 0
 texture = "sprites/spirit.png"
+
+[[sprites]]
+name = "trail"
+color = 0x1_0_0_0
+sprite_type = "trails"
+offset_x = 0
+offset_y = 0
+texture = "sprites/trails.png"

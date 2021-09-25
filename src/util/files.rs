@@ -2,7 +2,7 @@ use std::fs;
 
 use toml::de::Error;
 
-use crate::level::LevelFile;
+use crate::level::config::LevelFile;
 use crate::sprite::{SpriteFile, SpriteTypesFile};
 use crate::util::settings::GameFile;
 
@@ -11,6 +11,7 @@ pub const LEVEL_FILE_PATH: &str = "assets/levels.toml";
 pub const SPRITE_FILE_PATH: &str = "assets/sprites/sprites.toml";
 pub const SPRITE_TYPE_FILE_PATH: &str = "assets/sprites/types.toml";
 
+/// Verifies all game config files are found and valid.
 pub fn verify_files() {
   let game_settings_file =
     fs::read_to_string(GAME_SETTING_PATH).unwrap_or_else(|_| panic!("Failed to open file {}", GAME_SETTING_PATH));

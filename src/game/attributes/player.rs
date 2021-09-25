@@ -1,9 +1,11 @@
-use super::Attribute;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::game::collision_groups::*;
-use crate::level::SPRITE_SIZE;
 
+use super::Attribute;
+use crate::game::collision_groups::*;
+use crate::sprite::SPRITE_SIZE;
+
+/// Active Player State
 pub struct Player {
   pub height_adjust: f32,
   pub grounded: bool,
@@ -13,11 +15,11 @@ pub struct Player {
 
 impl Default for Player {
   fn default() -> Player {
-    Player { 
+    Player {
       height_adjust: 0.25,
       grounded: false,
       jump_in_progress: false,
-      outside_ground_bounds: false
+      outside_ground_bounds: false,
     }
   }
 }

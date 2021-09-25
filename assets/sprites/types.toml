@@ -15,3 +15,9 @@ id = "player"
 attributes = [
   "player"
 ]
+
+[[types]]
+id = "trails"
+attributes = [
+  "trails"
+]

@@ -11,6 +11,7 @@ pub struct CliArgs {
   pub load_level: Option<LevelId>,
 }
 
+/// Command line tool using [clap](https://docs.rs/clap/2.33.3/clap/)
 pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
   let author_list = game_file
     .authors

@@ -6,7 +6,7 @@ use kurinji::Kurinji;
 use super::attributes::Player;
 use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
-use crate::level::SPRITE_SIZE;
+use crate::sprite::SPRITE_SIZE;
 
 const PLAYER_MOVE_SPEED: i8 = 12;
 const PLAYER_JUMP_FORCE: u8 = 120;
@@ -57,6 +57,7 @@ fn handle_player_hover(
 
     let impulse_coeff = 20.0;
 
+    // Downwards raycast with specific collider group.
     if let Some((_, toi)) = query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_GROUP, None) {
       let hit_point = ray.point_at(toi);
       let distance_vec = Vec2::new(
@@ -74,7 +75,7 @@ fn handle_player_hover(
         player_c.outside_ground_bounds = false;
 
         let height_ratio = mag / player_c.height_adjust;
-  
+
         let adjust_i = impulse_coeff * (1.0 - height_ratio);
 
         let imp: Vector2<Real> = Vec2::new(0.0, adjust_i).into();
@@ -95,7 +96,7 @@ fn handle_player_jump(input: Res<Kurinji>, mut player: Query<(&mut Player, &mut 
 
       vel.linvel.y = PLAYER_JUMP_FORCE as f32;
     }
-    
+
     if !input.is_action_active(JUMP) && player_c.outside_ground_bounds {
       player_c.jump_in_progress = false;
     }
