@@ -2,7 +2,6 @@ version = 1
 
 [[sprites]]
 name = "boneyard_ground_middle"
-color = 0x0_0_0_0
 sprite_type = "solid"
 offset_x = 0
 offset_y = 0
@@ -10,7 +9,6 @@ texture = "sprites/boneyard_middle.png"
 
 [[sprites]]
 name = "player"
-color = 0xF_F_F_F
 sprite_type = "player"
 offset_x = 0
 offset_y = 0
@@ -18,7 +16,6 @@ texture = "sprites/spirit.png"
 
 [[sprites]]
 name = "trail"
-color = 0x1_0_0_0
 sprite_type = "trails"
 offset_x = 0
 offset_y = 0

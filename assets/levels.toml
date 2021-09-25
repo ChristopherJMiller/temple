@@ -3,3 +3,11 @@ version = 1
 [[levels]]
 id = 0
 sprite_map = "levels/0.png"
+
+[[levels.sprites]]
+color = 0x0_0_0_0
+name = "boneyard_ground_middle"
+
+[[levels.sprites]]
+color = 0xF_F_F_F
+name = "player"

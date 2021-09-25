@@ -11,7 +11,7 @@ use crate::util::files::{SPRITE_FILE_PATH, SPRITE_TYPE_FILE_PATH};
 /// Constant sprite size
 pub const SPRITE_SIZE: u32 = 16;
 
-pub type SpriteId = u32;
+pub type SpriteId = String;
 pub type SpriteTypeMap = HashMap<String, SpriteType>;
 pub type SpriteMap = HashMap<SpriteId, GameSprite>;
 
@@ -34,7 +34,7 @@ pub struct SpriteType {
 /// Object of sprites/sprites.toml
 #[derive(Deserialize)]
 pub struct SpriteFile {
-  version: SpriteId,
+  version: u32,
   sprites: Vec<SpriteEntry>,
 }
 
@@ -42,8 +42,6 @@ pub struct SpriteFile {
 #[derive(Deserialize, Debug, Clone, Default)]
 struct SpriteEntry {
   name: String,
-  /// 24-bit RGB
-  color: u32,
   sprite_type: String,
   offset_x: u32,
   offset_y: u32,
@@ -53,7 +51,6 @@ struct SpriteEntry {
 /// Sprite definition to be used in game
 #[derive(Debug, Clone, Default)]
 pub struct GameSprite {
-  pub id: SpriteId,
   pub name: String,
   pub offset_x: u32,
   pub offset_y: u32,
@@ -134,7 +131,6 @@ fn load_sprites(
 
             // Build Sprite definition
             let full_sprite = GameSprite {
-              id: sprite.color,
               name: sprite.name.clone(),
               attributes: sprite_type.attributes.clone(),
               offset_x: sprite.offset_x,
@@ -142,8 +138,8 @@ fn load_sprites(
               texture: materials.add(texture_handle.into()),
             };
 
-            if sprite_map.insert(sprite.color, full_sprite).is_some() {
-              panic!("Conflicting type definitions for color id {}", sprite.color);
+            if sprite_map.insert(sprite.name.clone(), full_sprite).is_some() {
+              panic!("Conflicting type definitions for sprite id {}", sprite.name);
             }
           } else {
             panic!(

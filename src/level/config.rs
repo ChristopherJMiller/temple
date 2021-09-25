@@ -7,7 +7,7 @@ use png::{BitDepth, ColorType, Decoder};
 use serde::Deserialize;
 
 use super::{LevelId, LevelMap};
-use crate::sprite::SpriteMap;
+use crate::sprite::{SpriteId, SpriteMap};
 use crate::util::files::LEVEL_FILE_PATH;
 
 pub struct LevelFileVersion(pub u32);
@@ -26,12 +26,22 @@ pub struct LevelDefinition {
   pub id: LevelId,
   /// Path to level map
   pub sprite_map: String,
+  /// Sprites used in level
+  pub sprites: Vec<LevelSpriteEntry>,
+}
+
+/// Sprite Entry for a Level
+#[derive(Deserialize)]
+pub struct LevelSpriteEntry {
+  // 24 Bit RGB
+  pub color: u32,
+  pub name: SpriteId
 }
 
 /// Sprite definition for a level
 pub struct LevelSprite {
   pub pos: UVec2,
-  pub id: u32,
+  pub id: SpriteId,
 }
 
 /// Stored object of a level, stores redundant id and list of sprites in the
@@ -93,17 +103,24 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 let tile_g: u32 = buf[i + 1] as u32;
                 let tile_b: u32 = buf[i + 2] as u32;
 
-                // Build sprite id using RGB value
-                let sprite_id: u32 = (tile_r << 8) | (tile_g << 4) | tile_b;
+                // Build sprite level entry color using RGB value
+                let entry_color: u32 = (tile_r << 8) | (tile_g << 4) | tile_b;
 
-                if !sprites.contains_key(&sprite_id) {
-                  panic!("Attempted to register level with invalid sprite id {}", sprite_id);
+                // Find entry
+                let sprite_entry = level.sprites.iter().find(|&entry| entry.color == entry_color);
+
+                if let Some(entry) = sprite_entry {
+                  if !sprites.contains_key(&entry.name) {
+                    panic!("Attempted to register sprite that has no definition! {}", entry.name);
+                  }
+
+                  level_sprites.push(LevelSprite {
+                    id: entry.name.clone(),
+                    pos: UVec2::new(level_x, level_y),
+                  });
+                } else {
+                  panic!("Attempted to register level with invalid sprite entry color {}", entry_color);
                 }
-
-                level_sprites.push(LevelSprite {
-                  id: sprite_id,
-                  pos: UVec2::new(level_x, level_y),
-                });
               }
 
               let level_obj = Level {

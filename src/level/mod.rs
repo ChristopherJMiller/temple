@@ -12,8 +12,7 @@ pub mod load;
 pub type LevelId = u32;
 pub type LevelMap = HashMap<LevelId, Level>;
 
-// Level Plugin
-
+/// Level Loading and Managment Plugin
 pub struct LevelPlugin;
 
 impl Plugin for LevelPlugin {
