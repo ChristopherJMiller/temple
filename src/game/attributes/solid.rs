@@ -10,7 +10,7 @@ pub struct Solid;
 impl Attribute for Solid {
   const KEY: &'static str = "solid";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2) {
+  fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<i32>) {
     let collider = ColliderBundle {
       position: position.into(),
       shape: ColliderShape::cuboid(SPRITE_SIZE as f32 / 2.0, SPRITE_SIZE as f32 / 2.0),

@@ -27,7 +27,7 @@ impl Default for Player {
 impl Attribute for Player {
   const KEY: &'static str = "player";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2) {
+  fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<i32>) {
     let rigid_body = RigidBodyBundle {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),

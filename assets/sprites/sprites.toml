@@ -20,3 +20,10 @@ sprite_type = "trails"
 offset_x = 0
 offset_y = 0
 texture = "sprites/trails.png"
+
+[[sprites]]
+name = "moving_platform_right_slow"
+sprite_type = "moving_platform_right_slow"
+offset_x = 0
+offset_y = 0
+texture = "sprites/boneyard_middle.png"

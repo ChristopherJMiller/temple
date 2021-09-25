@@ -21,3 +21,10 @@ id = "trails"
 attributes = [
   "trails"
 ]
+
+[[types]]
+id = "moving_platform_right_slow"
+attributes = [
+  "solid",
+  "moving(0, 1, 5)"
+]
