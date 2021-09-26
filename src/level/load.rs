@@ -4,6 +4,7 @@ use bevy_rapier2d::prelude::*;
 
 use super::{LevelId, LevelMap};
 use crate::game::attributes::*;
+use crate::game::camera::PlayerCamera;
 use crate::sprite::{GameSprite, SpriteMap, SPRITE_SIZE};
 
 /// Instruction to load a new level
@@ -69,8 +70,11 @@ pub fn load_level(
     let mut camera = OrthographicCameraBundle::new_2d();
     camera.orthographic_projection.scale = 1.0 / 3.0;
 
-    commands.spawn_bundle(camera).insert(LevelLoadedSprite);
-
+    commands
+      .spawn_bundle(camera)
+      .insert(LevelLoadedSprite)
+      .insert(PlayerCamera);
+    
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);
   });

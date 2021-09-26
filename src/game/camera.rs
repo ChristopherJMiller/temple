@@ -4,8 +4,9 @@ use bevy::render::camera::Camera;
 use crate::game::attributes::Player;
 
 pub struct CameraTarget;
+pub struct PlayerCamera;
 
-type CameraOnly = (With<Camera>, Without<CameraPlugin>, Without<Player>);
+type CameraOnly = (With<Camera>, With<PlayerCamera>, Without<CameraPlugin>, Without<Player>);
 type CameraTargetOnly = (Without<Camera>, With<CameraTarget>, Without<Player>);
 type PlayerOnly = (Without<Camera>, Without<CameraTarget>, With<Player>);
 

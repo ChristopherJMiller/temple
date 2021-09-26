@@ -1,5 +1,5 @@
-use bevy::prelude::*;
-use bevy_rapier2d::{na::{Point2, Vector2}, prelude::*};
+use bevy::{prelude::*, tasks::ComputeTaskPool};
+use bevy_rapier2d::prelude::*;
 use crate::sprite::SPRITE_SIZE;
 use std::f32::consts::PI;
 
@@ -106,17 +106,25 @@ impl Attribute for MovingSprite {
   }
 }
 
-pub fn moving_system(time: Res<Time>, mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>, moving_sprite: Query<(Entity, &mut MovingSprite, &mut ColliderPosition)>) {
-  if let Some((mut vel, props, player_c)) = player.iter_mut().next() {
-    moving_sprite.for_each_mut(|(ent, mut moving, mut collider_position)| {
-      moving.increment_time(time.delta().as_secs_f32());
-      collider_position.0 = moving.get_position().into();
+#[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
+pub enum MovingAttributeSystemSteps {
+  ApplyDeltaTranslation
+}
 
-      if let Some(platform) = player_c.on_moving_entity {
-        if platform == ent {
-          vel.apply_impulse(props, moving.get_delta_impulse().into());
-        }
+// TODO: Make it move all entities with a Movable Attribute instead of just the player
+pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
+  moving_sprite.for_each_mut(|(mut moving, mut collider_position)| {
+    moving.increment_time(time.delta().as_secs_f32());
+    collider_position.0 = moving.get_position().into();
+  }); 
+}
+
+pub fn move_player(mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
+  if let Some((mut vel, props, player_c)) = player.iter_mut().next() {
+    if let Some(entity) = player_c.on_moving_entity {
+      if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {
+        vel.apply_impulse(props, moving.get_delta_impulse().into());
       }
-    }); 
+    }
   }
 }

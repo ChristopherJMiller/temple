@@ -62,6 +62,7 @@ pub struct AttributePlugin;
 impl Plugin for AttributePlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .add_system(moving_system.system());
+      .add_system(moving_system.system().label(MovingAttributeSystemSteps::ApplyDeltaTranslation))
+      .add_system(move_player.system().after(MovingAttributeSystemSteps::ApplyDeltaTranslation));
   }
 }
