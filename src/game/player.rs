@@ -7,6 +7,7 @@ use super::attributes::Player;
 use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
+use super::attributes::MovingSprite;
 
 const PLAYER_MOVE_SPEED: i8 = 12;
 const PLAYER_JUMP_FORCE: u8 = 120;
@@ -45,6 +46,7 @@ fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>) {
 fn handle_player_hover(
   query_pipeline: Res<QueryPipeline>,
   collider_query: QueryPipelineColliderComponentsQuery,
+  moving_sprite_query: Query<&MovingSprite>,
   mut player: Query<(&Transform, &mut Player, &mut RigidBodyVelocity)>,
 ) {
   if let Some((trans, mut player_c, mut vel)) = player.iter_mut().next() {
@@ -58,7 +60,7 @@ fn handle_player_hover(
     let impulse_coeff = 20.0;
 
     // Downwards raycast with specific collider group.
-    if let Some((_, toi)) = query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_GROUP, None) {
+    if let Some((collided_handle, toi)) = query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_GROUP, None) {
       let hit_point = ray.point_at(toi);
       let distance_vec = Vec2::new(
         origin.x - hit_point.coords.get(0).unwrap(),
@@ -66,13 +68,27 @@ fn handle_player_hover(
       );
       let mag = distance_vec.length();
 
+      // Is "on ground"?
       if mag.abs() < player_c.height_adjust.abs() * 1.25 {
         player_c.outside_ground_bounds = false;
         if !player_c.jump_in_progress {
           player_c.grounded = true;
         }
 
-        player_c.outside_ground_bounds = false;
+        // If on ground, check if on moving platform
+        if player_c.grounded {
+          if player_c.on_moving_entity.is_none() || (player_c.on_moving_entity.is_some() && collided_handle.entity() != player_c.on_moving_entity.unwrap()) {
+            if moving_sprite_query.get_component::<MovingSprite>(collided_handle.entity()).is_ok() {
+              player_c.on_moving_entity = Some(collided_handle.entity());
+            }
+          } else {
+            player_c.on_moving_entity = None;
+          }
+        } else {
+          player_c.on_moving_entity = None;
+        }
+
+        // Apply hovering force
 
         let height_ratio = mag / player_c.height_adjust;
 
@@ -83,6 +99,7 @@ fn handle_player_hover(
         vel.linvel.y = vel.linvel.y.max(imp.y);
       } else {
         player_c.outside_ground_bounds = true;
+        player_c.on_moving_entity = None;
       }
     }
   }

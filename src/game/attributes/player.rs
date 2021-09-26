@@ -11,6 +11,7 @@ pub struct Player {
   pub grounded: bool,
   pub jump_in_progress: bool,
   pub outside_ground_bounds: bool,
+  pub on_moving_entity: Option<Entity>,
 }
 
 impl Default for Player {
@@ -20,6 +21,7 @@ impl Default for Player {
       grounded: false,
       jump_in_progress: false,
       outside_ground_bounds: false,
+      on_moving_entity: None,
     }
   }
 }

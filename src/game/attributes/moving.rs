@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
+use bevy_rapier2d::{na::{Point2, Vector2}, prelude::*};
 use crate::sprite::SPRITE_SIZE;
 use std::f32::consts::PI;
 
-use super::Attribute;
+use super::{Attribute, Player};
 
 #[derive(Clone, Copy)]
 pub enum MovingDirection {
@@ -39,6 +39,8 @@ pub struct MovingSprite {
   pub speed: i32,
   pub duration: i32,
 
+  last_delta_t: f32,
+  delta: f32,
   starting_position: Vec2,
   movement_vect: Vec2,
   current_time: f32,
@@ -58,15 +60,18 @@ impl MovingSprite {
   }
 
   pub fn increment_time(&mut self, delta_t: f32) {
+    self.last_delta_t = delta_t;
     self.current_time += delta_t;
+    self.delta = 0.5 * (self.current_time + PI).cos() + 0.5;
   }
 
-  pub fn get_x(&self) -> f32 {
-    self.starting_position.x + (0.5 * (self.current_time + PI).cos() + 0.5) * self.movement_vect.x
+  pub fn get_position(&self) -> Vec2 {
+    self.starting_position + self.delta * self.movement_vect
   }
 
-  pub fn get_y(&self) -> f32 {
-    self.starting_position.y + (0.5 * (self.current_time + PI).cos() + 0.5) * self.movement_vect.y
+  pub fn get_delta_impulse(&self) -> Vec2 {
+    let delta_pos = self.get_position() - (self.starting_position + (0.5 * (self.current_time - self.last_delta_t + PI).cos() + 0.5) * self.movement_vect);
+    1.25 * delta_pos / self.last_delta_t
   }
 }
 
@@ -79,6 +84,8 @@ impl Default for MovingSprite {
       starting_position: Vec2::ZERO,
       movement_vect: Vec2::ZERO,
       current_time: 0.0,
+      delta: 0.0,
+      last_delta_t: 0.0,
     }
   }
 }
@@ -99,9 +106,17 @@ impl Attribute for MovingSprite {
   }
 }
 
-pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
-  moving_sprite.for_each_mut(|(mut moving, mut collider_position)| {
-    moving.increment_time(time.delta().as_secs_f32());
-    collider_position.0 = Vec2::new(moving.get_x(), moving.get_y()).into();
-  });
+pub fn moving_system(time: Res<Time>, mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>, moving_sprite: Query<(Entity, &mut MovingSprite, &mut ColliderPosition)>) {
+  if let Some((mut vel, props, player_c)) = player.iter_mut().next() {
+    moving_sprite.for_each_mut(|(ent, mut moving, mut collider_position)| {
+      moving.increment_time(time.delta().as_secs_f32());
+      collider_position.0 = moving.get_position().into();
+
+      if let Some(platform) = player_c.on_moving_entity {
+        if platform == ent {
+          vel.apply_impulse(props, moving.get_delta_impulse().into());
+        }
+      }
+    }); 
+  }
 }
