@@ -7,6 +7,10 @@
 
 Temple is a platforming game built with the [Bevy Engine](https://bevyengine.org/). Temple is designed to be fully configurable via manifests, allowing for simple level creation and extensibility. 
 
+### Project Status
+
+The project is now focused on completing work items for a basic game experience. For more information, see our [Github Milestone](https://github.com/ChristopherJMiller/temple/milestone/1).
+
 ## Getting Started
 
 ```
