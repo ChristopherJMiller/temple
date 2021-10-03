@@ -1,4 +1,4 @@
-use bevy::{prelude::*, tasks::ComputeTaskPool};
+use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use crate::sprite::SPRITE_SIZE;
 use std::f32::consts::PI;
@@ -23,8 +23,10 @@ impl MovingDirection {
       _ => None,
     }
   }
+}
 
-  pub fn to_vec2(&self) -> Vec2 {
+impl Into<Vec2> for MovingDirection {
+  fn into(self) -> Vec2 {
     match self {
       Self::Right => Vec2::X,
       Self::Left => -Vec2::X,
@@ -49,12 +51,13 @@ pub struct MovingSprite {
 impl MovingSprite {
   pub fn new(dir: MovingDirection, speed: i32, duration: i32, position: Vec2) -> Self {
     let delta = SPRITE_SIZE as f32 * speed as f32 * duration as f32;
+    let vec_dir: Vec2 = dir.into();
     MovingSprite {
       dir,
       speed,
       duration,
       starting_position: position,
-      movement_vect: (dir.to_vec2() * delta),
+      movement_vect: (vec_dir * delta),
       ..MovingSprite::default()
     }
   }
