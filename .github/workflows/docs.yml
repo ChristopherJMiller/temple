@@ -19,7 +19,7 @@ jobs:
     - name: Install latest nightly
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly-2021-01-07
+        toolchain: nightly-2021-02-17
         override: true
     - name: Build Docs
       run: cargo doc --quiet --bin temple
