@@ -20,7 +20,7 @@ jobs:
         toolchain: nightly
         override: true
     - name: Build Docs
-      run: cargo doc --bin temple
+      run: cargo doc --quiet --bin temple
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
