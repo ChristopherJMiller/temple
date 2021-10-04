@@ -1,3 +1,5 @@
+//! Sprite and sprite type config management
+
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;

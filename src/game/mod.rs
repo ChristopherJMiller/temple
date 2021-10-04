@@ -1,3 +1,5 @@
+//! Game mechanisms and sprite attribute definitions.
+
 use bevy::app::PluginGroupBuilder;
 use bevy::prelude::*;
 use camera::CameraPlugin;
@@ -9,6 +11,7 @@ pub mod camera;
 pub mod collision_groups;
 pub mod player;
 
+/// [PluginGroup] for game modules.
 pub struct GamePlugins;
 
 impl PluginGroup for GamePlugins {

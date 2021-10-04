@@ -1,3 +1,8 @@
+//! Temple is a platform built with the [Bevy Engine](https://docs.rs/bevy/) and has a focus on
+//! configurability.
+//!
+//! Check out the [github](https://github.com/ChristopherJMiller/temple) for more info.
+
 use bevy::prelude::*;
 use bevy::diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin};
 use bevy_rapier2d::prelude::*;
@@ -57,8 +62,10 @@ fn main() {
     .run();
 }
 
+/// Component tag for the FPS counter [Text].
 struct FpsText;
 
+/// Start up system for [FpsText] UI.
 fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
   commands.spawn_bundle(UiCameraBundle::default());
   commands.spawn_bundle(TextBundle {
@@ -91,6 +98,7 @@ fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
   }).insert(FpsText);
 }
 
+/// System that updates FPS counter via [FrameTimeDiagnosticsPlugin].
 fn update_fps_system(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, With<FpsText>>) {
   for mut text in query.iter_mut() {
     if let Some(fps) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
@@ -101,7 +109,7 @@ fn update_fps_system(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, 
 }
 }
 
-/// Consumes incoming CLI Arguments
+/// Consumes incoming CLI arguments within Bevy
 fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
   // --load <level>
   if let Some(level) = cli_args.load_level {

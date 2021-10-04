@@ -1,3 +1,5 @@
+//! Input config management and associated systems.
+
 use std::fs;
 
 use bevy::prelude::*;

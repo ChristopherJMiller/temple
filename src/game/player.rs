@@ -1,3 +1,7 @@
+//! [Player] attribute systems
+//!
+//! TODO: This plugin should be moved into the same file as the [Player] attribute.
+
 use bevy::prelude::*;
 use bevy_rapier2d::na::Vector2;
 use bevy_rapier2d::prelude::*;
@@ -12,6 +16,7 @@ use super::attributes::MovingSprite;
 const PLAYER_MOVE_SPEED: i8 = 12;
 const PLAYER_JUMP_FORCE: u8 = 120;
 
+/// Consumes [Kurinji] inputs for player horizontal movement. 
 fn handle_player_movement(
   input: Res<Kurinji>,
   mut player_force: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps), With<Player>>,
@@ -29,6 +34,7 @@ fn handle_player_movement(
   }
 }
 
+/// Consumes [Kurinji] inputs for player hover height adjustments.
 fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>) {
   if let Some(mut player_c) = player.iter_mut().next() {
     let height = if input.is_action_active(UP) {
@@ -43,6 +49,7 @@ fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>) {
   }
 }
 
+/// Handles player hovering.
 fn handle_player_hover(
   query_pipeline: Res<QueryPipeline>,
   collider_query: QueryPipelineColliderComponentsQuery,
@@ -105,6 +112,7 @@ fn handle_player_hover(
   }
 }
 
+/// Consumes [Kurinji] inputs for player jumping.
 fn handle_player_jump(input: Res<Kurinji>, mut player: Query<(&mut Player, &mut RigidBodyVelocity)>) {
   if let Some((mut player_c, mut vel)) = player.iter_mut().next() {
     if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
@@ -120,6 +128,7 @@ fn handle_player_jump(input: Res<Kurinji>, mut player: Query<(&mut Player, &mut 
   }
 }
 
+/// [Plugin] for player systems.
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {

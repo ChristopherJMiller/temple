@@ -1,3 +1,18 @@
+//! Defines a cyclically moving sprite. `moving(dir, speed, dur)`
+//!
+//! TODO: `speed` should be changed to `dist`, for easier usage.
+//!
+//! # Usage
+//! `dir`: Direction of movement
+//! - `0` Right
+//! - `1` Right
+//! - `2` Right
+//! - `3` Right
+//!
+//! `speed`: Max velocity of the moving sprite
+//!
+//! `dur`: Duration of the sprite's cycle in seconds
+
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use crate::sprite::SPRITE_SIZE;
@@ -5,6 +20,7 @@ use std::f32::consts::PI;
 
 use super::{Attribute, Player};
 
+/// Direction of sprite movement.
 #[derive(Clone, Copy)]
 pub enum MovingDirection {
   Right,
@@ -36,6 +52,7 @@ impl Into<Vec2> for MovingDirection {
   }
 }
 
+/// `moving` attribute state.
 pub struct MovingSprite {
   pub dir: MovingDirection,
   pub speed: i32,
@@ -62,16 +79,20 @@ impl MovingSprite {
     }
   }
 
+  /// Increments time and recalculates [Self::delta]
   pub fn increment_time(&mut self, delta_t: f32) {
     self.last_delta_t = delta_t;
     self.current_time += delta_t;
     self.delta = 0.5 * (self.current_time + PI).cos() + 0.5;
   }
 
+  /// Returns the position of the sprite, per current time
   pub fn get_position(&self) -> Vec2 {
     self.starting_position + self.delta * self.movement_vect
   }
 
+  /// Calculates a impulse that is applied to the player when on the sprite, to keep them from falling off.
+  /// TODO: Calculation should be done once per frame, not once per call.
   pub fn get_delta_impulse(&self) -> Vec2 {
     let delta_pos = self.get_position() - (self.starting_position + (0.5 * (self.current_time - self.last_delta_t + PI).cos() + 0.5) * self.movement_vect);
     1.25 * delta_pos / self.last_delta_t
@@ -109,12 +130,15 @@ impl Attribute for MovingSprite {
   }
 }
 
+/// Simulation steps for moving sprites.
+/// Used for applying force to the player when riding a moving sprite.
+/// (see [super::AttributePlugin])
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum MovingAttributeSystemSteps {
   ApplyDeltaTranslation
 }
 
-// TODO: Make it move all entities with a Movable Attribute instead of just the player
+/// System to move all moving sprites per change in [Time].
 pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
   moving_sprite.for_each_mut(|(mut moving, mut collider_position)| {
     moving.increment_time(time.delta().as_secs_f32());
@@ -122,6 +146,8 @@ pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &
   }); 
 }
 
+/// Moves the [Player] if they are on top of a moving sprite.
+/// TODO: Make it move all entities with a Movable Attribute instead of just the player.
 pub fn move_player(mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
   if let Some((mut vel, props, player_c)) = player.iter_mut().next() {
     if let Some(entity) = player_c.on_moving_entity {

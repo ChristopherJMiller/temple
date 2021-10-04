@@ -4,7 +4,7 @@ use bevy_rapier2d::prelude::*;
 
 use super::{LevelId, LevelMap};
 use crate::game::attributes::*;
-use crate::game::camera::PlayerCamera;
+use crate::game::camera::MainCamera;
 use crate::sprite::{GameSprite, SpriteMap, SPRITE_SIZE};
 
 /// Instruction to load a new level
@@ -73,7 +73,7 @@ pub fn load_level(
     commands
       .spawn_bundle(camera)
       .insert(LevelLoadedSprite)
-      .insert(PlayerCamera);
+      .insert(MainCamera);
     
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);

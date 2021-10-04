@@ -1,3 +1,5 @@
+//! Level config management and level loading.
+
 use std::collections::HashMap;
 
 use bevy::prelude::*;

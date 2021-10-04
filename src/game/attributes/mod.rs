@@ -1,14 +1,24 @@
+//! Attribute definitions and systems.
+//!
+//! # About Attributes
+//! Attributes are Temple's translation of a Bevy component into a manifest-defined space
+//! for use with sprites (see [crate::sprite]).
+//! In most scenario's, they are simply tags to apply a system, but attributes additionally 
+//! have the ability to take parameters to generalize their functionality.
+
 use bevy::prelude::*;
 
-// TODO: Allow for parameter input from attribute e.g. moving_platform(x, 5.0)
-/// Sprite Type Attribute trait
+/// Attribute, as used with a [crate::sprite::SpriteType]
 trait Attribute {
   const KEY: &'static str;
   fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<i32>);
 }
 
+// TODO: Allow parameters to be strings. Attributes should individually handle parsing.
+/// Attribute with supplied parameters.
 struct AttributeEntry(String, Vec<i32>);
 
+/// Parses attribute string as a key and supplied parameters.
 fn derive_attribute_entry(entry: String) -> AttributeEntry {
   // e.g. attribute(...)
   if entry.contains("(") && entry.contains(")") {
@@ -39,6 +49,7 @@ fn derive_attribute_entry(entry: String) -> AttributeEntry {
   }
 }
 
+/// Constructs attribute onto a given [Entity]. Used during level load (see [crate::level::load::load_level]).
 pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entity, position: Vec2) {
   let entry = derive_attribute_entry(attribute);
   match entry.0.as_str() {
@@ -57,6 +68,7 @@ pub use player::*;
 pub use solid::*;
 pub use moving::*;
 
+/// [Plugin] for attributes
 pub struct AttributePlugin;
 
 impl Plugin for AttributePlugin {
