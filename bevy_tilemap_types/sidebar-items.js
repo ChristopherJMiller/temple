@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["dimension","Dimension helpers with encoding and decoding to and from indexes."],["point","Points used for helping with coordinates."],["prelude","The Bevy Tilemap types prelude."]]});

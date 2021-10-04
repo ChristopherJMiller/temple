@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Tile","A tile with an index value and color."]]});

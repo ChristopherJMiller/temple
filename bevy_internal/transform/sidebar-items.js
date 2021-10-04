@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["TransformSystem",""]],"mod":[["components",""],["hierarchy",""],["prelude",""],["transform_propagate_system",""]],"struct":[["TransformPlugin",""]]});

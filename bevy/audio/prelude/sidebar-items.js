@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Audio","The external struct used to play audio"],["AudioOutput","Used internally to play audio on the current \"audio device\""],["AudioSource","A source of audio data"]],"trait":[["Decodable",""]]});

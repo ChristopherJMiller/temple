@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Point2","A point which contains a X,Y coordinate."],["Point3","A point which contains a X,Y,Z coordinate."]]});

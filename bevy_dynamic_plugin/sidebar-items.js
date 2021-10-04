@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["dynamically_load_plugin","Dynamically links a plugin a the given path. The plugin must export the [CreatePlugin] function."]],"trait":[["DynamicPluginExt",""]]});

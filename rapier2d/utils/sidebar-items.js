@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["IndexMut2","Methods for simultaneously indexing a container with two distinct indices."],["WBasis","Trait to compute the orthonormal basis of a vector."],["WSign","Trait to copy the sign of each component of one scalar/vector/matrix to another."]]});

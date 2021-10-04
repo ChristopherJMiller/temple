@@ -1,0 +1,1 @@
+initSidebarItems({"attr":[["reflect_trait",""]],"derive":[["Reflect",""]],"struct":[["ReflectDeserialize",""]],"trait":[["GetField",""],["GetTupleStructField",""],["Reflect","A reflected rust type."],["Struct","An ordered &str->ReflectValue mapping where &str is a \"field\". This corresponds to rust struct types."],["TupleStruct","A rust \"tuple struct\" reflection"]]});

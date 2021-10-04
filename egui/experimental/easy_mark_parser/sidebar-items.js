@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Item",""]],"struct":[["Parser","Parser for the `EasyMark` markup language."],["Style",""]]});

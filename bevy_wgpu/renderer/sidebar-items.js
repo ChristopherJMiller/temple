@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["BIND_BUFFER_ALIGNMENT",""],["COPY_BUFFER_ALIGNMENT",""],["COPY_BYTES_PER_ROW_ALIGNMENT",""],["PUSH_CONSTANT_ALIGNMENT",""]],"fn":[["create_render_pass",""]],"struct":[["LazyCommandEncoder",""],["WgpuRenderContext",""],["WgpuRenderGraphExecutor",""],["WgpuRenderResourceContext",""]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Backend",""],["DebugMessenger",""]],"struct":[["CommandQueue",""],["Device",""],["DeviceCreationFeatures",""],["Instance",""],["PhysicalDevice",""],["QueueFamily",""],["RawInstance",""]],"type":[["RawCommandQueue",""]]});

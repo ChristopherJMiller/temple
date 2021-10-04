@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["bevy_render"] = [{"text":"impl <a class=\"trait\" href=\"bevy_core/bytes/trait.Bytes.html\" title=\"trait bevy_core::bytes::Bytes\">Bytes</a> for <a class=\"enum\" href=\"bevy_render/color/enum.Color.html\" title=\"enum bevy_render::color::Color\">Color</a>","synthetic":false,"types":["bevy_render::color::Color"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

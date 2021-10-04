@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["bevy_wgpu"] = [{"text":"impl&lt;'a&gt; <a class=\"trait\" href=\"bevy_render/pass/render_pass/trait.RenderPass.html\" title=\"trait bevy_render::pass::render_pass::RenderPass\">RenderPass</a> for <a class=\"struct\" href=\"bevy_wgpu/struct.WgpuRenderPass.html\" title=\"struct bevy_wgpu::WgpuRenderPass\">WgpuRenderPass</a>&lt;'a&gt;","synthetic":false,"types":["bevy_wgpu::wgpu_render_pass::WgpuRenderPass"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

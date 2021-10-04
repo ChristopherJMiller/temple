@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `gilrs` crate."><meta name="keywords" content="rust, rustlang, rust-lang, gilrs"><title>gilrs - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../gilrs/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><p class="location">Crate gilrs</p><div class="block version"><p>Version 0.8.1</p></div><div class="sidebar-elems"><a id="all-types" href="all.html"><p>See all gilrs's items</p></a><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></div><p class="location"></p><div id="sidebar-vars" data-name="gilrs" data-ty="mod" data-relpath="../"></div></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Crate <a class="mod" href="">gilrs</a></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/gilrs/lib.rs.html#8-127" title="goto source code">[src]</a></span></h1><div class="docblock"><h1 id="gilrs---game-input-library-for-rust" class="section-header"><a href="#gilrs---game-input-library-for-rust">GilRs - Game Input Library for Rust</a></h1>
+<p>GilRs abstract platform specific APIs to provide unified interfaces for working with gamepads.</p>
+<p>Main features:</p>
+<ul>
+<li>Unified gamepad layout—buttons and axes are represented by familiar names</li>
+<li>Support for SDL2 mappings including <code>SDL_GAMECONTROLLERCONFIG</code> environment
+variable which Steam uses</li>
+<li>Hotplugging—GilRs will try to assign new IDs for new gamepads and reuse same
+ID for gamepads which reconnected</li>
+<li>Force feedback (rumble)</li>
+<li>Power information (is gamepad wired, current battery status)</li>
+</ul>
+<h2 id="example" class="section-header"><a href="#example">Example</a></h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">gilrs</span>::{<span class="ident">Gilrs</span>, <span class="ident">Button</span>, <span class="ident">Event</span>};
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">gilrs</span> <span class="op">=</span> <span class="ident">Gilrs</span>::<span class="ident">new</span>().<span class="ident">unwrap</span>();
+
+<span class="comment">// Iterate over all connected gamepads</span>
+<span class="kw">for</span> (<span class="ident">_id</span>, <span class="ident">gamepad</span>) <span class="kw">in</span> <span class="ident">gilrs</span>.<span class="ident">gamepads</span>() {
+    <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{} is {:?}&quot;</span>, <span class="ident">gamepad</span>.<span class="ident">name</span>(), <span class="ident">gamepad</span>.<span class="ident">power_info</span>());
+}
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">active_gamepad</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+
+<span class="kw">loop</span> {
+    <span class="comment">// Examine new events</span>
+    <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Event</span> { <span class="ident">id</span>, <span class="ident">event</span>, <span class="ident">time</span> }) <span class="op">=</span> <span class="ident">gilrs</span>.<span class="ident">next_event</span>() {
+        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:?} New event from {}: {:?}&quot;</span>, <span class="ident">time</span>, <span class="ident">id</span>, <span class="ident">event</span>);
+        <span class="ident">active_gamepad</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">id</span>);
+    }
+
+    <span class="comment">// You can also use cached gamepad state</span>
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">gamepad</span>) <span class="op">=</span> <span class="ident">active_gamepad</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">id</span><span class="op">|</span> <span class="ident">gilrs</span>.<span class="ident">gamepad</span>(<span class="ident">id</span>)) {
+        <span class="kw">if</span> <span class="ident">gamepad</span>.<span class="ident">is_pressed</span>(<span class="ident">Button</span>::<span class="ident">South</span>) {
+            <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Button South is pressed (XBox - A, PS - X)&quot;</span>);
+        }
+    }
+}</pre></div>
+<h2 id="supported-features" class="section-header"><a href="#supported-features">Supported features</a></h2><table><thead><tr><th></th><th align="center">Input</th><th align="center">Hotplugging</th><th align="center">Force feedback</th></tr></thead><tbody>
+<tr><td>Linux</td><td align="center">✓</td><td align="center">✓</td><td align="center">✓</td></tr>
+<tr><td>Windows (XInput)</td><td align="center">✓</td><td align="center">✓</td><td align="center">✓</td></tr>
+<tr><td>OS X</td><td align="center">✓</td><td align="center">✓</td><td align="center">✕</td></tr>
+<tr><td>Wasm</td><td align="center">✓</td><td align="center">✓</td><td align="center">n/a</td></tr>
+<tr><td>Android</td><td align="center">✕</td><td align="center">✕</td><td align="center">✕</td></tr>
+</tbody></table>
+<h2 id="controller-layout" class="section-header"><a href="#controller-layout">Controller layout</a></h2>
+<p><img src="https://gilrs-project.gitlab.io/gilrs/img/controller.svg" alt="Controller layout" />
+<a href="http://opengameart.org/content/generic-gamepad-template">original image by nicefrog</a></p>
+<h2 id="mappings" class="section-header"><a href="#mappings">Mappings</a></h2>
+<p>GilRs use SDL-compatible controller mappings to fix on Linux legacy drivers that doesn't follow
+<a href="https://www.kernel.org/doc/Documentation/input/gamepad.txt">Linux Gamepad API</a> and to provide
+unified button layout for platforms that doesn't make any guarantees about it. The main source
+is <a href="https://github.com/gabomdq/SDL_GameControllerDB">SDL_GameControllerDB</a>, but library also
+support loading mappings from environment variable <code>SDL_GAMECONTROLLERCONFIG</code> (which Steam
+use).</p>
+<h2 id="cargo-features" class="section-header"><a href="#cargo-features">Cargo features</a></h2>
+<ul>
+<li><code>serde-serialize</code> - enable deriving of serde's <code>Serialize</code> and <code>Deserialize</code> for
+various types.</li>
+</ul>
+<h1 id="platform-specific-notes" class="section-header"><a href="#platform-specific-notes">Platform specific notes</a></h1><h2 id="linux" class="section-header"><a href="#linux">Linux</a></h2>
+<p>On Linux, GilRs read (and write, in case of force feedback) directly from appropriate
+<code>/dev/input/event*</code> file. This mean that user have to have read and write access to this file.
+On most distros it shouldn't be a problem, but if it is, you will have to create udev rule.</p>
+<p>To build GilRs, you will need pkg-config and libudev .pc file. On some
+distributions this file is packaged in separate archive (for example <code>libudev-dev</code> in Debian).</p>
+<h2 id="wasm" class="section-header"><a href="#wasm">Wasm</a></h2>
+<p>Wasm implementation uses stdweb, or wasm-bindgen with the wasm-bindgen feature.
+For stdweb, you will need <a href="https://github.com/koute/cargo-web">cargo-web</a> to build gilrs for
+wasm32-unknown-unknown. For wasm-bindgen, you will need the wasm-bindgen cli or a tool like
+<a href="https://rustwasm.github.io/wasm-pack/installer/">wasm-pack</a>.
+Unlike other platforms, events are only generated when you call <code>Gilrs::next_event()</code>.</p>
+</div><h2 id="reexports" class="section-header"><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub use crate::ev::filter::<a class="trait" href="../gilrs/ev/filter/trait.Filter.html" title="trait gilrs::ev::filter::Filter">Filter</a>;</code></td></tr><tr><td><code>pub use crate::ev::<a class="enum" href="../gilrs/ev/enum.Axis.html" title="enum gilrs::ev::Axis">Axis</a>;</code></td></tr><tr><td><code>pub use crate::ev::<a class="enum" href="../gilrs/ev/enum.Button.html" title="enum gilrs::ev::Button">Button</a>;</code></td></tr><tr><td><code>pub use crate::ev::<a class="struct" href="../gilrs/ev/struct.Event.html" title="struct gilrs::ev::Event">Event</a>;</code></td></tr><tr><td><code>pub use crate::ev::<a class="enum" href="../gilrs/ev/enum.EventType.html" title="enum gilrs::ev::EventType">EventType</a>;</code></td></tr></table><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
+<table><tr class="module-item"><td><a class="mod" href="ev/index.html" title="gilrs::ev mod">ev</a></td><td class="docblock-short"><p>Gamepad state and other event related functionality.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="ff/index.html" title="gilrs::ff mod">ff</a></td><td class="docblock-short"><p>Force feedback module.</p>
+</td></tr></table><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
+<table><tr class="module-item"><td><a class="struct" href="struct.ConnectedGamepadsIterator.html" title="gilrs::ConnectedGamepadsIterator struct">ConnectedGamepadsIterator</a></td><td class="docblock-short"><p>Iterator over all connected gamepads.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Gamepad.html" title="gilrs::Gamepad struct">Gamepad</a></td><td class="docblock-short"><p>Represents handle to game controller.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.GamepadId.html" title="gilrs::GamepadId struct">GamepadId</a></td><td class="docblock-short"><p>Gamepad ID.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Gilrs.html" title="gilrs::Gilrs struct">Gilrs</a></td><td class="docblock-short"><p>Main object responsible of managing gamepads.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.GilrsBuilder.html" title="gilrs::GilrsBuilder struct">GilrsBuilder</a></td><td class="docblock-short"><p>Allow to create <code>Gilrs </code> with customized behaviour.</p>
+</td></tr><tr class="module-item"><td><a class="struct" href="struct.Mapping.html" title="gilrs::Mapping struct">Mapping</a></td><td class="docblock-short"><p>Stores data used to map gamepad buttons and axes.</p>
+</td></tr></table><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2>
+<table><tr class="module-item"><td><a class="enum" href="enum.Error.html" title="gilrs::Error enum">Error</a></td><td class="docblock-short"><p>Error type which can be returned when creating <code>Gilrs</code>.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.MappingError.html" title="gilrs::MappingError enum">MappingError</a></td><td class="docblock-short"><p>The error type for functions related to gamepad mapping.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.MappingSource.html" title="gilrs::MappingSource enum">MappingSource</a></td><td class="docblock-short"><p>Source of gamepad mappings.</p>
+</td></tr><tr class="module-item"><td><a class="enum" href="enum.PowerInfo.html" title="gilrs::PowerInfo enum">PowerInfo</a></td><td class="docblock-short"><p>State of device's power supply.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="gilrs"></div>
+    <script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

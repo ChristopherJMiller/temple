@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `bevy` crate."><meta name="keywords" content="rust, rustlang, rust-lang, bevy"><title>bevy - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="https://bevyengine.org/assets/icon.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../bevy/index.html'><div class='logo-container'><img src='https://bevyengine.org/assets/icon.png' alt='logo'></div></a><p class="location">Crate bevy</p><div class="block version"><p>Version 0.5.0</p></div><div class="sidebar-elems"><a id="all-types" href="all.html"><p>See all bevy's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li></ul></div><p class="location"></p><div id="sidebar-vars" data-name="bevy" data-ty="mod" data-relpath="../"></div></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Crate <a class="mod" href="">bevy</a></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/bevy/lib.rs.html#1-49" title="goto source code">[src]</a></span></h1><div class="docblock"><p><a href="https://bevyengine.org"><img src="https://bevyengine.org/assets/bevy_logo_docs.svg" alt="" /></a></p>
+<p>Bevy is an open-source modular game engine built in Rust, with a focus on developer productivity
+and performance.</p>
+<p>Check out the <a href="https://bevyengine.org">Bevy website</a> for more information, read the
+<a href="https://bevyengine.org/learn/book/introduction">Bevy Book</a> for a step-by-step guide, and <a href="https://bevyengine.org/community/">engage with our
+community</a> if you have any questions or ideas!</p>
+<h2 id="example" class="section-header"><a href="#example">Example</a></h2>
+<p>Here is a simple &quot;Hello World&quot; Bevy app:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">bevy</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
+
+<span class="kw">fn</span> <span class="ident">main</span>() {
+   <span class="ident">App</span>::<span class="ident">build</span>()
+       .<span class="ident">add_system</span>(<span class="ident">hello_world_system</span>.<span class="ident">system</span>())
+       .<span class="ident">run</span>();
+}
+
+<span class="kw">fn</span> <span class="ident">hello_world_system</span>() {
+   <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;hello world&quot;</span>);
+}</pre></div>
+<p>Don't let the simplicity of the example above fool you. Bevy is a <a href="https://bevyengine.org">fully featured game engine</a>
+and it gets more powerful every day!</p>
+<h3 id="this-crate" class="section-header"><a href="#this-crate">This Crate</a></h3>
+<p>The <code>bevy</code> crate is just a container crate that makes it easier to consume Bevy subcrates.
+The defaults provide a &quot;full&quot; engine experience, but you can easily enable / disable features
+in your project's <code>Cargo.toml</code> to meet your specific needs. See Bevy's <code>Cargo.toml</code> for a full
+list of features available.</p>
+<p>If you prefer, you can also consume the individual bevy crates directly.
+Each module in the root of this crate, except for the prelude, can be found on crates.io
+with <code>bevy_</code> appended to the front, e.g. <code>app</code> -&gt; <a href="https://docs.rs/bevy_app/*/bevy_app/"><code>bevy_app</code></a>.</p>
+</div><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
+<table><tr class="module-item"><td><a class="mod" href="app/index.html" title="bevy::app mod">app</a></td><td class="docblock-short"><p>Build bevy apps, create plugins, and read events.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="asset/index.html" title="bevy::asset mod">asset</a></td><td class="docblock-short"><p>Load and store assets and resources for Apps.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="audio/index.html" title="bevy::audio mod">audio</a></td><td class="docblock-short"><p>Provides types and plugins for audio playback.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="core/index.html" title="bevy::core mod">core</a></td><td class="docblock-short"><p>Contains core plugins and utilities for time.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="diagnostic/index.html" title="bevy::diagnostic mod">diagnostic</a></td><td class="docblock-short"><p>Useful diagnostic plugins and types for bevy apps.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="dynamic_plugin/index.html" title="bevy::dynamic_plugin mod">dynamic_plugin</a></td><td class="docblock-short"></td></tr><tr class="module-item"><td><a class="mod" href="ecs/index.html" title="bevy::ecs mod">ecs</a></td><td class="docblock-short"><p>Bevy's entity-component-system.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="gilrs/index.html" title="bevy::gilrs mod">gilrs</a></td><td class="docblock-short"></td></tr><tr class="module-item"><td><a class="mod" href="gltf/index.html" title="bevy::gltf mod">gltf</a></td><td class="docblock-short"><p>Support for GLTF file loading.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="input/index.html" title="bevy::input mod">input</a></td><td class="docblock-short"><p>Resources and events for inputs, e.g. mouse/keyboard, touch, gamepads, etc.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="log/index.html" title="bevy::log mod">log</a></td><td class="docblock-short"><p>Logging capabilities</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="math/index.html" title="bevy::math mod">math</a></td><td class="docblock-short"><p>Math types (Vec3, Mat4, Quat, etc) and helpers.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="pbr/index.html" title="bevy::pbr mod">pbr</a></td><td class="docblock-short"><p>Physically based rendering.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="prelude/index.html" title="bevy::prelude mod">prelude</a></td><td class="docblock-short"><p><code>use bevy::prelude::*;</code> to import common components, bundles, and plugins.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="reflect/index.html" title="bevy::reflect mod">reflect</a></td><td class="docblock-short"><p>Type reflection used for dynamically interacting with rust types.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="render/index.html" title="bevy::render mod">render</a></td><td class="docblock-short"><p>Cameras, meshes, textures, shaders, and pipelines.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="scene/index.html" title="bevy::scene mod">scene</a></td><td class="docblock-short"><p>Save/load collections of entities and components to/from file.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="sprite/index.html" title="bevy::sprite mod">sprite</a></td><td class="docblock-short"><p>Items for sprites, rects, texture atlases, etc.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="tasks/index.html" title="bevy::tasks mod">tasks</a></td><td class="docblock-short"><p>Pools for async, IO, and compute tasks.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="text/index.html" title="bevy::text mod">text</a></td><td class="docblock-short"><p>Text drawing, styling, and font assets.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="transform/index.html" title="bevy::transform mod">transform</a></td><td class="docblock-short"><p>Local and global transforms (e.g. translation, scale, rotation).</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="ui/index.html" title="bevy::ui mod">ui</a></td><td class="docblock-short"><p>User interface components and widgets.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="utils/index.html" title="bevy::utils mod">utils</a></td><td class="docblock-short"></td></tr><tr class="module-item"><td><a class="mod" href="wgpu/index.html" title="bevy::wgpu mod">wgpu</a></td><td class="docblock-short"><p>A render backend utilizing <a href="https://github.com/gfx-rs/wgpu-rs">wgpu</a>.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="window/index.html" title="bevy::window mod">window</a></td><td class="docblock-short"><p>Configuration, creation, and management of one or more windows.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="winit/index.html" title="bevy::winit mod">winit</a></td><td class="docblock-short"></td></tr></table><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
+<table><tr class="module-item"><td><a class="struct" href="struct.DefaultPlugins.html" title="bevy::DefaultPlugins struct">DefaultPlugins</a></td><td class="docblock-short"></td></tr><tr class="module-item"><td><a class="struct" href="struct.MinimalPlugins.html" title="bevy::MinimalPlugins struct">MinimalPlugins</a></td><td class="docblock-short"></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="bevy"></div>
+    <script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

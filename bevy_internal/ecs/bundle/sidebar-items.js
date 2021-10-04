@@ -1,0 +1,1 @@
+initSidebarItems({"derive":[["Bundle",""]],"struct":[["BundleId",""],["BundleInfo",""],["Bundles",""]],"trait":[["Bundle","An ordered collection of components, commonly used for spawning entities, and adding and removing components in bulk."]]});

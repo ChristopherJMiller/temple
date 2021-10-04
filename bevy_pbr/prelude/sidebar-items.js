@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Light","A point light"],["LightBundle","A component bundle for \"light\" entities"],["PbrBundle","A component bundle for \"pbr mesh\" entities"],["StandardMaterial","A material with \"standard\" properties used in PBR lighting Standard property values with pictures here https://google.github.io/filament/Material%20Properties.pdf"]]});

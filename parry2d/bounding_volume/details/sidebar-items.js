@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["local_point_cloud_aabb","Computes the AABB of a set of points."],["local_support_map_aabb","Computes the AABB of an support mapped shape."],["point_cloud_aabb","Computes the AABB of a set of points transformed by `m`."],["point_cloud_bounding_sphere","Computes a bounding sphere of the specified set of point."]]});

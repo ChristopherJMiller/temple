@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["bevy_text"] = [{"text":"impl&lt;'a&gt; <a class=\"trait\" href=\"bevy_render/draw/trait.Drawable.html\" title=\"trait bevy_render::draw::Drawable\">Drawable</a> for <a class=\"struct\" href=\"bevy_text/struct.DrawableText.html\" title=\"struct bevy_text::DrawableText\">DrawableText</a>&lt;'a&gt;","synthetic":false,"types":["bevy_text::draw::DrawableText"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `bevy_tilemap` crate."><meta name="keywords" content="rust, rustlang, rust-lang, bevy_tilemap"><title>bevy_tilemap - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../ayu.css" disabled ><script id="default-settings"></script><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../bevy_tilemap/index.html'><div class='logo-container rust-logo'><img src='../rust-logo.png' alt='logo'></div></a><p class="location">Crate bevy_tilemap</p><div class="block version"><p>Version 0.4.0</p></div><div class="sidebar-elems"><a id="all-types" href="all.html"><p>See all bevy_tilemap's items</p></a><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></div><p class="location"></p><div id="sidebar-vars" data-name="bevy_tilemap" data-ty="mod" data-relpath="../"></div></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class="fqn"><span class="in-band">Crate <a class="mod" href="">bevy_tilemap</a></span><span class="out-of-band"><span id="render-detail"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span><a class="srclink" href="../src/bevy_tilemap/lib.rs.html#1-291" title="goto source code">[src]</a></span></h1><div class="docblock"><p><img src="https://github.com/joshuajbouw/bevy_tilemap/raw/master/docs/img/logo.gif" alt="" /></p>
+<h1 id="bevy-tilemap" class="section-header"><a href="#bevy-tilemap">Bevy Tilemap</a></h1>
+<p>Bevy Tilemap allows for Bevy native batch-rendered tiles in maps to be
+constructed with chunk based loading, efficiently.</p>
+<p>Simple yet refined in its implementation, it is meant to attach to other
+extensible plugins that can enhance its functionality further. Hand-crafted
+tilemaps with an attentive focus on performance, and low data usage.</p>
+<h2 id="features" class="section-header"><a href="#features">Features</a></h2>
+<ul>
+<li>Perfect for game jams.</li>
+<li>Easy to use and stable API with thorough documentation.</li>
+<li>Endless or constrained tilemaps.</li>
+<li>Batched rendering of many tiles.</li>
+<li>Square and hex tiles.</li>
+</ul>
+<h2 id="design" class="section-header"><a href="#design">Design</a></h2>
+<p>This is not intended to be just another Tilemap. It is meant to be a
+framework and extensible by design, like Bevy. As well as work done to keep
+it as close to Bevy API as possible while keeping in mind of Rust API best
+practices. It is not meant to be complicated and created to be simple to use
+but give enough functionality to advanced users.</p>
+<p>Less time fiddling, more time building.</p>
+<h1 id="serde-support" class="section-header"><a href="#serde-support">Serde support</a></h1>
+<p>Optionally serde is supported through the use of features.</p>
+<pre><code class="language-toml">[dependencies]
+bevy_tilemap = { version = &quot;0.4&quot;, features = [&quot;serialize&quot;] }
+</code></pre>
+<h1 id="extra-types-feature" class="section-header"><a href="#extra-types-feature">Extra types feature</a></h1>
+<p>Internally, the library uses Point2, Point3, Dimension2 and Dimension3
+types. This is not part of the official Bevy library and multiple or
+alternative implementations of them may not be ideal, especially not in the
+prelude.</p>
+<p>It is quite important however to <code>impl Into&lt;T&gt;</code> for each of them for most
+public methods. It already has most basic implementations that make sense.</p>
+<p>However if you would like to use this, please do so.</p>
+<pre><code class="language-toml">[dependencies]
+bevy_tilemap = { version = &quot;0.4&quot;, features = [&quot;types&quot;] }
+</code></pre>
+<p>See the library <code>bevy_tilemap_types</code> for more information.</p>
+</div><h2 id="reexports" class="section-header"><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub extern crate <a class="mod" href="../bevy_tilemap_types/index.html" title="mod bevy_tilemap_types">bevy_tilemap_types</a>;</code></td></tr><tr><td><code>pub use crate::tile::<a class="struct" href="../bevy_tilemap/tile/struct.Tile.html" title="struct bevy_tilemap::tile::Tile">Tile</a>;</code></td></tr><tr><td><code>pub use crate::tilemap::<a class="struct" href="../bevy_tilemap/tilemap/struct.Tilemap.html" title="struct bevy_tilemap::tilemap::Tilemap">Tilemap</a>;</code></td></tr><tr><td><code>pub use crate::tilemap::<a class="struct" href="../bevy_tilemap/tilemap/struct.TilemapLayer.html" title="struct bevy_tilemap::tilemap::TilemapLayer">TilemapLayer</a>;</code></td></tr></table><h2 id="modules" class="section-header"><a href="#modules">Modules</a></h2>
+<table><tr class="module-item"><td><a class="mod" href="chunk/index.html" title="bevy_tilemap::chunk mod">chunk</a></td><td class="docblock-short"><p>Tiles organised into chunks for efficiency and performance.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="default_plugin/index.html" title="bevy_tilemap::default_plugin mod">default_plugin</a></td><td class="docblock-short"><p>The default plugin to be used in Bevy applications.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="dimension/index.html" title="bevy_tilemap::dimension mod">dimension</a></td><td class="docblock-short"><p>Dimension helpers with encoding and decoding to and from indexes.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="entity/index.html" title="bevy_tilemap::entity mod">entity</a></td><td class="docblock-short"><p>Bundles of components for spawning entities.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="event/index.html" title="bevy_tilemap::event mod">event</a></td><td class="docblock-short"><p>The tilemap events.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="point/index.html" title="bevy_tilemap::point mod">point</a></td><td class="docblock-short"><p>Points used for helping with coordinates.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="prelude/index.html" title="bevy_tilemap::prelude mod">prelude</a></td><td class="docblock-short"><p>The Bevy Tilemap prelude.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="stage/index.html" title="bevy_tilemap::stage mod">stage</a></td><td class="docblock-short"><p>The stages for the tilemap in the bevy app.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="tile/index.html" title="bevy_tilemap::tile mod">tile</a></td><td class="docblock-short"><p>Tile traits to implement for a custom tile.</p>
+</td></tr><tr class="module-item"><td><a class="mod" href="tilemap/index.html" title="bevy_tilemap::tilemap mod">tilemap</a></td><td class="docblock-short"><p>Constructing a basic tilemap, setting tiles, and spawning.</p>
+</td></tr></table><h2 id="structs" class="section-header"><a href="#structs">Structs</a></h2>
+<table><tr class="module-item"><td><a class="struct" href="struct.TilemapPlugin.html" title="bevy_tilemap::TilemapPlugin struct">TilemapPlugin</a></td><td class="docblock-short"><p>The Bevy Tilemap 2D main plugin.</p>
+</td></tr></table><h2 id="enums" class="section-header"><a href="#enums">Enums</a></h2>
+<table><tr class="module-item"><td><a class="enum" href="enum.TilemapSystem.html" title="bevy_tilemap::TilemapSystem enum">TilemapSystem</a></td><td class="docblock-short"><p>The tilemap system stages.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../" data-current-crate="bevy_tilemap"></div>
+    <script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

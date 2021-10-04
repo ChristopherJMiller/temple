@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["GltfError","An error that occurs when loading a GLTF file"]],"struct":[["Gltf",""],["GltfLoader","Loads meshes from GLTF files into Mesh assets"],["GltfMesh",""],["GltfNode",""],["GltfPlugin","Adds support for GLTF file loading to Apps"],["GltfPrimitive",""]]});

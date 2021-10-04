@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["DebugOptions","Options for help debug egui by adding extra visualization"],["Interaction",""],["Selection","Selected text, selected elements etc"],["Spacing",""],["Style","Specifies the look and feel of a [`Ui`]."],["Visuals",""],["WidgetVisuals","bg = background, fg = foreground."],["Widgets",""]]});

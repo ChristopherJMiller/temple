@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Curve","A series of values forming a path."],["HLine","A horizontal line in a plot, filling the full width"],["Plot","A 2D plot, e.g. a graph of a function."],["VLine","A vertical line in a plot, filling the full width"],["Value","A value in the value-space of the plot."]]});

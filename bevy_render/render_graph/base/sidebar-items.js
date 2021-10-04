@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["camera",""],["node",""]],"struct":[["BaseRenderGraphConfig",""],["MainPass","A component that indicates that an entity should be drawn in the \"main pass\""],["Msaa",""]]});

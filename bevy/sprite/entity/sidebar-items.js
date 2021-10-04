@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["SpriteBundle",""],["SpriteSheetBundle","A Bundle of components for drawing a single sprite from a sprite sheet (also referred to as a `TextureAtlas`)"]]});

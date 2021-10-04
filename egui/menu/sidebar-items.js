@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["bar","The menu bar goes well in `TopPanel`, but can also be placed in a `Window`. In the latter case you may want to wrap it in `Frame`."],["menu","Construct a top level menu in a menu bar. This would be e.g. \"File\", \"Edit\" etc."]]});

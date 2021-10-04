@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Axis",""],["Input","A \"press-able\" input of type `T`"]]});

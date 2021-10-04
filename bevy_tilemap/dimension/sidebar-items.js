@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Dimension2","Dimensions of the 2nd kind."],["Dimension3","Dimensions of the 3rd kind."],["DimensionError","An error type for dimensions which indicates that an error has occurred."]],"type":[["DimensionResult","A dimension result which is of the type `Result<T, DimensionError>`."]]});

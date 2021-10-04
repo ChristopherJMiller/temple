@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["WIREFRAME_PIPELINE_HANDLE",""]],"fn":[["draw_wireframes_system",""]],"struct":[["Wireframe",""],["WireframeConfig",""],["WireframePlugin",""]]});

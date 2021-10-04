@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["PubSub","A pub-sub queue."],["Subscription","A permanent subscription to a pub-sub queue."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["prelude",""],["render_graph",""]],"struct":[["AmbientLight",""],["Light","A point light"],["LightBundle","A component bundle for \"light\" entities"],["PbrBundle","A component bundle for \"pbr mesh\" entities"],["PbrPlugin","NOTE: this isn't PBR yet. consider this name \"aspirational\" :)"]]});
