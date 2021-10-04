@@ -19,9 +19,10 @@ jobs:
     - name: Install latest nightly
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly
+        toolchain: nightly-2021-01-07
+        override: true
     - name: Build Docs
-      run: cargo +nightly doc --quiet --bin temple
+      run: cargo doc --quiet --bin temple
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
