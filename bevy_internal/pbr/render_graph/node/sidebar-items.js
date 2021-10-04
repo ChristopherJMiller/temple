@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["LIGHTS",""],["STANDARD_MATERIAL",""],["TRANSFORM",""]]});

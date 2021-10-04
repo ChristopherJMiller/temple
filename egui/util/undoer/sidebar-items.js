@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Settings",""],["Undoer","Automatic undo system."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["MeshBundle","A component bundle for \"mesh\" entities"],["OrthographicCameraBundle","Component bundle for camera entities with orthographic projection"],["PerspectiveCameraBundle","Component bundle for camera entities with perspective projection"]]});

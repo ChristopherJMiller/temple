@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["transform_propagate_system","Update [`GlobalTransform`] component of entities based on entity hierarchy and [`Transform`] component."]]});

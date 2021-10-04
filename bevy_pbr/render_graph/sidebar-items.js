@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["PBR_PIPELINE_HANDLE",""]],"fn":[["lights_node_system",""]],"mod":[["node","the names of pbr graph nodes"],["uniform","the names of pbr uniforms"]],"struct":[["LightsNode","A Render Graph [Node] that write light data from the ECS to GPU buffers"],["LightsNodeSystemState","Local \"lights node system\" state"]]});

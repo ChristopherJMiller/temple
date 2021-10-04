@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_best_videomode",""],["get_fitting_videomode",""],["winit_runner",""],["winit_runner_any_thread",""],["winit_runner_with",""]],"struct":[["WinitConfig","A resource for configuring usage of the `rust_winit` library."],["WinitPlugin",""],["WinitWindows",""]]});

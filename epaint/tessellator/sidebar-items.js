@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["PathType",""]],"fn":[["tessellate_shapes","Turns [`Shape`]:s into sets of triangles."]],"mod":[["path","Helpers for constructing paths"]],"struct":[["PathPoint",""],["TessellationOptions","Tessellation quality options"],["Tessellator","Converts [`Shape`]s into [`Mesh`]."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Clipboard",""],["Primary",""],["X11ClipboardContext",""]],"trait":[["Selection",""]]});

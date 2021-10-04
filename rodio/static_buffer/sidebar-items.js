@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["StaticSamplesBuffer","A buffer of samples treated as a source."]]});

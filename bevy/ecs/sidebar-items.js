@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["archetype",""],["bundle",""],["component",""],["entity",""],["prelude",""],["query",""],["reflect",""],["schedule",""],["storage",""],["system",""],["world",""]]});

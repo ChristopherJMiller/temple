@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["ClearColor",""],["Mesh",""],["RenderPipelines",""],["Shader","A shader, as defined by its [ShaderSource] and [ShaderStage]"],["Texture",""]]});

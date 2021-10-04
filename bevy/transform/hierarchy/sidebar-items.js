@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["despawn_with_children_recursive",""],["parent_update_system",""]],"struct":[["ChildBuilder",""],["DespawnRecursive",""],["InsertChildren",""],["PushChildren",""],["WorldChildBuilder",""]],"trait":[["BuildChildren",""],["BuildWorldChildren",""],["DespawnRecursiveExt",""]]});

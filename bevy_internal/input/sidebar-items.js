@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ElementState","The current \"press\" state of an element"]],"mod":[["gamepad",""],["keyboard",""],["mouse",""],["prelude",""],["system",""],["touch",""]],"struct":[["Axis",""],["Input","A \"press-able\" input of type `T`"],["InputPlugin","Adds keyboard and mouse input to an App"],["InputSystem",""]]});

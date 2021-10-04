@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Image",""]],"fn":[["draw_text_system",""],["image_node_system",""],["text_constraint","Defines how min_size, size, and max_size affects the bounds of a text block."],["text_system","Computes the size of a text block and updates the TextGlyphs with the new computed glyphs from the layout"]],"struct":[["Button",""],["QueuedText",""]]});

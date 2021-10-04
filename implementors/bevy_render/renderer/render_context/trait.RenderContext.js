@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["bevy_wgpu"] = [{"text":"impl <a class=\"trait\" href=\"bevy_render/renderer/render_context/trait.RenderContext.html\" title=\"trait bevy_render::renderer::render_context::RenderContext\">RenderContext</a> for <a class=\"struct\" href=\"bevy_wgpu/renderer/struct.WgpuRenderContext.html\" title=\"struct bevy_wgpu::renderer::WgpuRenderContext\">WgpuRenderContext</a>","synthetic":false,"types":["bevy_wgpu::renderer::wgpu_render_context::WgpuRenderContext"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

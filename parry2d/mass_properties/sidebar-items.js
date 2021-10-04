@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["details","Free functions for some special-cases of mass-properties computation."]],"struct":[["MassProperties","The local mass properties of a rigid-body."]]});

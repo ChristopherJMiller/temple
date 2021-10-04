@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["TilemapDefaultPlugins","Implements a plugin group which contains all the plugins."]]});

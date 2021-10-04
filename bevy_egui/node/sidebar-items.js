@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["EGUI_PASS","The main egui pass."],["EGUI_TRANSFORM","Keeps the transform uniform up to date."]]});

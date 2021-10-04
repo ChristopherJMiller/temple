@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Alpha","What options to show for alpha"]],"fn":[["color_edit_button_hsva",""],["color_edit_button_srgba","Shows a button with the given color. If the user clicks the button, a full color picker is shown."],["show_color",""]]});

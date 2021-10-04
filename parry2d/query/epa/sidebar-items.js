@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["epa2","Two-dimensional penetration depth queries using the Expanding Polytope Algorithm."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ReflectDimension",""],["ReflectStorageClass",""]],"struct":[["ReflectBlockVariable",""],["ReflectDecorationFlags",""],["ReflectEntryPoint",""],["ReflectInterfaceVariable",""],["ReflectShaderStageFlags",""],["ReflectTypeDescription",""],["ReflectTypeFlags",""]]});

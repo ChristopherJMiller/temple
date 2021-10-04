@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["EPA","The Expanding Polytope Algorithm in 2D."]]});

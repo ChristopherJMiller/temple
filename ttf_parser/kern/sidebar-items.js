@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Subtable","A kerning subtable."],["Subtables","An iterator over kerning subtables."]]});

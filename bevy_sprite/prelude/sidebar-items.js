@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["SpriteResizeMode","Determines how `Sprite` resize should be handled"]],"struct":[["ColorMaterial",""],["Sprite",""],["TextureAtlas","An atlas containing multiple textures (like a spritesheet or a tilemap)"],["TextureAtlasSprite",""]]});

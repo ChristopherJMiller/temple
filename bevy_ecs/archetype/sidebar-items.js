@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ComponentStatus",""]],"struct":[["AddBundle",""],["Archetype",""],["ArchetypeComponentId",""],["ArchetypeGeneration","A generational id that changes every time the set of archetypes changes"],["ArchetypeId",""],["ArchetypeIdentity",""],["Archetypes",""],["Edges",""]]});

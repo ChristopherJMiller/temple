@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["easy_mark","Parse and display a VERY simple and small subset of Markdown."]],"mod":[["easy_mark_parser","A parser for `EasyMark`: a very simple markup language."]]});

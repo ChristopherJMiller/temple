@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["CAMERA_2D",""],["CAMERA_3D",""],["MAIN_DEPTH_TEXTURE",""],["MAIN_PASS",""],["MAIN_SAMPLED_COLOR_ATTACHMENT",""],["PRIMARY_SWAP_CHAIN",""],["SHARED_BUFFERS",""],["TEXTURE_COPY",""]]});

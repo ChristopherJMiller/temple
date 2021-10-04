@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["MapEntitiesError",""]],"struct":[["Entities",""],["Entity","Lightweight unique ID of an entity"],["EntityLocation","A location of an entity in an archetype"],["EntityMap",""],["EntityMeta",""],["ReserveEntitiesIterator","An iterator returning a sequence of Entity values from `Entities::reserve_entities`."]],"trait":[["MapEntities",""]]});

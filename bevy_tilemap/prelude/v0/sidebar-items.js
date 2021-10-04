@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["GridTopology","Topology of the tilemap grid (square or hex)"],["LayerKind","Specifies which kind of layer to construct, either a dense or a sparse sprite layer."]]});

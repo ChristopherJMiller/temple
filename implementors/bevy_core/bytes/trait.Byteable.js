@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["bevy_sprite"] = [{"text":"impl <a class=\"trait\" href=\"bevy_core/bytes/trait.Byteable.html\" title=\"trait bevy_core::bytes::Byteable\">Byteable</a> for <a class=\"struct\" href=\"bevy_sprite/struct.Rect.html\" title=\"struct bevy_sprite::Rect\">Rect</a>","synthetic":false,"types":["bevy_sprite::rect::Rect"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

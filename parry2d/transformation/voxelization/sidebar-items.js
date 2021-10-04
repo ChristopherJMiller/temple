@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["FillMode","Controls how the voxelization determines which voxel needs to be considered empty, and which ones will be considered full."],["VoxelValue","The values of a voxel."]],"struct":[["Voxel","A voxel."],["VoxelSet","A sparse set of voxels."],["VoxelizedVolume","A cubic volume filled with voxels."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["popup_below_widget","Shows a popup below another widget."],["show_tooltip","Show a tooltip at the current pointer position (if any)."],["show_tooltip_at",""],["show_tooltip_at_pointer",""],["show_tooltip_text","Show some text at the current pointer position (if any)."],["show_tooltip_under",""]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["convex_hull","Computes the convex hull of a set of 2d points."],["convex_hull_idx","Computes the convex hull of a set of 2d points and returns only the indices of the hull vertices."]],"mod":[["vhacd","Approximate convex decomposition using the VHACD algorithm."],["voxelization","Voxelization of a 2D polyline or 3D triangle mesh."]]});

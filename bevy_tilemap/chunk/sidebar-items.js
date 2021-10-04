@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["LayerKind","Specifies which kind of layer to construct, either a dense or a sparse sprite layer."]],"mod":[["raw_tile","Raw tile that is stored in the chunks."]]});

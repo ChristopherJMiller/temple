@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["GamepadAxisType",""],["GamepadButtonType",""],["GamepadEventType",""]],"fn":[["gamepad_event_system",""]],"struct":[["AxisSettings",""],["ButtonAxisSettings",""],["ButtonSettings",""],["Gamepad",""],["GamepadAxis",""],["GamepadButton",""],["GamepadEvent",""],["GamepadEventRaw",""],["GamepadSettings",""]]});

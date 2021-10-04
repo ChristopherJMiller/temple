@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Collision",""]],"fn":[["collide","Axis-aligned bounding box collision with \"side\" detection"]]});

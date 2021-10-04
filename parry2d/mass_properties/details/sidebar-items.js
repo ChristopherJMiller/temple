@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["convex_polygon_area_and_center_of_mass","Computes the area and center-of-mass of a convex polygon."],["trimesh_area_and_center_of_mass","Computes the area and center-of-mass of a triangle-mesh."]]});
