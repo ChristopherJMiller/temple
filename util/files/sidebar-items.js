@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["GAME_SETTING_PATH","`game.toml` location"],["LEVEL_FILE_PATH","`levels.toml` location"],["SPRITE_FILE_PATH","`sprites.toml` location"],["SPRITE_TYPE_FILE_PATH","`types.toml` location"]],"fn":[["find_toml_problems","Consumes the TOML result and reports any errors found."],["verify_files","Verifies all game config files are found and valid."]]});

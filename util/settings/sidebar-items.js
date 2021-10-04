@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["gen_default_game_file","Generates a default game file and saves it to [GAME_SETTING_PATH]."],["get_game_file","Loads `game.toml`."]],"struct":[["GameFile","Object that represents `game.toml`."],["Version",""]]});

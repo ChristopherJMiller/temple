@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["cli","Handles the CLI options"],["files","Handles manifest validation"],["settings","Handles the main settings file, `game.toml`."]]});
