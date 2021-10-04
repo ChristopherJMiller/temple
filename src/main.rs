@@ -8,12 +8,13 @@ use bevy::diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin};
 use bevy_rapier2d::prelude::*;
 use game::GamePlugins;
 use input::InputPlugin;
-use level::load::LoadLevel;
 use level::LevelPlugin;
 use sprite::SpritePlugin;
-use util::cli::{get_cli_args, CliArgs};
+use util::cli::get_cli_args;
 use util::files::verify_files;
 use util::settings::{get_game_file, Version};
+
+use crate::util::cli::handle_cli_args;
 
 mod game;
 mod input;
@@ -63,9 +64,11 @@ fn main() {
 }
 
 /// Component tag for the FPS counter [Text].
+/// TODO: Should be moved into a ui module.
 struct FpsText;
 
 /// Start up system for [FpsText] UI.
+/// TODO: Should be moved into a ui module.
 fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
   commands.spawn_bundle(UiCameraBundle::default());
   commands.spawn_bundle(TextBundle {
@@ -99,6 +102,7 @@ fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 /// System that updates FPS counter via [FrameTimeDiagnosticsPlugin].
+/// TODO: Should be moved into a ui module.
 fn update_fps_system(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, With<FpsText>>) {
   for mut text in query.iter_mut() {
     if let Some(fps) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
@@ -106,13 +110,5 @@ fn update_fps_system(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, 
             text.sections[1].value = format!("{:.0}", average);
         }
     }
-}
-}
-
-/// Consumes incoming CLI arguments within Bevy
-fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
-  // --load <level>
-  if let Some(level) = cli_args.load_level {
-    commands.spawn().insert(LoadLevel(level));
   }
 }

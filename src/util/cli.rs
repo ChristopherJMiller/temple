@@ -1,6 +1,8 @@
 use clap::{App, Arg};
+use bevy::prelude::*;
 
 use crate::level::LevelId;
+use crate::level::load::LoadLevel;
 use crate::util::settings::GameFile;
 
 pub const LOAD_ARG: &str = "load";
@@ -46,5 +48,13 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
 
   CliArgs {
     load_level: level_load_arg,
+  }
+}
+
+/// Consumes incoming CLI arguments within Bevy
+pub fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
+  // --load <level>
+  if let Some(level) = cli_args.load_level {
+    commands.spawn().insert(LoadLevel(level));
   }
 }
