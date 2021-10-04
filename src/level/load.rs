@@ -1,3 +1,11 @@
+//! Handles level loading for gameplay.
+//! 
+//! # Usage
+//! Levels are instructed to load using tag [LoadLevel].
+//! [LevelLoadComplete] can be tracked for completion of load.
+//! All sprites that are loaded via [LoadLevel] are tagged with [LevelLoadedSprite].
+//! Instruction [UnloadLevel] can be added to the original [LoadLevel] entity to instruct an unload.
+
 use bevy::prelude::*;
 use bevy_rapier2d::physics::TimestepMode;
 use bevy_rapier2d::prelude::*;
@@ -21,13 +29,13 @@ pub struct UnloadLevel;
 /// instruction is given
 pub struct LevelLoadedSprite;
 
-/// Configures rapier physics for sprites
+/// Startup system to configure rapier physics for sprites
 pub fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
   rapier_config.scale = 1.0;
   rapier_config.timestep_mode = TimestepMode::FixedTimestep;
 }
 
-/// Loads sprites in a given level.
+/// System that loads sprites in a given level.
 /// Can be tracked with [LevelLoadComplete]
 pub fn load_level(
   mut commands: Commands,
@@ -80,7 +88,7 @@ pub fn load_level(
   });
 }
 
-/// Unloads a currently loaded level using the [UnloadLevel] tag
+/// System that unloads a currently loaded level using the [UnloadLevel] tag
 pub fn unload_level(
   mut commands: Commands,
   query: Query<Entity, (With<LevelLoadComplete>, With<UnloadLevel>)>,

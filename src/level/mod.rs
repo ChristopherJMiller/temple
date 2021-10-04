@@ -11,10 +11,13 @@ use crate::sprite::SpritePluginSteps;
 pub mod config;
 pub mod load;
 
+/// ID type for level map
 pub type LevelId = u32;
+
+/// Type for storing all loaded levels
 pub type LevelMap = HashMap<LevelId, Level>;
 
-/// Level Loading and Managment Plugin
+/// [Plugin] for level management systems
 pub struct LevelPlugin;
 
 impl Plugin for LevelPlugin {

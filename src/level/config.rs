@@ -1,3 +1,8 @@
+//! Handles all config manifest loading for levels.
+//!
+//! Level manifests are loaded on game boot and
+//! are stored in a Bevy Resource.
+
 use std::fs;
 use std::path::Path;
 use std::vec::Vec;
@@ -10,9 +15,10 @@ use super::{LevelId, LevelMap};
 use crate::sprite::{SpriteId, SpriteMap};
 use crate::util::files::LEVEL_FILE_PATH;
 
+/// Global config file version.
 pub struct LevelFileVersion(pub u32);
 
-/// Object of levels.toml
+/// Structure of levels.toml
 #[derive(Deserialize)]
 pub struct LevelFile {
   pub version: u32,
@@ -30,29 +36,34 @@ pub struct LevelDefinition {
   pub sprites: Vec<LevelSpriteEntry>,
 }
 
-/// Sprite Entry for a Level
+/// Sprite Entry for a [Level]
 #[derive(Deserialize)]
 pub struct LevelSpriteEntry {
-  // 24 Bit RGB
+  /// 24 Bit RGB ID
   pub color: u32,
+  /// Sprite ID, as mapped to [crate::sprite::GameSprite]
   pub name: SpriteId
 }
 
 /// Sprite definition for a level
 pub struct LevelSprite {
+  /// Position in the level
   pub pos: UVec2,
+  /// Sprite ID, as mapped to [crate::sprite::GameSprite]
   pub id: SpriteId,
 }
 
 /// Stored object of a level, stores redundant id and list of sprites in the
 /// level
 pub struct Level {
+  /// Level's ID.
   #[allow(dead_code)]
   pub id: LevelId,
+  /// List of sprites in the level.
   pub sprites: Vec<LevelSprite>,
 }
 
-/// Loads all levels into the [LevelMap] resource
+/// System that loads all levels into the [LevelMap] resource
 pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>, mut levels: ResMut<LevelMap>) {
   let version_num = version.0;
 
