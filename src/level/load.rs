@@ -1,10 +1,11 @@
 //! Handles level loading for gameplay.
-//! 
+//!
 //! # Usage
 //! Levels are instructed to load using tag [LoadLevel].
 //! [LevelLoadComplete] can be tracked for completion of load.
-//! All sprites that are loaded via [LoadLevel] are tagged with [LevelLoadedSprite].
-//! Instruction [UnloadLevel] can be added to the original [LoadLevel] entity to instruct an unload.
+//! All sprites that are loaded via [LoadLevel] are tagged with
+//! [LevelLoadedSprite]. Instruction [UnloadLevel] can be added to the original
+//! [LoadLevel] entity to instruct an unload.
 
 use bevy::prelude::*;
 use bevy_rapier2d::physics::TimestepMode;
@@ -82,7 +83,7 @@ pub fn load_level(
       .spawn_bundle(camera)
       .insert(LevelLoadedSprite)
       .insert(MainCamera);
-    
+
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);
   });

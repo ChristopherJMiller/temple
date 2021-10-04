@@ -13,12 +13,13 @@
 //!
 //! `dur`: Duration of the sprite's cycle in seconds
 
-use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
-use crate::sprite::SPRITE_SIZE;
 use std::f32::consts::PI;
 
+use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
+
 use super::{Attribute, Player};
+use crate::sprite::SPRITE_SIZE;
 
 /// Direction of sprite movement.
 #[derive(Clone, Copy)]
@@ -91,10 +92,13 @@ impl MovingSprite {
     self.starting_position + self.delta * self.movement_vect
   }
 
-  /// Calculates a impulse that is applied to the player when on the sprite, to keep them from falling off.
-  /// TODO: Calculation should be done once per frame, not once per call.
+  /// Calculates a impulse that is applied to the player when on the sprite, to
+  /// keep them from falling off. TODO: Calculation should be done once per
+  /// frame, not once per call.
   pub fn get_delta_impulse(&self) -> Vec2 {
-    let delta_pos = self.get_position() - (self.starting_position + (0.5 * (self.current_time - self.last_delta_t + PI).cos() + 0.5) * self.movement_vect);
+    let delta_pos = self.get_position()
+      - (self.starting_position
+        + (0.5 * (self.current_time - self.last_delta_t + PI).cos() + 0.5) * self.movement_vect);
     1.25 * delta_pos / self.last_delta_t
   }
 }
@@ -118,11 +122,22 @@ impl Attribute for MovingSprite {
   const KEY: &'static str = "moving";
 
   fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<i32>) {
-    let direction_num = params.get(0).expect("Moving Sprite Attribute was not supplied parameter 0");
-    let direction = MovingDirection::from_param(*direction_num).unwrap_or_else(|| panic!("Was supplied invalid moving direction of {} for moving attribute", direction_num));
-    
-    let speed = *params.get(1).expect("Moving Sprite Attribute was not supplied parameter 1");
-    let duration = *params.get(2).expect("Moving Sprite Attribute was not supplied parameter 2");
+    let direction_num = params
+      .get(0)
+      .expect("Moving Sprite Attribute was not supplied parameter 0");
+    let direction = MovingDirection::from_param(*direction_num).unwrap_or_else(|| {
+      panic!(
+        "Was supplied invalid moving direction of {} for moving attribute",
+        direction_num
+      )
+    });
+
+    let speed = *params
+      .get(1)
+      .expect("Moving Sprite Attribute was not supplied parameter 1");
+    let duration = *params
+      .get(2)
+      .expect("Moving Sprite Attribute was not supplied parameter 2");
 
     commands
       .entity(target)
@@ -135,7 +150,7 @@ impl Attribute for MovingSprite {
 /// (see [super::AttributePlugin])
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum MovingAttributeSystemSteps {
-  ApplyDeltaTranslation
+  ApplyDeltaTranslation,
 }
 
 /// System to move all moving sprites per change in [Time].
@@ -143,12 +158,16 @@ pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &
   moving_sprite.for_each_mut(|(mut moving, mut collider_position)| {
     moving.increment_time(time.delta().as_secs_f32());
     collider_position.0 = moving.get_position().into();
-  }); 
+  });
 }
 
 /// Moves the [Player] if they are on top of a moving sprite.
-/// TODO: Make it move all entities with a Movable Attribute instead of just the player.
-pub fn move_player(mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
+/// TODO: Make it move all entities with a Movable Attribute instead of just the
+/// player.
+pub fn move_player(
+  mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>,
+  moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>,
+) {
   if let Some((mut vel, props, player_c)) = player.iter_mut().next() {
     if let Some(entity) = player_c.on_moving_entity {
       if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {

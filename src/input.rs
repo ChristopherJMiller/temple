@@ -27,8 +27,8 @@ fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
   }
 }
 
-/// Temporary component to handle locking and unlocking the cursor within the window.
-/// To be replaced with menu-based cursor toggling
+/// Temporary component to handle locking and unlocking the cursor within the
+/// window. To be replaced with menu-based cursor toggling
 struct DevToggleCursor(pub bool);
 
 /// System for toggling the cursor via [DevToggleCursor].

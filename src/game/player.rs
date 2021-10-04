@@ -1,22 +1,22 @@
 //! [Player] attribute systems
 //!
-//! TODO: This plugin should be moved into the same file as the [Player] attribute.
+//! TODO: This plugin should be moved into the same file as the [Player]
+//! attribute.
 
 use bevy::prelude::*;
 use bevy_rapier2d::na::Vector2;
 use bevy_rapier2d::prelude::*;
 use kurinji::Kurinji;
 
-use super::attributes::Player;
+use super::attributes::{MovingSprite, Player};
 use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
-use super::attributes::MovingSprite;
 
 const PLAYER_MOVE_SPEED: i8 = 12;
 const PLAYER_JUMP_FORCE: u8 = 120;
 
-/// Consumes [Kurinji] inputs for player horizontal movement. 
+/// Consumes [Kurinji] inputs for player horizontal movement.
 fn handle_player_movement(
   input: Res<Kurinji>,
   mut player_force: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps), With<Player>>,
@@ -67,7 +67,9 @@ fn handle_player_hover(
     let impulse_coeff = 20.0;
 
     // Downwards raycast with specific collider group.
-    if let Some((collided_handle, toi)) = query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_GROUP, None) {
+    if let Some((collided_handle, toi)) =
+      query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_GROUP, None)
+    {
       let hit_point = ray.point_at(toi);
       let distance_vec = Vec2::new(
         origin.x - hit_point.coords.get(0).unwrap(),
@@ -84,8 +86,13 @@ fn handle_player_hover(
 
         // If on ground, check if on moving platform
         if player_c.grounded {
-          if player_c.on_moving_entity.is_none() || (player_c.on_moving_entity.is_some() && collided_handle.entity() != player_c.on_moving_entity.unwrap()) {
-            if moving_sprite_query.get_component::<MovingSprite>(collided_handle.entity()).is_ok() {
+          if player_c.on_moving_entity.is_none()
+            || (player_c.on_moving_entity.is_some() && collided_handle.entity() != player_c.on_moving_entity.unwrap())
+          {
+            if moving_sprite_query
+              .get_component::<MovingSprite>(collided_handle.entity())
+              .is_ok()
+            {
               player_c.on_moving_entity = Some(collided_handle.entity());
             }
           } else {

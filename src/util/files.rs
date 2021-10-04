@@ -1,3 +1,15 @@
+//! Handles manifest validation
+//!
+//! # About
+//! Given temple's reliance on configurability via manifests,
+//! steps should be taken to ensure all config files are in a valid
+//! state before game start.
+//!
+//! This is currently handled by the entrypoint [verify_files], which:
+//! - Loads all files from their default locations.
+//! - Parses them from their TOML string.
+//! - Reports any found issues.
+
 use std::fs;
 
 use toml::de::Error;
@@ -6,9 +18,16 @@ use crate::level::config::LevelFile;
 use crate::sprite::{SpriteFile, SpriteTypesFile};
 use crate::util::settings::GameFile;
 
+/// `game.toml` location
 pub const GAME_SETTING_PATH: &str = "assets/game.toml";
+
+/// `levels.toml` location
 pub const LEVEL_FILE_PATH: &str = "assets/levels.toml";
+
+/// `sprites.toml` location
 pub const SPRITE_FILE_PATH: &str = "assets/sprites/sprites.toml";
+
+/// `types.toml` location
 pub const SPRITE_TYPE_FILE_PATH: &str = "assets/sprites/types.toml";
 
 /// Verifies all game config files are found and valid.
@@ -49,6 +68,7 @@ pub fn verify_files() {
   }
 }
 
+/// Consumes the TOML result and reports any errors found.
 fn find_toml_problems<T>(path: &str, toml_result: Result<T, Error>) -> Option<String> {
   if let Err(e) = toml_result {
     Some(format!("File verification failed for {}: {}", path, e))

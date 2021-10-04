@@ -1,4 +1,11 @@
 //! Sprite and sprite type config management
+//!
+//! # Usage
+//! Sprite types and sprites are loaded on game boot.
+//! The textures supplied by the manifest's [SpriteEntry]
+//! list are loaded into Bevy's [AssetServer] for later use,
+//! and then are converted to a [GameSprite] with a reference
+//! to the loaded texture and associated attributes.
 
 use std::collections::HashMap;
 use std::fs;
@@ -10,13 +17,19 @@ use serde::Deserialize;
 
 use crate::util::files::{SPRITE_FILE_PATH, SPRITE_TYPE_FILE_PATH};
 
-/// Constant sprite size
+/// Conversion of game unit to pixel.
 pub const SPRITE_SIZE: u32 = 16;
 
+/// Sprite ID
 pub type SpriteId = String;
+
+/// Map that stores loaded sprite types.
 pub type SpriteTypeMap = HashMap<String, SpriteType>;
+
+/// Map that stores loaded sprites.
 pub type SpriteMap = HashMap<SpriteId, GameSprite>;
 
+/// Global sprite file version
 struct SpriteFileVersion(u32);
 
 /// Object of sprites/types.toml
@@ -50,7 +63,7 @@ struct SpriteEntry {
   texture: String,
 }
 
-/// Sprite definition to be used in game
+/// Sprite with loaded texture, to be used in game.
 #[derive(Debug, Clone, Default)]
 pub struct GameSprite {
   pub name: String,
@@ -60,7 +73,7 @@ pub struct GameSprite {
   pub attributes: Vec<String>,
 }
 
-/// Loads all sprite types into memory map
+/// Startup system that loads all sprite types into memory map
 fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<SpriteTypeMap>) {
   let version_num = version.0;
 
@@ -95,7 +108,7 @@ fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<S
   }
 }
 
-/// Loads all sprites and sprite textures into memory
+/// Startup system that loads all sprites and sprite textures into memory
 fn load_sprites(
   version: Res<SpriteFileVersion>,
   sprite_types: Res<SpriteTypeMap>,
@@ -162,13 +175,14 @@ fn load_sprites(
   }
 }
 
+/// System labels for sprite loading steps.
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum SpritePluginSteps {
   LoadSpriteTypes,
   LoadSprites,
 }
 
-/// SpritePlugin for handling loading sprite config files (attribute and sprite
+/// [Plugin] for handling loading sprite config files (attribute and sprite
 /// definitions)
 pub struct SpritePlugin;
 

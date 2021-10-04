@@ -1,13 +1,21 @@
-use clap::{App, Arg};
-use bevy::prelude::*;
+//! Handles the CLI options
 
-use crate::level::LevelId;
+use bevy::prelude::*;
+use clap::{App, Arg};
+
 use crate::level::load::LoadLevel;
+use crate::level::LevelId;
 use crate::util::settings::GameFile;
 
+/// `load` argument. TODO: Convert to enum flags.
 pub const LOAD_ARG: &str = "load";
-const TEMPLE_URL: &str = "chrismiller.xyz";
 
+/// Website about the Temple project
+const TEMPLE_URL: &str = "https://github.com/ChristopherJMiller/temple";
+
+/// Output of the CLI processing.
+/// Contains all possible argument flags and their
+/// supplied values.
 #[derive(Clone, Debug)]
 pub struct CliArgs {
   pub load_level: Option<LevelId>,

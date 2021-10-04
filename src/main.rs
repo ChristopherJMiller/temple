@@ -3,8 +3,8 @@
 //!
 //! Check out the [github](https://github.com/ChristopherJMiller/temple) for more info.
 
-use bevy::prelude::*;
 use bevy::diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin};
+use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use game::GamePlugins;
 use input::InputPlugin;
@@ -22,10 +22,13 @@ mod level;
 mod sprite;
 mod util;
 
+/// Game version. For dev builds, this is a timestamp.
+pub const VERSION: &str = env!("VERSION");
+
 /// Game Entrypoint
 fn main() {
   // Version supplied by build.rs
-  let version = String::from(env!("VERSION"));
+  let version = VERSION.to_string();
   verify_files();
 
   // Once files are verified, get the main GameFile and use it to parse incoming
@@ -71,34 +74,36 @@ struct FpsText;
 /// TODO: Should be moved into a ui module.
 fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
   commands.spawn_bundle(UiCameraBundle::default());
-  commands.spawn_bundle(TextBundle {
-    style: Style {
-      align_self: AlignSelf::FlexEnd,
+  commands
+    .spawn_bundle(TextBundle {
+      style: Style {
+        align_self: AlignSelf::FlexEnd,
+        ..Default::default()
+      },
+      text: Text {
+        sections: vec![
+          TextSection {
+            value: "FPS: ".to_string(),
+            style: TextStyle {
+              font: asset_server.load("fonts/Vollkorn-Bold.ttf"),
+              font_size: 30.0,
+              color: Color::WHITE,
+            },
+          },
+          TextSection {
+            value: "".to_string(),
+            style: TextStyle {
+              font: asset_server.load("fonts/Vollkorn-Medium.ttf"),
+              font_size: 30.0,
+              color: Color::GOLD,
+            },
+          },
+        ],
+        ..Default::default()
+      },
       ..Default::default()
-    },
-    text: Text {
-      sections: vec![
-        TextSection {
-          value: "FPS: ".to_string(),
-          style: TextStyle {
-            font: asset_server.load("fonts/Vollkorn-Bold.ttf"),
-            font_size: 30.0,
-            color: Color::WHITE,
-          }
-        },
-        TextSection {
-          value: "".to_string(),
-          style: TextStyle {
-            font: asset_server.load("fonts/Vollkorn-Medium.ttf"),
-            font_size: 30.0,
-            color: Color::GOLD,
-          }
-        }
-      ],
-      ..Default::default()
-    },
-    ..Default::default()
-  }).insert(FpsText);
+    })
+    .insert(FpsText);
 }
 
 /// System that updates FPS counter via [FrameTimeDiagnosticsPlugin].
@@ -106,9 +111,9 @@ fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
 fn update_fps_system(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, With<FpsText>>) {
   for mut text in query.iter_mut() {
     if let Some(fps) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
-        if let Some(average) = fps.average() {
-            text.sections[1].value = format!("{:.0}", average);
-        }
+      if let Some(average) = fps.average() {
+        text.sections[1].value = format!("{:.0}", average);
+      }
     }
   }
 }

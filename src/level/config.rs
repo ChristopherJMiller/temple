@@ -42,7 +42,7 @@ pub struct LevelSpriteEntry {
   /// 24 Bit RGB ID
   pub color: u32,
   /// Sprite ID, as mapped to [crate::sprite::GameSprite]
-  pub name: SpriteId
+  pub name: SpriteId,
 }
 
 /// Sprite definition for a level
@@ -130,7 +130,10 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                     pos: UVec2::new(level_x, level_y),
                   });
                 } else {
-                  panic!("Attempted to register level with invalid sprite entry color {}", entry_color);
+                  panic!(
+                    "Attempted to register level with invalid sprite entry color {}",
+                    entry_color
+                  );
                 }
               }
 

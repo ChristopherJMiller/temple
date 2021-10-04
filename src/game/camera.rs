@@ -25,7 +25,6 @@ type CameraTargetOnly = (Without<Camera>, With<CameraTarget>, Without<Player>);
 /// Component filtering for the player.
 type PlayerOnly = (Without<Camera>, Without<CameraTarget>, With<Player>);
 
-
 /// System to determine camera targeting.
 fn target_camera(
   mut camera: Query<&mut Transform, CameraOnly>,

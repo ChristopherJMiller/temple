@@ -1,10 +1,11 @@
 //! Attribute definitions and systems.
 //!
 //! # About Attributes
-//! Attributes are Temple's translation of a Bevy component into a manifest-defined space
-//! for use with sprites (see [crate::sprite]).
-//! In most scenario's, they are simply tags to apply a system, but attributes additionally 
-//! have the ability to take parameters to generalize their functionality.
+//! Attributes are Temple's translation of a Bevy component into a
+//! manifest-defined space for use with sprites (see [crate::sprite]).
+//! In most scenario's, they are simply tags to apply a system, but attributes
+//! additionally have the ability to take parameters to generalize their
+//! functionality.
 
 use bevy::prelude::*;
 
@@ -14,7 +15,8 @@ trait Attribute {
   fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<i32>);
 }
 
-// TODO: Allow parameters to be strings. Attributes should individually handle parsing.
+// TODO: Allow parameters to be strings. Attributes should individually handle
+// parsing.
 /// Attribute with supplied parameters.
 struct AttributeEntry(String, Vec<i32>);
 
@@ -26,7 +28,8 @@ fn derive_attribute_entry(entry: String) -> AttributeEntry {
     entry_copy.retain(|x| !x.is_whitespace());
     entry_copy.pop();
 
-    // Splits attribute symbol and parameters, removes empty string artifacts if had no parameters e.g. attribute()
+    // Splits attribute symbol and parameters, removes empty string artifacts if had
+    // no parameters e.g. attribute()
     let entry_list: Vec<&str> = entry_copy.split("(").filter(|&x| x.len() > 0).collect();
 
     // e.g. attribute(())
@@ -40,7 +43,17 @@ fn derive_attribute_entry(entry: String) -> AttributeEntry {
     }
 
     // e.g. attribute(1,...)
-    let parameters: Vec<i32> = entry_list[1].split(",").map(|x| x.to_string().parse::<i32>().unwrap_or_else(|_| panic!("Attempted to unwrap attribute parameter but was not a signed integer, found {}", x))).collect();
+    let parameters: Vec<i32> = entry_list[1]
+      .split(",")
+      .map(|x| {
+        x.to_string().parse::<i32>().unwrap_or_else(|_| {
+          panic!(
+            "Attempted to unwrap attribute parameter but was not a signed integer, found {}",
+            x
+          )
+        })
+      })
+      .collect();
 
     AttributeEntry(entry_list[0].to_string(), parameters)
   } else {
@@ -49,7 +62,8 @@ fn derive_attribute_entry(entry: String) -> AttributeEntry {
   }
 }
 
-/// Constructs attribute onto a given [Entity]. Used during level load (see [crate::level::load::load_level]).
+/// Constructs attribute onto a given [Entity]. Used during level load (see
+/// [crate::level::load::load_level]).
 pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entity, position: Vec2) {
   let entry = derive_attribute_entry(attribute);
   match entry.0.as_str() {
@@ -60,13 +74,13 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
   }
 }
 
+mod moving;
 mod player;
 mod solid;
-mod moving;
 
+pub use moving::*;
 pub use player::*;
 pub use solid::*;
-pub use moving::*;
 
 /// [Plugin] for attributes
 pub struct AttributePlugin;
@@ -74,7 +88,15 @@ pub struct AttributePlugin;
 impl Plugin for AttributePlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .add_system(moving_system.system().label(MovingAttributeSystemSteps::ApplyDeltaTranslation))
-      .add_system(move_player.system().after(MovingAttributeSystemSteps::ApplyDeltaTranslation));
+      .add_system(
+        moving_system
+          .system()
+          .label(MovingAttributeSystemSteps::ApplyDeltaTranslation),
+      )
+      .add_system(
+        move_player
+          .system()
+          .after(MovingAttributeSystemSteps::ApplyDeltaTranslation),
+      );
   }
 }
