@@ -28,3 +28,9 @@ attributes = [
   "solid",
   "moving(0, 1, 5)"
 ]
+
+[[types]]
+id = "death_air"
+attributes = [
+  "deadly"
+]

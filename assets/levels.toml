@@ -15,3 +15,7 @@ name = "player"
 [[levels.sprites]]
 color = 0xF_F_F_0
 name = "moving_platform_right_slow"
+
+[[levels.sprites]]
+color = 0xF_F_0_0
+name = "death_air"

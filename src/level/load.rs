@@ -58,6 +58,8 @@ pub fn load_level(
         .get(&sprite.id)
         .unwrap_or_else(|| panic!("Attempted to load invalid sprite id {}", sprite.id));
 
+      println!("Sprite Pos {} ID {}", sprite.pos, sprite.id);
+
       let transform =
         Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
 

@@ -108,7 +108,7 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 }
 
                 let level_x = (i / 4) as u32 % info.width;
-                let level_y = info.height - ((i / 4) as u32 / info.width);
+                let level_y = info.height - ((i / 4) as u32 / info.width) - 1;
 
                 let tile_r: u32 = buf[i] as u32;
                 let tile_g: u32 = buf[i + 1] as u32;

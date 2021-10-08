@@ -68,7 +68,7 @@ fn handle_player_hover(
 
     // Downwards raycast with specific collider group.
     if let Some((collided_handle, toi)) =
-      query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_GROUP, None)
+      query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_HOVER_GROUP, None)
     {
       let hit_point = ray.point_at(toi);
       let distance_vec = Vec2::new(

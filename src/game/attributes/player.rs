@@ -7,6 +7,8 @@ use super::Attribute;
 use crate::game::collision_groups::*;
 use crate::sprite::SPRITE_SIZE;
 
+pub struct PlayerDied;
+
 /// Active Player State
 pub struct Player {
   pub height_adjust: f32,
@@ -14,16 +16,18 @@ pub struct Player {
   pub jump_in_progress: bool,
   pub outside_ground_bounds: bool,
   pub on_moving_entity: Option<Entity>,
+  pub respawn_pos: Vec2,
 }
 
-impl Default for Player {
-  fn default() -> Player {
-    Player {
+impl Player {
+  pub fn new(respawn_pos: Vec2) -> Self {
+    Self {
       height_adjust: 0.25,
-      grounded: false,
+      grounded: true,
       jump_in_progress: false,
       outside_ground_bounds: false,
       on_moving_entity: None,
+      respawn_pos
     }
   }
 }
@@ -32,6 +36,7 @@ impl Attribute for Player {
   const KEY: &'static str = "player";
 
   fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<i32>) {
+    println!("Position {}", position);
     let rigid_body = RigidBodyBundle {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
@@ -63,7 +68,7 @@ impl Attribute for Player {
 
     commands
       .entity(target)
-      .insert(Player::default())
+      .insert(Player::new(position.into()))
       .insert_bundle(rigid_body)
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete);

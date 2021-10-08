@@ -27,3 +27,10 @@ sprite_type = "moving_platform_right_slow"
 offset_x = 0
 offset_y = 0
 texture = "sprites/boneyard_middle.png"
+
+[[sprites]]
+name = "death_air"
+sprite_type = "death_air"
+offset_x = 0
+offset_y = 0
+texture = "sprites/blank.png"

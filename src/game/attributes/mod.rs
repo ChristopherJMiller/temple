@@ -10,7 +10,7 @@
 use bevy::prelude::*;
 
 /// Attribute, as used with a [crate::sprite::SpriteType]
-trait Attribute {
+pub trait Attribute {
   const KEY: &'static str;
   fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<i32>);
 }
@@ -70,6 +70,7 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
     Player::KEY => Player::build(commands, target, position, entry.1),
     Solid::KEY => Solid::build(commands, target, position, entry.1),
     MovingSprite::KEY => MovingSprite::build(commands, target, position, entry.1),
+    Deadly::KEY => Deadly::build(commands, target, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
@@ -77,10 +78,12 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
 mod moving;
 mod player;
 mod solid;
+mod deadly;
 
 pub use moving::*;
 pub use player::*;
 pub use solid::*;
+pub use deadly::*;
 
 /// [Plugin] for attributes
 pub struct AttributePlugin;
