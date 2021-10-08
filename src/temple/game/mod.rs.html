@@ -22,6 +22,12 @@
 <span id="19">19</span>
 <span id="20">20</span>
 <span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Game mechanisms and sprite attribute definitions.</span>
 
@@ -30,18 +36,24 @@
 <span class="kw">use</span> <span class="ident">bevy</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">camera</span>::<span class="ident">CameraPlugin</span>;
 <span class="kw">use</span> <span class="ident">player</span>::<span class="ident">PlayerPlugin</span>;
+<span class="kw">use</span> <span class="ident">collision</span>::<span class="ident">CollisionPlugin</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">attributes</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">camera</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">collision_groups</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">player</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">collision</span>;
 
 <span class="doccomment">/// [PluginGroup] for game modules.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">GamePlugins</span>;
 
 <span class="kw">impl</span> <span class="ident">PluginGroup</span> <span class="kw">for</span> <span class="ident">GamePlugins</span> {
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">group</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">PluginGroupBuilder</span>) {
-    <span class="ident">group</span>.<span class="ident">add</span>(<span class="ident">CameraPlugin</span>).<span class="ident">add</span>(<span class="ident">PlayerPlugin</span>).<span class="ident">add</span>(<span class="ident">AttributePlugin</span>);
+    <span class="ident">group</span>
+      .<span class="ident">add</span>(<span class="ident">CameraPlugin</span>)
+      .<span class="ident">add</span>(<span class="ident">PlayerPlugin</span>)
+      .<span class="ident">add</span>(<span class="ident">AttributePlugin</span>)
+      .<span class="ident">add</span>(<span class="ident">CollisionPlugin</span>);
   }
 }
 </pre></div>

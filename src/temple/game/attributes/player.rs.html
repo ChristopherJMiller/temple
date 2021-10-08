@@ -72,6 +72,11 @@
 <span id="69">69</span>
 <span id="70">70</span>
 <span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Represents the player. `player()`</span>
 
@@ -82,6 +87,8 @@
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">game</span>::<span class="ident">collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sprite</span>::<span class="ident">SPRITE_SIZE</span>;
 
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerDied</span>;
+
 <span class="doccomment">/// Active Player State</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Player</span> {
   <span class="kw">pub</span> <span class="ident">height_adjust</span>: <span class="ident">f32</span>,
@@ -89,16 +96,18 @@
   <span class="kw">pub</span> <span class="ident">jump_in_progress</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">outside_ground_bounds</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">on_moving_entity</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Entity</span><span class="op">&gt;</span>,
+  <span class="kw">pub</span> <span class="ident">respawn_pos</span>: <span class="ident">Vec2</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Player</span> {
-  <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Player</span> {
-    <span class="ident">Player</span> {
+<span class="kw">impl</span> <span class="ident">Player</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">respawn_pos</span>: <span class="ident">Vec2</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+    <span class="self">Self</span> {
       <span class="ident">height_adjust</span>: <span class="number">0.25</span>,
-      <span class="ident">grounded</span>: <span class="bool-val">false</span>,
+      <span class="ident">grounded</span>: <span class="bool-val">true</span>,
       <span class="ident">jump_in_progress</span>: <span class="bool-val">false</span>,
       <span class="ident">outside_ground_bounds</span>: <span class="bool-val">false</span>,
       <span class="ident">on_moving_entity</span>: <span class="prelude-val">None</span>,
+      <span class="ident">respawn_pos</span>
     }
   }
 }
@@ -107,6 +116,7 @@
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;player&quot;</span>;
 
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>) {
+    <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Position {}&quot;</span>, <span class="ident">position</span>);
     <span class="kw">let</span> <span class="ident">rigid_body</span> <span class="op">=</span> <span class="ident">RigidBodyBundle</span> {
       <span class="ident">position</span>: <span class="ident">position</span>.<span class="ident">into</span>(),
       <span class="ident">mass_properties</span>: (<span class="ident">RigidBodyMassPropsFlags</span>::<span class="ident">ROTATION_LOCKED</span>).<span class="ident">into</span>(),
@@ -138,7 +148,7 @@
 
     <span class="ident">commands</span>
       .<span class="ident">entity</span>(<span class="ident">target</span>)
-      .<span class="ident">insert</span>(<span class="ident">Player</span>::<span class="ident">default</span>())
+      .<span class="ident">insert</span>(<span class="ident">Player</span>::<span class="ident">new</span>(<span class="ident">position</span>.<span class="ident">into</span>()))
       .<span class="ident">insert_bundle</span>(<span class="ident">rigid_body</span>)
       .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>)
       .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync</span>::<span class="ident">Discrete</span>);

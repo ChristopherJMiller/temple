@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["determine_possible_tag_collision",""],["handle_collision_events",""],["on_contact_with_player",""]],"struct":[["CollisionPlugin","[Plugin] for handling collision events from rapier."]]});

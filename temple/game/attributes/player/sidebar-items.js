@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Player","Active Player State"]]});
+initSidebarItems({"struct":[["Player","Active Player State"],["PlayerDied",""]]});

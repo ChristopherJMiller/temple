@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["attributes","Attribute definitions and systems."],["camera","Camera related systems."],["collision_groups","Static collision group definitions."],["player","[Player] attribute systems"]],"struct":[["GamePlugins","[PluginGroup] for game modules."]]});
+initSidebarItems({"mod":[["attributes","Attribute definitions and systems."],["camera","Camera related systems."],["collision",""],["collision_groups","Static collision group definitions."],["player","[Player] attribute systems"]],"struct":[["GamePlugins","[PluginGroup] for game modules."]]});

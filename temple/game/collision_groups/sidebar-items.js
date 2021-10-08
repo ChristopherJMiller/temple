@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["PLAYER_GROUP",""],["SOLID_GROUP",""]]});
+initSidebarItems({"constant":[["DETECTS_PLAYER_GROUP",""],["PLAYER_GROUP",""],["PLAYER_HOVER_GROUP",""],["SOLID_GROUP",""]]});
