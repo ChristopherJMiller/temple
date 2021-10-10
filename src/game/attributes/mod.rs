@@ -100,6 +100,7 @@ impl Plugin for AttributePlugin {
         move_player
           .system()
           .after(MovingAttributeSystemSteps::ApplyDeltaTranslation),
-      );
+      )
+      .add_system(on_death_system.system());
   }
 }

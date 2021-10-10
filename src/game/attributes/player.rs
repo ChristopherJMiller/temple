@@ -74,3 +74,12 @@ impl Attribute for Player {
       .insert(ColliderPositionSync::Discrete);
   }
 }
+
+pub fn on_death_system(mut commands: Commands, death_tags: Query<(Entity, &PlayerDied)>, mut player: Query<(&mut RigidBodyPosition, &Player)>) {
+  if let Ok((mut pos, player)) = player.single_mut() {
+    death_tags.for_each(|(ent, _)| {
+      commands.entity(ent).despawn();
+      pos.position.translation = player.respawn_pos.into();
+    });
+  }
+}
