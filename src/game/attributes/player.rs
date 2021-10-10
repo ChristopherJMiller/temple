@@ -75,6 +75,7 @@ impl Attribute for Player {
   }
 }
 
+/// Consumes [PlayerDied] tags and respawns the player.
 pub fn on_death_system(mut commands: Commands, death_tags: Query<(Entity, &PlayerDied)>, mut player: Query<(&mut RigidBodyPosition, &Player)>) {
   if let Ok((mut pos, player)) = player.single_mut() {
     death_tags.for_each(|(ent, _)| {

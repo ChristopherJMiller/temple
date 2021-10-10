@@ -1,3 +1,4 @@
+//! Handles contant and interaction events from rapier
 
 use bevy::prelude::*;
 use bevy_rapier2d::physics::IntoEntity;
@@ -5,6 +6,7 @@ use bevy_rapier2d::prelude::ContactEvent::{self, Started};
 
 use super::attributes::{Attribute, Deadly, Player, PlayerDied};
 
+/// Given an [Entity], determines what attribute it contains if any.
 fn determine_possible_tag_collision(entity: Entity, deadly_query: &Query<&Deadly>) -> Option<String> {
   if deadly_query.get_component::<Deadly>(entity).is_ok() {
     return Some(Deadly::KEY.to_string());
@@ -13,6 +15,7 @@ fn determine_possible_tag_collision(entity: Entity, deadly_query: &Query<&Deadly
   return None;
 }
 
+/// Consumes the determined attribute that should be accounted for as a collision event.
 fn on_contact_with_player(commands: &mut Commands, tag: String) {
   match tag.as_str() {
     Deadly::KEY => { 
@@ -22,6 +25,7 @@ fn on_contact_with_player(commands: &mut Commands, tag: String) {
   };
 }
 
+/// Handles incoming contact events.
 pub fn handle_collision_events(
   mut commands: Commands,
   mut contact_events: EventReader<ContactEvent>,
