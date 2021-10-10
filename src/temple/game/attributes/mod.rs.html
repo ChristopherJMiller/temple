@@ -106,6 +106,7 @@
 <span id="103">103</span>
 <span id="104">104</span>
 <span id="105">105</span>
+<span id="106">106</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Attribute definitions and systems.</span>
 <span class="doccomment">//!</span>
@@ -209,7 +210,8 @@
         <span class="ident">move_player</span>
           .<span class="ident">system</span>()
           .<span class="ident">after</span>(<span class="ident">MovingAttributeSystemSteps</span>::<span class="ident">ApplyDeltaTranslation</span>),
-      );
+      )
+      .<span class="ident">add_system</span>(<span class="ident">on_death_system</span>.<span class="ident">system</span>());
   }
 }
 </pre></div>

@@ -77,6 +77,16 @@
 <span id="74">74</span>
 <span id="75">75</span>
 <span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Represents the player. `player()`</span>
 
@@ -152,6 +162,16 @@
       .<span class="ident">insert_bundle</span>(<span class="ident">rigid_body</span>)
       .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>)
       .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync</span>::<span class="ident">Discrete</span>);
+  }
+}
+
+<span class="doccomment">/// Consumes [PlayerDied] tags and respawns the player.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">on_death_system</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">death_tags</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">PlayerDied</span>)<span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RigidBodyPosition</span>, <span class="kw-2">&amp;</span><span class="ident">Player</span>)<span class="op">&gt;</span>) {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">pos</span>, <span class="ident">player</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
+    <span class="ident">death_tags</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">ent</span>, <span class="kw">_</span>)<span class="op">|</span> {
+      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>();
+      <span class="ident">pos</span>.<span class="ident">position</span>.<span class="ident">translation</span> <span class="op">=</span> <span class="ident">player</span>.<span class="ident">respawn_pos</span>.<span class="ident">into</span>();
+    });
   }
 }
 </pre></div>
