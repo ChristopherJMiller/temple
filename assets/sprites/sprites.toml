@@ -34,3 +34,10 @@ sprite_type = "death_air"
 offset_x = 0
 offset_y = 0
 texture = "sprites/blank.png"
+
+[[sprites]]
+name = "checkpoint"
+sprite_type = "checkpoint"
+offset_x = 0
+offset_y = 0
+texture = "sprites/checkpoint.png"

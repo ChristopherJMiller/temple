@@ -5,17 +5,21 @@ id = 0
 sprite_map = "levels/0.png"
 
 [[levels.sprites]]
-color = 0x0_0_0_0
+color = 0x00_00_00
 name = "boneyard_ground_middle"
 
 [[levels.sprites]]
-color = 0xF_F_F_F
+color = 0xFF_FF_FF
 name = "player"
 
 [[levels.sprites]]
-color = 0xF_F_F_0
+color = 0xFF_FF_00
 name = "moving_platform_right_slow"
 
 [[levels.sprites]]
-color = 0xF_F_0_0
+color = 0xFF_00_00
+name = "checkpoint"
+
+[[levels.sprites]]
+color = 0x00_00_FF
 name = "death_air"

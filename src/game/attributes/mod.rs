@@ -71,6 +71,7 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
     Solid::KEY => Solid::build(commands, target, position, entry.1),
     MovingSprite::KEY => MovingSprite::build(commands, target, position, entry.1),
     Deadly::KEY => Deadly::build(commands, target, position, entry.1),
+    Checkpoint::KEY => Checkpoint::build(commands, target, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
@@ -79,11 +80,13 @@ mod moving;
 mod player;
 mod solid;
 mod deadly;
+mod checkpoint;
 
 pub use moving::*;
 pub use player::*;
 pub use solid::*;
 pub use deadly::*;
+pub use checkpoint::*;
 
 /// [Plugin] for attributes
 pub struct AttributePlugin;
@@ -101,6 +104,7 @@ impl Plugin for AttributePlugin {
           .system()
           .after(MovingAttributeSystemSteps::ApplyDeltaTranslation),
       )
-      .add_system(on_death_system.system());
+      .add_system(on_death_system.system())
+      .add_system(on_checkpoint_system.system());
   }
 }

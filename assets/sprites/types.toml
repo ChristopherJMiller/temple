@@ -34,3 +34,9 @@ id = "death_air"
 attributes = [
   "deadly"
 ]
+
+[[types]]
+id = "checkpoint"
+attributes = [
+  "checkpoint(0,0)"
+]

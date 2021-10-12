@@ -3,7 +3,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use super::Attribute;
+use super::{Attribute, Checkpoint, PlayerReachedCheckpoint};
 use crate::game::collision_groups::*;
 use crate::sprite::SPRITE_SIZE;
 
@@ -81,6 +81,16 @@ pub fn on_death_system(mut commands: Commands, death_tags: Query<(Entity, &Playe
     death_tags.for_each(|(ent, _)| {
       commands.entity(ent).despawn();
       pos.position.translation = player.respawn_pos.into();
+    });
+  }
+}
+
+/// Consumes [PlayerReachedCheckpoint] tags and sets the new player respawn point.
+pub fn on_checkpoint_system(mut commands: Commands, checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerReachedCheckpoint>>, mut player: Query<&mut Player>) {
+  if let Ok(mut player) = player.single_mut() {
+    checkpoint_reached.for_each(|(ent, checkpoint)| {
+      player.respawn_pos = checkpoint.0;
+      commands.entity(ent).remove::<PlayerReachedCheckpoint>();
     });
   }
 }

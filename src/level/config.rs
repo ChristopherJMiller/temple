@@ -110,12 +110,15 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 let level_x = (i / 4) as u32 % info.width;
                 let level_y = info.height - ((i / 4) as u32 / info.width) - 1;
 
-                let tile_r: u32 = buf[i] as u32;
-                let tile_g: u32 = buf[i + 1] as u32;
-                let tile_b: u32 = buf[i + 2] as u32;
+                // Alpha channel is index i
+                let tile_r: u16 = buf[i] as u16;
+                let tile_g: u16 = buf[i + 1] as u16;
+                let tile_b: u16 = buf[i + 2] as u16;
+
+                //println!("({},{}) R {:#03x} G {:#03x} B {:#03x}", level_x, info.height - level_y - 1, tile_r, tile_g, tile_b);
 
                 // Build sprite level entry color using RGB value
-                let entry_color: u32 = (tile_r << 8) | (tile_g << 4) | tile_b;
+                let entry_color: u32 = ((tile_r as u32) << 16) | ((tile_g as u32) << 8) | (tile_b as u32);
 
                 // Find entry
                 let sprite_entry = level.sprites.iter().find(|&entry| entry.color == entry_color);
@@ -131,7 +134,10 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                   });
                 } else {
                   panic!(
-                    "Attempted to register level with invalid sprite entry color {}",
+                    "Attempted to register level {} with invalid entry at ({}, {}) for a sprite with color {:#08x}",
+                    &level.id,
+                    level_x,
+                    info.height - level_y - 1,
                     entry_color
                   );
                 }

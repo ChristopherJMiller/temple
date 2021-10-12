@@ -19,7 +19,7 @@ impl Attribute for Deadly {
       material: ColliderMaterial::default(),
       flags: ColliderFlags {
         collision_groups: DETECTS_PLAYER_GROUP,
-        solver_groups: DETECTS_PLAYER_GROUP,
+        solver_groups: NONE_GROUP,
         active_events: ActiveEvents::CONTACT_EVENTS,
         ..Default::default()
       },
