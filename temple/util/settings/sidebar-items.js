@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["gen_default_game_file","Generates a default game file and saves it to [GAME_SETTING_PATH]."],["get_game_file","Loads `game.toml`."]],"struct":[["GameFile","Object that represents `game.toml`."],["Version",""]]});
+initSidebarItems({"enum":[["LevelTransistionType","Describes what method should be used to allow players to move from one level to the next."]],"fn":[["get_game_file","Loads `game.toml`."]],"struct":[["GameFile","Object that represents `game.toml`."],["Version",""]]});

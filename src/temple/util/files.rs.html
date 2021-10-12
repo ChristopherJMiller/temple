@@ -79,6 +79,13 @@
 <span id="76">76</span>
 <span id="77">77</span>
 <span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Handles manifest validation</span>
 <span class="doccomment">//!</span>
@@ -98,7 +105,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">level</span>::<span class="ident">config</span>::<span class="ident">LevelFile</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sprite</span>::{<span class="ident">SpriteFile</span>, <span class="ident">SpriteTypesFile</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">settings</span>::<span class="ident">GameFile</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">settings</span>::{<span class="ident">GameFile</span>, <span class="ident">LevelTransistionType</span>};
 
 <span class="doccomment">/// `game.toml` location</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">GAME_SETTING_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/game.toml&quot;</span>;
@@ -127,6 +134,7 @@
   <span class="kw">let</span> <span class="ident">verify_level_file</span> <span class="op">=</span> <span class="ident">toml</span>::<span class="ident">from_str</span>::<span class="op">&lt;</span><span class="ident">LevelFile</span><span class="op">&gt;</span>(<span class="ident">level_file</span>.<span class="ident">as_str</span>());
   <span class="kw">let</span> <span class="ident">verify_sprite_file</span> <span class="op">=</span> <span class="ident">toml</span>::<span class="ident">from_str</span>::<span class="op">&lt;</span><span class="ident">SpriteFile</span><span class="op">&gt;</span>(<span class="ident">sprite_file</span>.<span class="ident">as_str</span>());
   <span class="kw">let</span> <span class="ident">verify_sprite_types_file</span> <span class="op">=</span> <span class="ident">toml</span>::<span class="ident">from_str</span>::<span class="op">&lt;</span><span class="ident">SpriteTypesFile</span><span class="op">&gt;</span>(<span class="ident">sprite_types_file</span>.<span class="ident">as_str</span>());
+  <span class="kw">let</span> <span class="ident">game_settings_copy</span> <span class="op">=</span> <span class="ident">verify_game_settings</span>.<span class="ident">clone</span>();
 
   <span class="kw">let</span> <span class="ident">toml_problems</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
     <span class="ident">find_toml_problems</span>(<span class="ident">GAME_SETTING_PATH</span>, <span class="ident">verify_game_settings</span>),
@@ -147,6 +155,12 @@
 
   <span class="kw">if</span> <span class="ident">should_panic</span> {
     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;File Verification Failed&quot;</span>);
+  }
+
+  <span class="comment">// Verify Game Settings Attributes</span>
+  <span class="kw">let</span> <span class="ident">game_settings</span> <span class="op">=</span> <span class="ident">game_settings_copy</span>.<span class="ident">unwrap</span>();
+  <span class="kw">if</span> <span class="ident">game_settings</span>.<span class="ident">level_transistion</span> <span class="op">=</span><span class="op">=</span> <span class="ident">LevelTransistionType</span>::<span class="ident">NoOverworld</span> <span class="op">&amp;&amp;</span> <span class="ident">game_settings</span>.<span class="ident">level_order</span>.<span class="ident">is_none</span>() {
+    <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;game.toml: NoOverworld supplied for level_transistion, but no level_order was provided!&quot;</span>);
   }
 }
 
