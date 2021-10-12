@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["on_death_system","Consumes [PlayerDied] tags and respawns the player."]],"struct":[["Player","Active Player State"],["PlayerDied",""]]});
+initSidebarItems({"fn":[["on_checkpoint_system","Consumes [PlayerReachedCheckpoint] tags and sets the new player respawn point."],["on_death_system","Consumes [PlayerDied] tags and respawns the player."]],"struct":[["Player","Active Player State"],["PlayerDied",""]]});
