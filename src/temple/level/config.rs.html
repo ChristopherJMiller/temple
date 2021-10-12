@@ -170,8 +170,6 @@
 <span id="167">167</span>
 <span id="168">168</span>
 <span id="169">169</span>
-<span id="170">170</span>
-<span id="171">171</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Handles all config manifest loading for levels.</span>
 <span class="doccomment">//!</span>
@@ -289,8 +287,6 @@
                 <span class="kw">let</span> <span class="ident">tile_r</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">buf</span>[<span class="ident">i</span>] <span class="kw">as</span> <span class="ident">u16</span>;
                 <span class="kw">let</span> <span class="ident">tile_g</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">buf</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="kw">as</span> <span class="ident">u16</span>;
                 <span class="kw">let</span> <span class="ident">tile_b</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="ident">buf</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">2</span>] <span class="kw">as</span> <span class="ident">u16</span>;
-
-                <span class="comment">//println!(&quot;({},{}) R {:#03x} G {:#03x} B {:#03x}&quot;, level_x, info.height - level_y - 1, tile_r, tile_g, tile_b);</span>
 
                 <span class="comment">// Build sprite level entry color using RGB value</span>
                 <span class="kw">let</span> <span class="ident">entry_color</span>: <span class="ident">u32</span> <span class="op">=</span> ((<span class="ident">tile_r</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>) <span class="op">|</span> ((<span class="ident">tile_g</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>) <span class="op">|</span> (<span class="ident">tile_b</span> <span class="kw">as</span> <span class="ident">u32</span>);
