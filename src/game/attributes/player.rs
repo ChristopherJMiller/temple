@@ -36,7 +36,6 @@ impl Attribute for Player {
   const KEY: &'static str = "player";
 
   fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<i32>) {
-    println!("Position {}", position);
     let rigid_body = RigidBodyBundle {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
@@ -52,7 +51,7 @@ impl Attribute for Player {
     };
 
     let collider = ColliderBundle {
-      position: position.into(),
+      position: Vec2::ZERO.into(),
       material: ColliderMaterial {
         friction: 0.0,
         ..Default::default()

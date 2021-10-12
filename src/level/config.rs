@@ -115,8 +115,6 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 let tile_g: u16 = buf[i + 1] as u16;
                 let tile_b: u16 = buf[i + 2] as u16;
 
-                //println!("({},{}) R {:#03x} G {:#03x} B {:#03x}", level_x, info.height - level_y - 1, tile_r, tile_g, tile_b);
-
                 // Build sprite level entry color using RGB value
                 let entry_color: u32 = ((tile_r as u32) << 16) | ((tile_g as u32) << 8) | (tile_b as u32);
 
