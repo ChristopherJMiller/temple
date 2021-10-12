@@ -7,6 +7,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::util::files::GAME_SETTING_PATH;
 
+/// Describes what method should be used to allow players to move from one level to the next.
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
+pub enum LevelTransistionType {
+  /// On play, the player is loaded into the overworld to be able to access levels. Completing levels will bring them back to the overworld.
+  Overworld,
+
+  /// On play, the player is loaded into the first level. Completing levels will bring them to the next level.
+  /// If used, `level_order` must be supplied in `game.toml`
+  NoOverworld
+}
+
 /// Object that represents `game.toml`.
 #[derive(Clone, Serialize, Deserialize)]
 pub struct GameFile {
@@ -15,6 +26,12 @@ pub struct GameFile {
 
   /// Authors of the game
   pub authors: Vec<String>,
+
+  /// Type of Level Transistion used
+  pub level_transistion: LevelTransistionType,
+
+  /// If [LevelTransistionType::NoOverworld] is used, this defines the level order of the game.
+  pub level_order: Option<Vec<u32>>
 }
 
 impl Default for GameFile {
@@ -22,18 +39,13 @@ impl Default for GameFile {
     Self {
       title: String::from("Temple"),
       authors: vec![String::from("ALUMUX (Chris M.)")],
+      level_transistion: LevelTransistionType::NoOverworld,
+      level_order: Some(vec![0]),
     }
   }
 }
 
 pub struct Version(pub String);
-
-/// Generates a default game file and saves it to [GAME_SETTING_PATH].
-#[allow(dead_code)]
-pub fn gen_default_game_file() -> bool {
-  let toml = toml::to_string_pretty(&GameFile::default()).unwrap();
-  fs::write(GAME_SETTING_PATH, toml).is_ok()
-}
 
 /// Loads `game.toml`.
 pub fn get_game_file() -> GameFile {

@@ -1,2 +1,4 @@
 title = 'Temple'
 authors = ['ALUMUX (Chris M)']
+level_transistion = 'NoOverworld'
+level_order = [0]

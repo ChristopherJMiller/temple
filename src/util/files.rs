@@ -16,7 +16,7 @@ use toml::de::Error;
 
 use crate::level::config::LevelFile;
 use crate::sprite::{SpriteFile, SpriteTypesFile};
-use crate::util::settings::GameFile;
+use crate::util::settings::{GameFile, LevelTransistionType};
 
 /// `game.toml` location
 pub const GAME_SETTING_PATH: &str = "assets/game.toml";
@@ -45,6 +45,7 @@ pub fn verify_files() {
   let verify_level_file = toml::from_str::<LevelFile>(level_file.as_str());
   let verify_sprite_file = toml::from_str::<SpriteFile>(sprite_file.as_str());
   let verify_sprite_types_file = toml::from_str::<SpriteTypesFile>(sprite_types_file.as_str());
+  let game_settings_copy = verify_game_settings.clone();
 
   let toml_problems: Vec<Option<String>> = vec![
     find_toml_problems(GAME_SETTING_PATH, verify_game_settings),
@@ -65,6 +66,12 @@ pub fn verify_files() {
 
   if should_panic {
     panic!("File Verification Failed");
+  }
+
+  // Verify Game Settings Attributes
+  let game_settings = game_settings_copy.unwrap();
+  if game_settings.level_transistion == LevelTransistionType::NoOverworld && game_settings.level_order.is_none() {
+    panic!("game.toml: NoOverworld supplied for level_transistion, but no level_order was provided!");
   }
 }
 
