@@ -8,6 +8,13 @@ offset_y = 0
 texture = "sprites/boneyard_middle.png"
 
 [[sprites]]
+name = "boneyard_ground_center"
+sprite_type = "solid"
+offset_x = 0
+offset_y = 0
+texture = "sprites/boneyard_center.png"
+
+[[sprites]]
 name = "player"
 sprite_type = "player"
 offset_x = 0
@@ -41,3 +48,17 @@ sprite_type = "checkpoint"
 offset_x = 0
 offset_y = 0
 texture = "sprites/checkpoint.png"
+
+[[sprites]]
+name = "skull_nomove"
+sprite_type = "spike"
+offset_x = 0
+offset_y = 0
+texture = "sprites/skull.png"
+
+[[sprites]]
+name = "skull_move_vertical"
+sprite_type = "moving_death_vertical_slow"
+offset_x = 0
+offset_y = 0
+texture = "sprites/skull.png"

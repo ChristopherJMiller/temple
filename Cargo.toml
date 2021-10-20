@@ -28,8 +28,13 @@ chrono = "0.4"
 [profile.dev]
 opt-level = 1
 
+[profile.dev.package.bevy_rapier2d]
+opt-level = 3
+codegen-units = 1
+
 [profile.release]
 opt-level = 3
+codegen-units = 1
 
 [features]
 debug = []

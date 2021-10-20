@@ -68,7 +68,7 @@ pub struct MovingSprite {
 
 impl MovingSprite {
   pub fn new(dir: MovingDirection, speed: i32, duration: i32, position: Vec2) -> Self {
-    let delta = SPRITE_SIZE as f32 * speed as f32 * duration as f32;
+    let delta = speed as f32 * duration as f32;
     let vec_dir: Vec2 = dir.into();
     MovingSprite {
       dir,
@@ -99,7 +99,7 @@ impl MovingSprite {
     let delta_pos = self.get_position()
       - (self.starting_position
         + (0.5 * (self.current_time - self.last_delta_t + PI).cos() + 0.5) * self.movement_vect);
-    1.25 * delta_pos / self.last_delta_t
+    delta_pos
   }
 }
 
@@ -141,6 +141,7 @@ impl Attribute for MovingSprite {
 
     commands
       .entity(target)
+      .insert(ColliderPositionSync::Discrete)
       .insert(MovingSprite::new(direction, speed, duration, position));
   }
 }

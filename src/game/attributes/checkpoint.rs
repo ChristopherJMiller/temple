@@ -30,7 +30,7 @@ impl Attribute for Checkpoint {
 
     let collider = ColliderBundle {
       position: position.into(),
-      shape: ColliderShape::cuboid(SPRITE_SIZE as f32 / 2.0, SPRITE_SIZE as f32 / 2.0),
+      shape: ColliderShape::cuboid(0.5, 0.5),
       material: ColliderMaterial::default(),
       flags: ColliderFlags {
         collision_groups: DETECTS_PLAYER_GROUP,

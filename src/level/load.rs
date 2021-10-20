@@ -32,8 +32,7 @@ pub struct LevelLoadedSprite;
 
 /// Startup system to configure rapier physics for sprites
 pub fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
-  rapier_config.scale = 1.0;
-  rapier_config.timestep_mode = TimestepMode::FixedTimestep;
+  rapier_config.scale = SPRITE_SIZE as f32;
 }
 
 /// System that loads sprites in a given level.
@@ -58,20 +57,20 @@ pub fn load_level(
         .get(&sprite.id)
         .unwrap_or_else(|| panic!("Attempted to load invalid sprite id {}", sprite.id));
 
-      let transform =
-        Transform::from_translation(Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0) * SPRITE_SIZE as f32);
+      let unit_pos = Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0);
+      let sprite_pos = unit_pos * SPRITE_SIZE as f32;
 
       let entity = commands
         .spawn_bundle(SpriteBundle {
           material: sprite_data.texture.clone(),
-          transform,
+          transform: Transform::from_translation(sprite_pos),
           ..Default::default()
         })
         .insert(LevelLoadedSprite)
         .id();
 
       for attribute in sprite_data.attributes.iter() {
-        let position = Vec2::new(transform.translation.x, transform.translation.y);
+        let position = Vec2::new(unit_pos.x, unit_pos.y);
         build_attribute(attribute.clone(), &mut commands, entity, position);
       }
     }

@@ -5,7 +5,6 @@ use bevy_rapier2d::prelude::*;
 
 use super::{Attribute, Checkpoint, PlayerReachedCheckpoint};
 use crate::game::collision_groups::*;
-use crate::sprite::SPRITE_SIZE;
 
 pub struct PlayerDied;
 
@@ -40,23 +39,22 @@ impl Attribute for Player {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
       forces: RigidBodyForces {
-        gravity_scale: 5.0,
+        gravity_scale: 0.5,
         ..Default::default()
       },
       damping: RigidBodyDamping {
-        linear_damping: 0.5,
+        linear_damping: 1.0,
         ..Default::default()
       },
       ..Default::default()
     };
-
     let collider = ColliderBundle {
       position: Vec2::ZERO.into(),
       material: ColliderMaterial {
         friction: 0.0,
         ..Default::default()
       },
-      shape: ColliderShape::ball(SPRITE_SIZE as f32 / 2.0),
+      shape: ColliderShape::ball(0.5),
       flags: ColliderFlags {
         collision_groups: PLAYER_GROUP,
         solver_groups: PLAYER_GROUP,

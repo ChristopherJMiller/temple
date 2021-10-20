@@ -13,24 +13,24 @@ use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
 
-const PLAYER_MOVE_SPEED: i8 = 12;
-const PLAYER_JUMP_FORCE: u8 = 120;
+const PLAYER_MOVE_SPEED: i8 = 5;
+const PLAYER_JUMP_FORCE: u8 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
 fn handle_player_movement(
   input: Res<Kurinji>,
-  mut player_force: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps), With<Player>>,
+  mut player_force: Query<&mut RigidBodyForces, With<Player>>,
 ) {
-  if let Some((mut vel, props)) = player_force.iter_mut().next() {
-    let x_imp = if input.is_action_active(RIGHT) {
-      SPRITE_SIZE as f32 * PLAYER_MOVE_SPEED as f32
+  if let Some(mut forces) = player_force.iter_mut().next() {
+    let x = if input.is_action_active(RIGHT) {
+      PLAYER_MOVE_SPEED as f32
     } else if input.is_action_active(LEFT) {
-      SPRITE_SIZE as f32 * -PLAYER_MOVE_SPEED as f32
+      -PLAYER_MOVE_SPEED as f32
     } else {
       0.0
     };
 
-    vel.apply_impulse(props, Vec2::new(x_imp, 0.0).into());
+    forces.force = Vec2::new(x, 0.0).into();
   }
 }
 
@@ -38,11 +38,11 @@ fn handle_player_movement(
 fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>) {
   if let Some(mut player_c) = player.iter_mut().next() {
     let height = if input.is_action_active(UP) {
-      SPRITE_SIZE as f32 * 3.0
+      4.0
     } else if input.is_action_active(DOWN) {
-      SPRITE_SIZE as f32 * 0.5
+      1.0
     } else {
-      SPRITE_SIZE as f32 * 1.5
+      2.0
     };
 
     player_c.height_adjust = height;
@@ -59,12 +59,12 @@ fn handle_player_hover(
   if let Some((trans, mut player_c, mut vel)) = player.iter_mut().next() {
     let collider_set = QueryPipelineColliderComponentsSet(&collider_query);
 
-    let origin = Vec2::new(trans.translation.x, trans.translation.y - (SPRITE_SIZE as f32 / 2.0));
+    let origin = Vec2::new(trans.translation.x / SPRITE_SIZE as f32, trans.translation.y / SPRITE_SIZE as f32);
     let dir = Vec2::new(0.0, -1.0);
 
     let ray = Ray::new(origin.into(), dir.into());
 
-    let impulse_coeff = 20.0;
+    let impulse_coeff = 5.0;
 
     // Downwards raycast with specific collider group.
     if let Some((collided_handle, toi)) =
