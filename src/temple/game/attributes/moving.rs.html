@@ -179,6 +179,7 @@
 <span id="176">176</span>
 <span id="177">177</span>
 <span id="178">178</span>
+<span id="179">179</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, speed, dur)`</span>
 <span class="doccomment">//!</span>
@@ -250,7 +251,7 @@
 
 <span class="kw">impl</span> <span class="ident">MovingSprite</span> {
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">dir</span>: <span class="ident">MovingDirection</span>, <span class="ident">speed</span>: <span class="ident">i32</span>, <span class="ident">duration</span>: <span class="ident">i32</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-    <span class="kw">let</span> <span class="ident">delta</span> <span class="op">=</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">speed</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">duration</span> <span class="kw">as</span> <span class="ident">f32</span>;
+    <span class="kw">let</span> <span class="ident">delta</span> <span class="op">=</span> <span class="ident">speed</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">duration</span> <span class="kw">as</span> <span class="ident">f32</span>;
     <span class="kw">let</span> <span class="ident">vec_dir</span>: <span class="ident">Vec2</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">into</span>();
     <span class="ident">MovingSprite</span> {
       <span class="ident">dir</span>,
@@ -281,7 +282,7 @@
     <span class="kw">let</span> <span class="ident">delta_pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_position</span>()
       <span class="op">-</span> (<span class="self">self</span>.<span class="ident">starting_position</span>
         <span class="op">+</span> (<span class="number">0.5</span> <span class="op">*</span> (<span class="self">self</span>.<span class="ident">current_time</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">last_delta_t</span> <span class="op">+</span> <span class="ident">PI</span>).<span class="ident">cos</span>() <span class="op">+</span> <span class="number">0.5</span>) <span class="op">*</span> <span class="self">self</span>.<span class="ident">movement_vect</span>);
-    <span class="number">1.25</span> <span class="op">*</span> <span class="ident">delta_pos</span> <span class="op">/</span> <span class="self">self</span>.<span class="ident">last_delta_t</span>
+    <span class="ident">delta_pos</span>
   }
 }
 
@@ -323,6 +324,7 @@
 
     <span class="ident">commands</span>
       .<span class="ident">entity</span>(<span class="ident">target</span>)
+      .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync</span>::<span class="ident">Discrete</span>)
       .<span class="ident">insert</span>(<span class="ident">MovingSprite</span>::<span class="ident">new</span>(<span class="ident">direction</span>, <span class="ident">speed</span>, <span class="ident">duration</span>, <span class="ident">position</span>));
   }
 }

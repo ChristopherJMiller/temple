@@ -94,8 +94,6 @@
 <span id="91">91</span>
 <span id="92">92</span>
 <span id="93">93</span>
-<span id="94">94</span>
-<span id="95">95</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Represents the player. `player()`</span>
 
@@ -104,7 +102,6 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Checkpoint</span>, <span class="ident">PlayerReachedCheckpoint</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">game</span>::<span class="ident">collision_groups</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sprite</span>::<span class="ident">SPRITE_SIZE</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerDied</span>;
 
@@ -139,23 +136,22 @@
       <span class="ident">position</span>: <span class="ident">position</span>.<span class="ident">into</span>(),
       <span class="ident">mass_properties</span>: (<span class="ident">RigidBodyMassPropsFlags</span>::<span class="ident">ROTATION_LOCKED</span>).<span class="ident">into</span>(),
       <span class="ident">forces</span>: <span class="ident">RigidBodyForces</span> {
-        <span class="ident">gravity_scale</span>: <span class="number">5.0</span>,
+        <span class="ident">gravity_scale</span>: <span class="number">0.5</span>,
         ..<span class="ident">Default</span>::<span class="ident">default</span>()
       },
       <span class="ident">damping</span>: <span class="ident">RigidBodyDamping</span> {
-        <span class="ident">linear_damping</span>: <span class="number">0.5</span>,
+        <span class="ident">linear_damping</span>: <span class="number">1.0</span>,
         ..<span class="ident">Default</span>::<span class="ident">default</span>()
       },
       ..<span class="ident">Default</span>::<span class="ident">default</span>()
     };
-
     <span class="kw">let</span> <span class="ident">collider</span> <span class="op">=</span> <span class="ident">ColliderBundle</span> {
       <span class="ident">position</span>: <span class="ident">Vec2</span>::<span class="ident">ZERO</span>.<span class="ident">into</span>(),
       <span class="ident">material</span>: <span class="ident">ColliderMaterial</span> {
         <span class="ident">friction</span>: <span class="number">0.0</span>,
         ..<span class="ident">Default</span>::<span class="ident">default</span>()
       },
-      <span class="ident">shape</span>: <span class="ident">ColliderShape</span>::<span class="ident">ball</span>(<span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">/</span> <span class="number">2.0</span>),
+      <span class="ident">shape</span>: <span class="ident">ColliderShape</span>::<span class="ident">ball</span>(<span class="number">0.5</span>),
       <span class="ident">flags</span>: <span class="ident">ColliderFlags</span> {
         <span class="ident">collision_groups</span>: <span class="ident">PLAYER_GROUP</span>,
         <span class="ident">solver_groups</span>: <span class="ident">PLAYER_GROUP</span>,
