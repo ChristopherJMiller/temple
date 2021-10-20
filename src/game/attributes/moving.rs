@@ -61,7 +61,6 @@ pub struct MovingSprite {
 
   delta: f32,
   vec_dir: Vec2,
-  speed: f32,
   starting_position: Vec2,
   movement_vect: Vec2,
   current_time: f32,
@@ -75,7 +74,6 @@ impl MovingSprite {
       dir,
       duration: duration as f32,
       distance: sprite_distance,
-      speed: sprite_distance / duration as f32,
       starting_position: position,
       vec_dir,
       movement_vect: (vec_dir * sprite_distance),
@@ -112,7 +110,6 @@ impl Default for MovingSprite {
       dir: MovingDirection::Right,
       duration: 0.0,
       distance: 0.0,
-      speed: 0.0,
       vec_dir: Vec2::ZERO,
       starting_position: Vec2::ZERO,
       movement_vect: Vec2::ZERO,
