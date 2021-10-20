@@ -24,7 +24,6 @@ impl Player {
   pub const NORMAL_FALL_SPEED: f32 = 2.0;
   pub const SLOW_FALL_SPEED: f32 = 1.5;
 
-
   pub fn new(respawn_pos: Vec2) -> Self {
     Self {
       height_adjust: 0.25,

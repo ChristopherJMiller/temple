@@ -120,7 +120,8 @@ fn handle_player_hover(
   }
 }
 
-/// Handles Player Slow Falling. When `JUMP` is actively being held, the player falls slower.
+/// Handles Player Slow Falling. When `JUMP` is actively being held, the player
+/// falls slower.
 fn handle_player_slow_fall(input: Res<Kurinji>, mut player: Query<&mut RigidBodyForces, With<Player>>) {
   if let Ok(mut forces) = player.single_mut() {
     if input.is_action_active(JUMP) {
