@@ -100,8 +100,7 @@ impl MovingSprite {
   }
 
   /// Calculates a impulse that is applied to the player when on the sprite, to
-  /// keep them from falling off. TODO: Calculation should be done once per
-  /// frame, not once per call.
+  /// keep them from falling off.
   pub fn get_passenger_force(&self) -> Vec2 {
     let mag = PI * (2.0 * PI * self.current_time / self.duration + (PI/12.0)).sin() / (self.duration);
     mag * self.vec_dir
