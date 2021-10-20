@@ -20,6 +20,9 @@ cargo run
 # Use the Temple CLI to make level development easier
 cargo run -- --help
 
+# Load into a level
+cargo run -- -l 0
+
 # Open documentation
 cargo doc --open
 ```
