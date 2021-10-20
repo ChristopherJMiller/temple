@@ -61,6 +61,10 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Handles the main settings file, `game.toml`.</span>
 
@@ -71,15 +75,18 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">files</span>::<span class="ident">GAME_SETTING_PATH</span>;
 
-<span class="doccomment">/// Describes what method should be used to allow players to move from one level to the next.</span>
+<span class="doccomment">/// Describes what method should be used to allow players to move from one level</span>
+<span class="doccomment">/// to the next.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Clone</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">LevelTransistionType</span> {
-  <span class="doccomment">/// On play, the player is loaded into the overworld to be able to access levels. Completing levels will bring them back to the overworld.</span>
+  <span class="doccomment">/// On play, the player is loaded into the overworld to be able to access</span>
+  <span class="doccomment">/// levels. Completing levels will bring them back to the overworld.</span>
   <span class="ident">Overworld</span>,
 
-  <span class="doccomment">/// On play, the player is loaded into the first level. Completing levels will bring them to the next level.</span>
-  <span class="doccomment">/// If used, `level_order` must be supplied in `game.toml`</span>
-  <span class="ident">NoOverworld</span>
+  <span class="doccomment">/// On play, the player is loaded into the first level. Completing levels will</span>
+  <span class="doccomment">/// bring them to the next level. If used, `level_order` must be supplied in</span>
+  <span class="doccomment">/// `game.toml`</span>
+  <span class="ident">NoOverworld</span>,
 }
 
 <span class="doccomment">/// Object that represents `game.toml`.</span>
@@ -94,8 +101,9 @@
   <span class="doccomment">/// Type of Level Transistion used</span>
   <span class="kw">pub</span> <span class="ident">level_transistion</span>: <span class="ident">LevelTransistionType</span>,
 
-  <span class="doccomment">/// If [LevelTransistionType::NoOverworld] is used, this defines the level order of the game.</span>
-  <span class="kw">pub</span> <span class="ident">level_order</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span>
+  <span class="doccomment">/// If [LevelTransistionType::NoOverworld] is used, this defines the level</span>
+  <span class="doccomment">/// order of the game.</span>
+  <span class="kw">pub</span> <span class="ident">level_order</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">GameFile</span> {

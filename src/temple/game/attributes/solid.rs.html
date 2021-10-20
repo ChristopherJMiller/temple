@@ -30,9 +30,6 @@
 <span id="27">27</span>
 <span id="28">28</span>
 <span id="29">29</span>
-<span id="30">30</span>
-<span id="31">31</span>
-<span id="32">32</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Makes sprite solid to the player. `solid()`</span>
 
@@ -40,7 +37,7 @@
 <span class="kw">use</span> <span class="ident">bevy_rapier2d</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Attribute</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">game</span>::<span class="ident">collision_groups</span>::<span class="kw-2">*</span>, <span class="ident">sprite</span>::<span class="ident">SPRITE_SIZE</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">game</span>::<span class="ident">collision_groups</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Solid</span>;
 
@@ -60,10 +57,7 @@
       ..<span class="ident">Default</span>::<span class="ident">default</span>()
     };
 
-    <span class="ident">commands</span>
-      .<span class="ident">entity</span>(<span class="ident">target</span>)
-      .<span class="ident">insert</span>(<span class="ident">Solid</span>)
-      .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>);
+    <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">target</span>).<span class="ident">insert</span>(<span class="ident">Solid</span>).<span class="ident">insert_bundle</span>(<span class="ident">collider</span>);
   }
 }
 </pre></div>

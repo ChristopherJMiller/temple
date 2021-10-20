@@ -52,7 +52,8 @@
 <span id="49">49</span>
 <span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! Sets the players checkpoint. `checkpoint(optional x offset, optional y offset)`</span>
+<span class="doccomment">//! Sets the players checkpoint. `checkpoint(optional x offset, optional y</span>
+<span class="doccomment">//! offset)`</span>
 
 <span class="kw">use</span> <span class="ident">bevy</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
@@ -77,7 +78,6 @@
       } <span class="kw">else</span> {
         <span class="ident">Vec2</span>::<span class="ident">new</span>(<span class="kw-2">*</span><span class="ident">x_offset</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">f32</span>, <span class="kw-2">*</span><span class="ident">y_offset</span>.<span class="ident">unwrap</span>() <span class="kw">as</span> <span class="ident">f32</span>)
       }
-
     } <span class="kw">else</span> {
       <span class="ident">Vec2</span>::<span class="ident">ZERO</span>
     };

@@ -190,17 +190,17 @@
   }
 }
 
+<span class="kw">mod</span> <span class="ident">checkpoint</span>;
+<span class="kw">mod</span> <span class="ident">deadly</span>;
 <span class="kw">mod</span> <span class="ident">moving</span>;
 <span class="kw">mod</span> <span class="ident">player</span>;
 <span class="kw">mod</span> <span class="ident">solid</span>;
-<span class="kw">mod</span> <span class="ident">deadly</span>;
-<span class="kw">mod</span> <span class="ident">checkpoint</span>;
 
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">checkpoint</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">deadly</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">moving</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">player</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">solid</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">deadly</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">checkpoint</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// [Plugin] for attributes</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AttributePlugin</span>;
