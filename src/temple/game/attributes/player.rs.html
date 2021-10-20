@@ -103,6 +103,12 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Represents the player. `player()`</span>
 
@@ -118,6 +124,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Player</span> {
   <span class="kw">pub</span> <span class="ident">height_adjust</span>: <span class="ident">f32</span>,
   <span class="kw">pub</span> <span class="ident">grounded</span>: <span class="ident">bool</span>,
+  <span class="kw">pub</span> <span class="ident">jump_boost_time</span>: <span class="ident">f32</span>,
   <span class="kw">pub</span> <span class="ident">jump_in_progress</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">outside_ground_bounds</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">on_moving_entity</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Entity</span><span class="op">&gt;</span>,
@@ -125,10 +132,15 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Player</span> {
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">JUMP_BOOST_TIME</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">0.35</span>;
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">NORMAL_FALL_SPEED</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">2.0</span>;
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SLOW_FALL_SPEED</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">1.5</span>;
+
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">respawn_pos</span>: <span class="ident">Vec2</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
     <span class="self">Self</span> {
       <span class="ident">height_adjust</span>: <span class="number">0.25</span>,
       <span class="ident">grounded</span>: <span class="bool-val">true</span>,
+      <span class="ident">jump_boost_time</span>: <span class="self">Self</span>::<span class="ident">JUMP_BOOST_TIME</span>,
       <span class="ident">jump_in_progress</span>: <span class="bool-val">false</span>,
       <span class="ident">outside_ground_bounds</span>: <span class="bool-val">false</span>,
       <span class="ident">on_moving_entity</span>: <span class="prelude-val">None</span>,
@@ -145,11 +157,11 @@
       <span class="ident">position</span>: <span class="ident">position</span>.<span class="ident">into</span>(),
       <span class="ident">mass_properties</span>: (<span class="ident">RigidBodyMassPropsFlags</span>::<span class="ident">ROTATION_LOCKED</span>).<span class="ident">into</span>(),
       <span class="ident">forces</span>: <span class="ident">RigidBodyForces</span> {
-        <span class="ident">gravity_scale</span>: <span class="number">0.5</span>,
+        <span class="ident">gravity_scale</span>: <span class="self">Self</span>::<span class="ident">NORMAL_FALL_SPEED</span>,
         ..<span class="ident">Default</span>::<span class="ident">default</span>()
       },
       <span class="ident">damping</span>: <span class="ident">RigidBodyDamping</span> {
-        <span class="ident">linear_damping</span>: <span class="number">1.0</span>,
+        <span class="ident">linear_damping</span>: <span class="number">1.5</span>,
         ..<span class="ident">Default</span>::<span class="ident">default</span>()
       },
       ..<span class="ident">Default</span>::<span class="ident">default</span>()
