@@ -1,4 +1,4 @@
-//! Defines a cyclically moving sprite. `moving(dir, speed, dur)`
+//! Defines a cyclically moving sprite. `moving(dir, distance, time)`
 //!
 //! TODO: `speed` should be changed to `dist`, for easier usage.
 //!
@@ -17,6 +17,8 @@ use std::f32::consts::PI;
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
+
+use crate::sprite::SPRITE_SIZE;
 
 use super::{Attribute, Player};
 
@@ -55,50 +57,54 @@ impl Into<Vec2> for MovingDirection {
 /// `moving` attribute state.
 pub struct MovingSprite {
   pub dir: MovingDirection,
-  pub speed: i32,
-  pub duration: i32,
+  pub duration: f32,
+  pub distance: f32,
 
-  last_delta_t: f32,
   delta: f32,
+  vec_dir: Vec2,
+  speed: f32,
   starting_position: Vec2,
   movement_vect: Vec2,
   current_time: f32,
 }
 
 impl MovingSprite {
-  pub fn new(dir: MovingDirection, speed: i32, duration: i32, position: Vec2) -> Self {
-    let delta = speed as f32 * duration as f32;
+  pub fn new(dir: MovingDirection, distance: i32, duration: i32, position: Vec2) -> Self {
+    let sprite_distance: f32 = distance as f32;
     let vec_dir: Vec2 = dir.into();
     MovingSprite {
       dir,
-      speed,
-      duration,
+      duration: duration as f32,
+      distance: sprite_distance,
+      speed: sprite_distance / duration as f32,
       starting_position: position,
-      movement_vect: (vec_dir * delta),
+      vec_dir,
+      movement_vect: (vec_dir * sprite_distance),
       ..MovingSprite::default()
     }
   }
 
   /// Increments time and recalculates [Self::delta]
   pub fn increment_time(&mut self, delta_t: f32) {
-    self.last_delta_t = delta_t;
     self.current_time += delta_t;
-    self.delta = 0.5 * (self.current_time + PI).cos() + 0.5;
+    self.delta = 0.5 * (((2.0 * PI) / self.duration) * self.current_time + PI).cos() + 0.5;
   }
 
   /// Returns the position of the sprite, per current time
   pub fn get_position(&self) -> Vec2 {
-    self.starting_position + self.delta * self.movement_vect
+    self.starting_position + self.get_position_delta()
+  }
+
+  pub fn get_position_delta(&self) -> Vec2 {
+    self.delta * self.movement_vect
   }
 
   /// Calculates a impulse that is applied to the player when on the sprite, to
   /// keep them from falling off. TODO: Calculation should be done once per
   /// frame, not once per call.
-  pub fn get_delta_impulse(&self) -> Vec2 {
-    let delta_pos = self.get_position()
-      - (self.starting_position
-        + (0.5 * (self.current_time - self.last_delta_t + PI).cos() + 0.5) * self.movement_vect);
-    delta_pos
+  pub fn get_passenger_force(&self) -> Vec2 {
+    let mag = PI * (2.0 * PI * self.current_time / self.duration + (PI/12.0)).sin() / (self.duration);
+    mag * self.vec_dir
   }
 }
 
@@ -106,13 +112,14 @@ impl Default for MovingSprite {
   fn default() -> Self {
     Self {
       dir: MovingDirection::Right,
-      speed: 0,
-      duration: 0,
+      duration: 0.0,
+      distance: 0.0,
+      speed: 0.0,
+      vec_dir: Vec2::ZERO,
       starting_position: Vec2::ZERO,
       movement_vect: Vec2::ZERO,
       current_time: 0.0,
       delta: 0.0,
-      last_delta_t: 0.0,
     }
   }
 }
@@ -131,17 +138,17 @@ impl Attribute for MovingSprite {
       )
     });
 
-    let speed = *params
+    let distance = *params
       .get(1)
       .expect("Moving Sprite Attribute was not supplied parameter 1");
-    let duration = *params
+    let time = *params
       .get(2)
       .expect("Moving Sprite Attribute was not supplied parameter 2");
 
     commands
       .entity(target)
       .insert(ColliderPositionSync::Discrete)
-      .insert(MovingSprite::new(direction, speed, duration, position));
+      .insert(MovingSprite::new(direction, distance, time, position));
   }
 }
 
@@ -165,13 +172,15 @@ pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &
 /// TODO: Make it move all entities with a Movable Attribute instead of just the
 /// player.
 pub fn move_player(
+  time: Res<Time>,
   mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>,
   moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>,
 ) {
-  if let Some((mut vel, props, player_c)) = player.iter_mut().next() {
+  if let Ok((mut vel, props, player_c)) = player.single_mut() {
     if let Some(entity) = player_c.on_moving_entity {
       if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {
-        vel.apply_impulse(props, moving.get_delta_impulse().into());
+        let force: Vector<Real> = (time.delta_seconds() * SPRITE_SIZE as f32 * moving.get_passenger_force()).into();
+        vel.apply_impulse(props, force);
       }
     }
   }

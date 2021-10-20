@@ -26,7 +26,7 @@ attributes = [
 id = "moving_platform_right_slow"
 attributes = [
   "solid",
-  "moving(0, 1, 7)"
+  "moving(0, 6, 8)"
 ]
 
 [[types]]
@@ -51,7 +51,7 @@ attributes = [
 [[types]]
 id = "moving_death_vertical_slow"
 attributes = [
-  "moving(1, 1, 5)",
+  "moving(1, 5, 3)",
   "deadly",
   "solid"
 ]

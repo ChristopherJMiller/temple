@@ -13,8 +13,8 @@ use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
 
-const PLAYER_MOVE_SPEED: i8 = 9;
-const PLAYER_JUMP_FORCE: u8 = 9;
+const PLAYER_MOVE_SPEED: i8 = 20;
+const PLAYER_JUMP_FORCE: u8 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
 fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForces, With<Player>>) {
@@ -27,7 +27,8 @@ fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut Rigi
       0.0
     };
 
-    forces.force = Vec2::new(x, 0.0).into();
+    let force: Vector<Real> = Vec2::new(x, 0.0).into();
+    forces.force += force;
   }
 }
 
