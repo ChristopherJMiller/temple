@@ -8,7 +8,6 @@
 //! [LoadLevel] entity to instruct an unload.
 
 use bevy::prelude::*;
-use bevy_rapier2d::physics::TimestepMode;
 use bevy_rapier2d::prelude::*;
 
 use super::{LevelId, LevelMap};

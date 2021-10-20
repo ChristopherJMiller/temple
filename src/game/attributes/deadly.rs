@@ -5,7 +5,6 @@ use bevy_rapier2d::prelude::*;
 
 use super::Attribute;
 use crate::game::collision_groups::*;
-use crate::sprite::SPRITE_SIZE;
 
 pub struct Deadly;
 

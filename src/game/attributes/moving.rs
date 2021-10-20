@@ -19,7 +19,6 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use super::{Attribute, Player};
-use crate::sprite::SPRITE_SIZE;
 
 /// Direction of sprite movement.
 #[derive(Clone, Copy)]

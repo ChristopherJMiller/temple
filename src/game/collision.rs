@@ -4,10 +4,14 @@ use bevy::prelude::*;
 use bevy_rapier2d::physics::IntoEntity;
 use bevy_rapier2d::prelude::ContactEvent::{self, Started};
 
-use super::attributes::{Attribute, PlayerReachedCheckpoint, Checkpoint, Deadly, Player, PlayerDied};
+use super::attributes::{Attribute, Checkpoint, Deadly, Player, PlayerDied, PlayerReachedCheckpoint};
 
 /// Given an [Entity], determines what attribute it contains if any.
-fn determine_possible_tag_collision(entity: Entity, has_deadly: &Query<&Deadly>, has_checkpoint: &Query<&Checkpoint>) -> Option<String> {
+fn determine_possible_tag_collision(
+  entity: Entity,
+  has_deadly: &Query<&Deadly>,
+  has_checkpoint: &Query<&Checkpoint>,
+) -> Option<String> {
   if has_deadly.get_component::<Deadly>(entity).is_ok() {
     return Some(Deadly::KEY.to_string());
   } else if has_checkpoint.get_component::<Checkpoint>(entity).is_ok() {
@@ -17,15 +21,16 @@ fn determine_possible_tag_collision(entity: Entity, has_deadly: &Query<&Deadly>,
   return None;
 }
 
-/// Consumes the determined attribute that should be accounted for as a collision event.
+/// Consumes the determined attribute that should be accounted for as a
+/// collision event.
 fn on_contact_with_player(commands: &mut Commands, tag: String, collision_entity: Entity) {
   match tag.as_str() {
-    Deadly::KEY => { 
+    Deadly::KEY => {
       commands.spawn().insert(PlayerDied);
     },
     Checkpoint::KEY => {
       commands.entity(collision_entity).insert(PlayerReachedCheckpoint);
-    }
+    },
     _ => {},
   };
 }
@@ -36,7 +41,7 @@ pub fn handle_collision_events(
   mut contact_events: EventReader<ContactEvent>,
   player_query: Query<&Player>,
   has_deadly: Query<&Deadly>,
-  has_checkpoint: Query<&Checkpoint>
+  has_checkpoint: Query<&Checkpoint>,
 ) {
   for contact_event in contact_events.iter() {
     if let Started(a, b) = contact_event {
@@ -58,7 +63,6 @@ pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
   fn build(&self, app: &mut AppBuilder) {
-    app
-      .add_system(handle_collision_events.system());
+    app.add_system(handle_collision_events.system());
   }
 }

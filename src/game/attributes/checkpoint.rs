@@ -1,4 +1,5 @@
-//! Sets the players checkpoint. `checkpoint(optional x offset, optional y offset)`
+//! Sets the players checkpoint. `checkpoint(optional x offset, optional y
+//! offset)`
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -23,7 +24,6 @@ impl Attribute for Checkpoint {
       } else {
         Vec2::new(*x_offset.unwrap() as f32, *y_offset.unwrap() as f32)
       }
-
     } else {
       Vec2::ZERO
     };

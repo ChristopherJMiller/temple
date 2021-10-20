@@ -4,14 +4,14 @@ use attributes::AttributePlugin;
 use bevy::app::PluginGroupBuilder;
 use bevy::prelude::*;
 use camera::CameraPlugin;
-use player::PlayerPlugin;
 use collision::CollisionPlugin;
+use player::PlayerPlugin;
 
 pub mod attributes;
 pub mod camera;
+pub mod collision;
 pub mod collision_groups;
 pub mod player;
-pub mod collision;
 
 /// [PluginGroup] for game modules.
 pub struct GamePlugins;

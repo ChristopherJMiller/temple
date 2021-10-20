@@ -76,17 +76,17 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
   }
 }
 
+mod checkpoint;
+mod deadly;
 mod moving;
 mod player;
 mod solid;
-mod deadly;
-mod checkpoint;
 
+pub use checkpoint::*;
+pub use deadly::*;
 pub use moving::*;
 pub use player::*;
 pub use solid::*;
-pub use deadly::*;
-pub use checkpoint::*;
 
 /// [Plugin] for attributes
 pub struct AttributePlugin;

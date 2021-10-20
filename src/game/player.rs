@@ -17,10 +17,7 @@ const PLAYER_MOVE_SPEED: i8 = 5;
 const PLAYER_JUMP_FORCE: u8 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
-fn handle_player_movement(
-  input: Res<Kurinji>,
-  mut player_force: Query<&mut RigidBodyForces, With<Player>>,
-) {
+fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForces, With<Player>>) {
   if let Some(mut forces) = player_force.iter_mut().next() {
     let x = if input.is_action_active(RIGHT) {
       PLAYER_MOVE_SPEED as f32
@@ -59,7 +56,10 @@ fn handle_player_hover(
   if let Some((trans, mut player_c, mut vel)) = player.iter_mut().next() {
     let collider_set = QueryPipelineColliderComponentsSet(&collider_query);
 
-    let origin = Vec2::new(trans.translation.x / SPRITE_SIZE as f32, trans.translation.y / SPRITE_SIZE as f32);
+    let origin = Vec2::new(
+      trans.translation.x / SPRITE_SIZE as f32,
+      trans.translation.y / SPRITE_SIZE as f32,
+    );
     let dir = Vec2::new(0.0, -1.0);
 
     let ray = Ray::new(origin.into(), dir.into());

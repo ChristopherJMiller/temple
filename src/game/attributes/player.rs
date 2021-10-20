@@ -26,7 +26,7 @@ impl Player {
       jump_in_progress: false,
       outside_ground_bounds: false,
       on_moving_entity: None,
-      respawn_pos
+      respawn_pos,
     }
   }
 }
@@ -73,7 +73,11 @@ impl Attribute for Player {
 }
 
 /// Consumes [PlayerDied] tags and respawns the player.
-pub fn on_death_system(mut commands: Commands, death_tags: Query<(Entity, &PlayerDied)>, mut player: Query<(&mut RigidBodyPosition, &Player)>) {
+pub fn on_death_system(
+  mut commands: Commands,
+  death_tags: Query<(Entity, &PlayerDied)>,
+  mut player: Query<(&mut RigidBodyPosition, &Player)>,
+) {
   if let Ok((mut pos, player)) = player.single_mut() {
     death_tags.for_each(|(ent, _)| {
       commands.entity(ent).despawn();
@@ -82,8 +86,13 @@ pub fn on_death_system(mut commands: Commands, death_tags: Query<(Entity, &Playe
   }
 }
 
-/// Consumes [PlayerReachedCheckpoint] tags and sets the new player respawn point.
-pub fn on_checkpoint_system(mut commands: Commands, checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerReachedCheckpoint>>, mut player: Query<&mut Player>) {
+/// Consumes [PlayerReachedCheckpoint] tags and sets the new player respawn
+/// point.
+pub fn on_checkpoint_system(
+  mut commands: Commands,
+  checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerReachedCheckpoint>>,
+  mut player: Query<&mut Player>,
+) {
   if let Ok(mut player) = player.single_mut() {
     checkpoint_reached.for_each(|(ent, checkpoint)| {
       player.respawn_pos = checkpoint.0;

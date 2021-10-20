@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use super::Attribute;
-use crate::{game::collision_groups::*, sprite::SPRITE_SIZE};
+use crate::game::collision_groups::*;
 
 pub struct Solid;
 
@@ -24,9 +24,6 @@ impl Attribute for Solid {
       ..Default::default()
     };
 
-    commands
-      .entity(target)
-      .insert(Solid)
-      .insert_bundle(collider);
+    commands.entity(target).insert(Solid).insert_bundle(collider);
   }
 }
