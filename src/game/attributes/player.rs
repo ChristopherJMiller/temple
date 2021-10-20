@@ -12,6 +12,7 @@ pub struct PlayerDied;
 pub struct Player {
   pub height_adjust: f32,
   pub grounded: bool,
+  pub jump_boost_time: f32,
   pub jump_in_progress: bool,
   pub outside_ground_bounds: bool,
   pub on_moving_entity: Option<Entity>,
@@ -19,10 +20,16 @@ pub struct Player {
 }
 
 impl Player {
+  pub const JUMP_BOOST_TIME: f32 = 0.4;
+  pub const NORMAL_FALL_SPEED: f32 = 2.0;
+  pub const SLOW_FALL_SPEED: f32 = 1.5;
+
+
   pub fn new(respawn_pos: Vec2) -> Self {
     Self {
       height_adjust: 0.25,
       grounded: true,
+      jump_boost_time: Self::JUMP_BOOST_TIME,
       jump_in_progress: false,
       outside_ground_bounds: false,
       on_moving_entity: None,
@@ -39,11 +46,11 @@ impl Attribute for Player {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
       forces: RigidBodyForces {
-        gravity_scale: 0.5,
+        gravity_scale: Self::NORMAL_FALL_SPEED,
         ..Default::default()
       },
       damping: RigidBodyDamping {
-        linear_damping: 1.0,
+        linear_damping: 0.2,
         ..Default::default()
       },
       ..Default::default()

@@ -13,8 +13,8 @@ use super::collision_groups::*;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
 
-const PLAYER_MOVE_SPEED: i8 = 5;
-const PLAYER_JUMP_FORCE: u8 = 10;
+const PLAYER_MOVE_SPEED: i8 = 9;
+const PLAYER_JUMP_FORCE: u8 = 9;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
 fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForces, With<Player>>) {
@@ -119,17 +119,36 @@ fn handle_player_hover(
   }
 }
 
+/// Handles Player Slow Falling. When `JUMP` is actively being held, the player falls slower.
+fn handle_player_slow_fall(input: Res<Kurinji>, mut player: Query<&mut RigidBodyForces, With<Player>>) {
+  if let Ok(mut forces) = player.single_mut() {
+    if input.is_action_active(JUMP) {
+      forces.gravity_scale = Player::SLOW_FALL_SPEED;
+    } else {
+      forces.gravity_scale = Player::NORMAL_FALL_SPEED;
+    }
+  }
+}
+
 /// Consumes [Kurinji] inputs for player jumping.
-fn handle_player_jump(input: Res<Kurinji>, mut player: Query<(&mut Player, &mut RigidBodyVelocity)>) {
+fn handle_player_jump(input: Res<Kurinji>, time: Res<Time>, mut player: Query<(&mut Player, &mut RigidBodyVelocity)>) {
   if let Some((mut player_c, mut vel)) = player.iter_mut().next() {
+    // Start Jump
     if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
       player_c.jump_in_progress = true;
       player_c.grounded = false;
-
-      vel.linvel.y = PLAYER_JUMP_FORCE as f32;
+      player_c.jump_boost_time = Player::JUMP_BOOST_TIME;
     }
 
-    if !input.is_action_active(JUMP) && player_c.outside_ground_bounds {
+    // Apply Forces of the Jump
+    if input.is_action_active(JUMP) && player_c.jump_in_progress && !player_c.grounded {
+      if player_c.jump_boost_time > 0.0 {
+        vel.linvel.y = PLAYER_JUMP_FORCE as f32;
+        player_c.jump_boost_time = 0.0_f32.max(player_c.jump_boost_time - time.delta_seconds());
+      }
+    }
+
+    if !input.is_action_active(JUMP) {
       player_c.jump_in_progress = false;
     }
   }
@@ -144,6 +163,7 @@ impl Plugin for PlayerPlugin {
       .add_system(handle_player_movement.system())
       .add_system(handle_player_hover.system())
       .add_system(handle_height_adjust.system())
+      .add_system(handle_player_slow_fall.system())
       .add_system(handle_player_jump.system());
   }
 }
