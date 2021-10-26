@@ -134,7 +134,7 @@
 <span class="kw">impl</span> <span class="ident">Player</span> {
   <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">JUMP_BOOST_TIME</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">0.35</span>;
   <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">NORMAL_FALL_SPEED</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">2.0</span>;
-  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SLOW_FALL_SPEED</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">1.5</span>;
+  <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SLOW_FALL_SPEED</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">1.0</span>;
 
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">respawn_pos</span>: <span class="ident">Vec2</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
     <span class="self">Self</span> {
@@ -186,7 +186,7 @@
       .<span class="ident">insert</span>(<span class="ident">Player</span>::<span class="ident">new</span>(<span class="ident">position</span>.<span class="ident">into</span>()))
       .<span class="ident">insert_bundle</span>(<span class="ident">rigid_body</span>)
       .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>)
-      .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync</span>::<span class="ident">Discrete</span>);
+      .<span class="ident">insert</span>(<span class="ident">RigidBodyPositionSync</span>::<span class="ident">Interpolated</span> { <span class="ident">prev_pos</span>: <span class="prelude-val">None</span> });
   }
 }
 

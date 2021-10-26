@@ -180,9 +180,6 @@
 <span id="177">177</span>
 <span id="178">178</span>
 <span id="179">179</span>
-<span id="180">180</span>
-<span id="181">181</span>
-<span id="182">182</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
@@ -205,7 +202,6 @@
 <span class="kw">use</span> <span class="ident">bevy_rapier2d</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Player</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sprite</span>::<span class="ident">SPRITE_SIZE</span>;
 
 <span class="doccomment">/// Direction of sprite movement.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
@@ -285,8 +281,7 @@
   <span class="doccomment">/// Calculates a impulse that is applied to the player when on the sprite, to</span>
   <span class="doccomment">/// keep them from falling off.</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_passenger_force</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec2</span> {
-    <span class="kw">let</span> <span class="ident">mag</span> <span class="op">=</span> <span class="ident">PI</span> <span class="op">*</span> (<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">current_time</span> <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span> <span class="op">+</span> (<span class="ident">PI</span> <span class="op">/</span> <span class="number">12.0</span>)).<span class="ident">sin</span>() <span class="op">/</span> (<span class="self">self</span>.<span class="ident">duration</span>);
-    <span class="ident">mag</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">vec_dir</span>
+    <span class="op">-</span>((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>) <span class="op">*</span> (((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>) <span class="op">*</span> <span class="self">self</span>.<span class="ident">current_time</span> <span class="op">+</span> <span class="ident">PI</span> <span class="op">+</span> <span class="ident">PI</span><span class="op">/</span><span class="number">6.0</span>).<span class="ident">sin</span>() <span class="op">*</span> <span class="self">self</span>.<span class="ident">vec_dir</span>
   }
 }
 
@@ -353,15 +348,14 @@
 <span class="doccomment">/// TODO: Make it move all entities with a Movable Attribute instead of just the</span>
 <span class="doccomment">/// player.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">move_player</span>(
-  <span class="ident">time</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>,
-  <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RigidBodyVelocity</span>, <span class="kw-2">&amp;</span><span class="ident">RigidBodyMassProps</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Player</span>)<span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RigidBodyForces</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Player</span>)<span class="op">&gt;</span>,
   <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ColliderPosition</span>)<span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">vel</span>, <span class="ident">props</span>, <span class="ident">player_c</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">forces</span>, <span class="ident">player_c</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">entity</span>) <span class="op">=</span> <span class="ident">player_c</span>.<span class="ident">on_moving_entity</span> {
-      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">moving</span>) <span class="op">=</span> <span class="ident">moving_sprite</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">MovingSprite</span><span class="op">&gt;</span>(<span class="ident">entity</span>) {
-        <span class="kw">let</span> <span class="ident">force</span>: <span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">Real</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="ident">time</span>.<span class="ident">delta_seconds</span>() <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">moving</span>.<span class="ident">get_passenger_force</span>()).<span class="ident">into</span>();
-        <span class="ident">vel</span>.<span class="ident">apply_impulse</span>(<span class="ident">props</span>, <span class="ident">force</span>);
+      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">moving</span>) <span class="op">=</span>  <span class="ident">moving_sprite</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">MovingSprite</span><span class="op">&gt;</span>(<span class="ident">entity</span>) {
+        <span class="kw">let</span> <span class="ident">force</span>: <span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">Real</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">7.0</span> <span class="op">*</span> <span class="ident">moving</span>.<span class="ident">get_passenger_force</span>()).<span class="ident">into</span>();
+        <span class="ident">forces</span>.<span class="ident">force</span> <span class="op">=</span> <span class="ident">force</span>;
       }
     }
   }

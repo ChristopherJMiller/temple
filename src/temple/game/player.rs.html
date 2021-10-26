@@ -172,6 +172,7 @@
 <span id="169">169</span>
 <span id="170">170</span>
 <span id="171">171</span>
+<span id="172">172</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! [Player] attribute systems</span>
 <span class="doccomment">//!</span>
@@ -185,11 +186,12 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">attributes</span>::{<span class="ident">MovingSprite</span>, <span class="ident">Player</span>};
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">collision_groups</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">physics</span>::<span class="ident">PlayerSimulationSteps</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">input</span>::{<span class="ident">DOWN</span>, <span class="ident">JUMP</span>, <span class="ident">LEFT</span>, <span class="ident">RIGHT</span>, <span class="ident">UP</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">sprite</span>::<span class="ident">SPRITE_SIZE</span>;
 
-<span class="kw">const</span> <span class="ident">PLAYER_MOVE_SPEED</span>: <span class="ident">i8</span> <span class="op">=</span> <span class="number">20</span>;
-<span class="kw">const</span> <span class="ident">PLAYER_JUMP_FORCE</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">10</span>;
+<span class="kw">const</span> <span class="ident">PLAYER_MOVE_SPEED</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="number">15</span>;
+<span class="kw">const</span> <span class="ident">PLAYER_JUMP_FORCE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">10</span>;
 
 <span class="doccomment">/// Consumes [Kurinji] inputs for player horizontal movement.</span>
 <span class="kw">fn</span> <span class="ident">handle_player_movement</span>(<span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">player_force</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RigidBodyForces</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span><span class="op">&gt;</span>) {
@@ -203,7 +205,7 @@
     };
 
     <span class="kw">let</span> <span class="ident">force</span>: <span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">Real</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec2</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="number">0.0</span>).<span class="ident">into</span>();
-    <span class="ident">forces</span>.<span class="ident">force</span> <span class="op">+</span><span class="op">=</span> <span class="ident">force</span>;
+    <span class="ident">forces</span>.<span class="ident">force</span> <span class="op">=</span> <span class="ident">force</span>;
   }
 }
 
@@ -337,11 +339,11 @@
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">PlayerPlugin</span> {
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">AppBuilder</span>) {
     <span class="ident">app</span>
-      .<span class="ident">add_system</span>(<span class="ident">handle_player_movement</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">handle_player_hover</span>.<span class="ident">system</span>())
+      .<span class="ident">add_system</span>(<span class="ident">handle_player_movement</span>.<span class="ident">system</span>().<span class="ident">label</span>(<span class="ident">PlayerSimulationSteps</span>::<span class="ident">ApplyMoving</span>))
+      .<span class="ident">add_system</span>(<span class="ident">handle_player_hover</span>.<span class="ident">system</span>().<span class="ident">before</span>(<span class="ident">PlayerSimulationSteps</span>::<span class="ident">ApplyJumping</span>))
       .<span class="ident">add_system</span>(<span class="ident">handle_height_adjust</span>.<span class="ident">system</span>())
       .<span class="ident">add_system</span>(<span class="ident">handle_player_slow_fall</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">handle_player_jump</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">handle_player_jump</span>.<span class="ident">system</span>().<span class="ident">label</span>(<span class="ident">PlayerSimulationSteps</span>::<span class="ident">ApplyJumping</span>));
   }
 }
 </pre></div>
