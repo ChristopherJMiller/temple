@@ -10,11 +10,12 @@ use kurinji::Kurinji;
 
 use super::attributes::{MovingSprite, Player};
 use super::collision_groups::*;
+use super::physics::PlayerSimulationSteps;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
 
-const PLAYER_MOVE_SPEED: i8 = 20;
-const PLAYER_JUMP_FORCE: u8 = 10;
+const PLAYER_MOVE_SPEED: i32 = 15;
+const PLAYER_JUMP_FORCE: u32 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
 fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForces, With<Player>>) {
@@ -28,7 +29,7 @@ fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut Rigi
     };
 
     let force: Vector<Real> = Vec2::new(x, 0.0).into();
-    forces.force += force;
+    forces.force = force;
   }
 }
 
@@ -162,10 +163,10 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .add_system(handle_player_movement.system())
-      .add_system(handle_player_hover.system())
+      .add_system(handle_player_movement.system().label(PlayerSimulationSteps::ApplyMoving))
+      .add_system(handle_player_hover.system().before(PlayerSimulationSteps::ApplyJumping))
       .add_system(handle_height_adjust.system())
       .add_system(handle_player_slow_fall.system())
-      .add_system(handle_player_jump.system());
+      .add_system(handle_player_jump.system().label(PlayerSimulationSteps::ApplyJumping));
   }
 }

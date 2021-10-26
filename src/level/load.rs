@@ -8,7 +8,6 @@
 //! [LoadLevel] entity to instruct an unload.
 
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 
 use super::{LevelId, LevelMap};
 use crate::game::attributes::*;
@@ -28,11 +27,6 @@ pub struct UnloadLevel;
 /// Tag that entity was loaded by level, and will be removed when [UnloadLevel]
 /// instruction is given
 pub struct LevelLoadedSprite;
-
-/// Startup system to configure rapier physics for sprites
-pub fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
-  rapier_config.scale = SPRITE_SIZE as f32;
-}
 
 /// System that loads sprites in a given level.
 /// Can be tracked with [LevelLoadComplete]

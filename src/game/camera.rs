@@ -9,6 +9,7 @@ use bevy::prelude::*;
 use bevy::render::camera::Camera;
 
 use crate::game::attributes::Player;
+use crate::sprite::SPRITE_SIZE;
 
 /// Tag for a non-player camera focus.
 pub struct CameraTarget;
@@ -27,24 +28,38 @@ type PlayerOnly = (Without<Camera>, Without<CameraTarget>, With<Player>);
 
 /// System to determine camera targeting.
 fn target_camera(
+  time: Res<Time>,
+  cam_speed: Res<CameraTrackingSpeed>,
   mut camera: Query<&mut Transform, CameraOnly>,
   targets: Query<&Transform, CameraTargetOnly>,
   player: Query<&Transform, PlayerOnly>,
 ) {
   if let Ok(mut camera_trans) = camera.single_mut() {
-    if let Ok(target) = targets.single() {
-      camera_trans.translation = target.translation;
+    let target = if let Ok(target) = targets.single() {
+      target.translation
     } else if let Ok(player_trans) = player.single() {
-      camera_trans.translation = player_trans.translation;
-    }
+      player_trans.translation
+    } else {
+      camera_trans.translation
+    };
+
+    let dir = (target - camera_trans.translation).normalize_or_zero();
+    let speed = ((target - camera_trans.translation).length() * SPRITE_SIZE as f32).min(cam_speed.0);
+    
+    camera_trans.translation += dir * speed * time.delta_seconds();
   }
 }
 
 /// [Plugin] for camera systems.
 pub struct CameraPlugin;
 
+/// [Res] for how fast the camera can move per frame.
+pub struct CameraTrackingSpeed(pub f32);
+
 impl Plugin for CameraPlugin {
   fn build(&self, app: &mut AppBuilder) {
-    app.add_system(target_camera.system());
+    app
+      .insert_resource::<CameraTrackingSpeed>(CameraTrackingSpeed(SPRITE_SIZE as f32  * 32.0))
+      .add_system(target_camera.system());
   }
 }

@@ -19,7 +19,6 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use super::{Attribute, Player};
-use crate::sprite::SPRITE_SIZE;
 
 /// Direction of sprite movement.
 #[derive(Clone, Copy)]
@@ -99,8 +98,7 @@ impl MovingSprite {
   /// Calculates a impulse that is applied to the player when on the sprite, to
   /// keep them from falling off.
   pub fn get_passenger_force(&self) -> Vec2 {
-    let mag = PI * (2.0 * PI * self.current_time / self.duration + (PI / 12.0)).sin() / (self.duration);
-    mag * self.vec_dir
+    -((2.0 * PI) / self.duration) * (((2.0 * PI) / self.duration) * self.current_time + PI + PI/6.0).sin() * self.vec_dir
   }
 }
 
@@ -167,15 +165,14 @@ pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &
 /// TODO: Make it move all entities with a Movable Attribute instead of just the
 /// player.
 pub fn move_player(
-  time: Res<Time>,
-  mut player: Query<(&mut RigidBodyVelocity, &RigidBodyMassProps, &mut Player)>,
+  mut player: Query<(&mut RigidBodyForces, &mut Player)>,
   moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>,
 ) {
-  if let Ok((mut vel, props, player_c)) = player.single_mut() {
+  if let Ok((mut forces, player_c)) = player.single_mut() {
     if let Some(entity) = player_c.on_moving_entity {
-      if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {
-        let force: Vector<Real> = (time.delta_seconds() * SPRITE_SIZE as f32 * moving.get_passenger_force()).into();
-        vel.apply_impulse(props, force);
+      if let Ok(moving) =  moving_sprite.get_component::<MovingSprite>(entity) {
+        let force: Vector<Real> = (7.0 * moving.get_passenger_force()).into();
+        forces.force = force;
       }
     }
   }

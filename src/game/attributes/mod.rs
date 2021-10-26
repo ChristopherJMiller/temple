@@ -88,6 +88,8 @@ pub use moving::*;
 pub use player::*;
 pub use solid::*;
 
+use super::physics::PlayerSimulationSteps;
+
 /// [Plugin] for attributes
 pub struct AttributePlugin;
 
@@ -102,7 +104,8 @@ impl Plugin for AttributePlugin {
       .add_system(
         move_player
           .system()
-          .after(MovingAttributeSystemSteps::ApplyDeltaTranslation),
+          .after(MovingAttributeSystemSteps::ApplyDeltaTranslation)
+          .after(PlayerSimulationSteps::ApplyMoving),
       )
       .add_system(on_death_system.system())
       .add_system(on_checkpoint_system.system());

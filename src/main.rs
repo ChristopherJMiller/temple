@@ -53,7 +53,6 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_plugin(FrameTimeDiagnosticsPlugin::default())
     .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-    .add_plugin(RapierRenderPlugin)
 
     // Game Plugins
     .add_plugin(InputPlugin)

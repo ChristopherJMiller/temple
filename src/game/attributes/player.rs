@@ -22,7 +22,7 @@ pub struct Player {
 impl Player {
   pub const JUMP_BOOST_TIME: f32 = 0.35;
   pub const NORMAL_FALL_SPEED: f32 = 2.0;
-  pub const SLOW_FALL_SPEED: f32 = 1.5;
+  pub const SLOW_FALL_SPEED: f32 = 1.0;
 
   pub fn new(respawn_pos: Vec2) -> Self {
     Self {
@@ -74,7 +74,7 @@ impl Attribute for Player {
       .insert(Player::new(position.into()))
       .insert_bundle(rigid_body)
       .insert_bundle(collider)
-      .insert(ColliderPositionSync::Discrete);
+      .insert(RigidBodyPositionSync::Interpolated { prev_pos: None });
   }
 }
 

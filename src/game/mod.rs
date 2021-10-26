@@ -6,7 +6,9 @@ use bevy::prelude::*;
 use camera::CameraPlugin;
 use collision::CollisionPlugin;
 use player::PlayerPlugin;
+use physics::ModifyPhysicsPlugin;
 
+pub mod physics;
 pub mod attributes;
 pub mod camera;
 pub mod collision;
@@ -22,6 +24,7 @@ impl PluginGroup for GamePlugins {
       .add(CameraPlugin)
       .add(PlayerPlugin)
       .add(AttributePlugin)
-      .add(CollisionPlugin);
+      .add(CollisionPlugin)
+      .add(ModifyPhysicsPlugin);
   }
 }
