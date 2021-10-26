@@ -59,7 +59,7 @@ pub struct CameraTrackingSpeed(pub f32);
 impl Plugin for CameraPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .insert_resource::<CameraTrackingSpeed>(CameraTrackingSpeed(SPRITE_SIZE as f32  * 32.0))
+      .insert_resource::<CameraTrackingSpeed>(CameraTrackingSpeed(SPRITE_SIZE as f32  * 64.0))
       .add_system(target_camera.system());
   }
 }

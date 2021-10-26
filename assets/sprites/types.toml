@@ -30,7 +30,21 @@ attributes = [
 ]
 
 [[types]]
-id = "death_air"
+id = "moving_platform_left_slow"
+attributes = [
+  "solid",
+  "moving(2, 6, 8)"
+]
+
+[[types]]
+id = "moving_platform_up_slow"
+attributes = [
+  "solid",
+  "moving(3, 8, 8)"
+]
+
+[[types]]
+id = "death"
 attributes = [
   "deadly"
 ]
@@ -42,16 +56,8 @@ attributes = [
 ]
 
 [[types]]
-id = "spike"
-attributes = [
-  "deadly",
-  "solid"
-]
-
-[[types]]
 id = "moving_death_vertical_slow"
 attributes = [
   "moving(1, 5, 3)",
   "deadly",
-  "solid"
 ]

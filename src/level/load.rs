@@ -44,6 +44,8 @@ pub fn load_level(
       .get(&level_id)
       .unwrap_or_else(|| panic!("Attempted to load invalid level id {}", level_id));
 
+    let mut player_trans = Vec3::ZERO;
+
     // Get all sprites in level
     for sprite in level.sprites.iter() {
       let sprite_data: &GameSprite = sprites
@@ -64,11 +66,15 @@ pub fn load_level(
 
       for attribute in sprite_data.attributes.iter() {
         let position = Vec2::new(unit_pos.x, unit_pos.y);
+        if attribute == Player::KEY {
+          player_trans = unit_pos;
+        }
         build_attribute(attribute.clone(), &mut commands, entity, position);
       }
     }
 
     let mut camera = OrthographicCameraBundle::new_2d();
+    camera.transform.translation = player_trans;
     camera.orthographic_projection.scale = 1.0 / 3.0;
 
     commands

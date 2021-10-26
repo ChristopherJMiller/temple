@@ -45,7 +45,7 @@ fn main() {
       vsync: true,
       ..Default::default()
     })
-    .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+    .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
     .insert_resource(Version(version))
     .insert_resource(game_file)
     .insert_resource(cli_args)

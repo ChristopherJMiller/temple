@@ -21,8 +21,8 @@ pub struct Player {
 
 impl Player {
   pub const JUMP_BOOST_TIME: f32 = 0.35;
-  pub const NORMAL_FALL_SPEED: f32 = 2.0;
-  pub const SLOW_FALL_SPEED: f32 = 1.0;
+  pub const NORMAL_FALL_SPEED: f32 = 2.25;
+  pub const SLOW_FALL_SPEED: f32 = 1.25;
 
   pub fn new(respawn_pos: Vec2) -> Self {
     Self {

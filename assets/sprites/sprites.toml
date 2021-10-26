@@ -36,8 +36,22 @@ offset_y = 0
 texture = "sprites/boneyard_middle.png"
 
 [[sprites]]
+name = "moving_platform_left_slow"
+sprite_type = "moving_platform_left_slow"
+offset_x = 0
+offset_y = 0
+texture = "sprites/boneyard_middle.png"
+
+[[sprites]]
+name = "moving_platform_up_slow"
+sprite_type = "moving_platform_up_slow"
+offset_x = 0
+offset_y = 0
+texture = "sprites/boneyard_middle.png"
+
+[[sprites]]
 name = "death_air"
-sprite_type = "death_air"
+sprite_type = "death"
 offset_x = 0
 offset_y = 0
 texture = "sprites/blank.png"
@@ -51,7 +65,7 @@ texture = "sprites/checkpoint.png"
 
 [[sprites]]
 name = "skull_nomove"
-sprite_type = "spike"
+sprite_type = "death"
 offset_x = 0
 offset_y = 0
 texture = "sprites/skull.png"

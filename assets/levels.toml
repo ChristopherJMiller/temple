@@ -21,6 +21,10 @@ color = 0xFFFF00
 name = "moving_platform_right_slow"
 
 [[levels.sprites]]
+color = 0xFFFF01
+name = "moving_platform_left_slow"
+
+[[levels.sprites]]
 color = 0xFF0000
 name = "checkpoint"
 
@@ -35,3 +39,7 @@ name = "skull_nomove"
 [[levels.sprites]]
 color = 0xFF0010
 name = "skull_move_vertical"
+
+[[levels.sprites]]
+color = 0xFF00FF
+name = "moving_platform_up_slow"
