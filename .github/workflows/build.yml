@@ -41,7 +41,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: windows${{ steps.get_version.outputs.VERSION }}.zip
-        path: windows*.zip
+        path: windows
   build-linux:
     runs-on: ubuntu-latest
     steps:
@@ -70,4 +70,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: linux${{ steps.get_version.outputs.VERSION }}.zip
-        path: linux*.zip
+        path: linux
