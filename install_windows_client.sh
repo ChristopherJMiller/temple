@@ -12,5 +12,3 @@ cp /usr/lib/gcc/x86_64-w64-mingw32/9.3-posix/libstdc++-6.dll windows
 cp /usr/lib/gcc/x86_64-w64-mingw32/9.3-posix/libgcc_s_seh-1.dll windows
 cp /usr/x86_64-w64-mingw32/lib/libwinpthread-1.dll windows
 
-cd windows
-zip -r ../windows$VERSION.zip .
