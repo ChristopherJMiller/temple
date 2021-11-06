@@ -26,7 +26,7 @@ jobs:
       run: rustup target add x86_64-pc-windows-gnu
     - name: Get Version
       id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
     - name: Cache target
       id: cache-windows-target
       uses: actions/cache@v2
@@ -40,5 +40,34 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: windows-build
+        name: windows${{ steps.get_verion.outputs.VERSION }}.zip
         path: windows*.zip
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install required packages
+      run: sudo apt-get install -y libasound2-dev libudev-dev libxcb-xfixes0-dev libxcb-shape0-dev cmake mingw-w64 zip
+    - name: Install latest stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    - name: Get Version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+    - name: Cache target
+      id: cache-linux-target
+      uses: actions/cache@v2
+      with:
+        path: target
+        key: ${{ runner.os }}-linux-target
+    - name: Build Linux Game
+      env:
+        VERSION: ${{ steps.get_verion.outputs.VERSION }}
+      run: ./install_linux_client.sh
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: linux${{ steps.get_verion.outputs.VERSION }}.zip
+        path: linux*.zip
