@@ -2,26 +2,27 @@
 name = "temple"
 version = "0.1.0"
 authors = ["Christopher Miller <cmiller548@gmail.com>"]
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+edition = "2021"
 
 [dependencies]
 bevy = "0.5.0"
-bevy_rapier2d = { version = "0.10.2", features = [ "simd-stable" ] }
-kurinji = { git = "https://github.com/jacobjenks/kurinji", branch = "upgrade_bevy_0.5" }
-bevy_egui = "0.4"
-toml = "0.5.8"
-serde = "1.0.126"
-png = "0.16.8"
-log = "0.4.14"
-env_logger = "0.8.4"
-clap = "2.33.3"
-console = "0.14.1"
-dialoguer = "0.8.0"
+bevy_rapier2d = { version = "^0.11", features = [ "simd-stable" ] }
+kurinji = { git = "https://github.com/ChristopherJMiller/kurinji", branch = "upgrade_bevy_0.5" }
+bevy_egui = "^0.7"
+toml = "^0.5"
+serde = "^1.0"
+png = "^0.16"
+log = "^0.4"
+env_logger = "^0.8"
+clap = "^2.33"
+console = "^0.14"
+dialoguer = "^0.8"
 
 [build-dependencies]
-chrono = "0.4"
+chrono = "^0.4"
+
+[patch.crates-io]
+bevy-glsl-to-spirv = { git = "https://github.com/realliance/glsl-to-spirv.git" }
 
 [profile.dev]
 opt-level = 3

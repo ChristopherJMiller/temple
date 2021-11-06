@@ -1,0 +1,36 @@
+name: Build Game
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-windows:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install required packages
+      run: sudo apt-get install -y libasound2-dev libudev-dev libxcb-xfixes0-dev libxcb-shape0-dev cmake mingw-w64 zip
+    - name: Install latest stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    - name: Get Version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: Build Windows Game
+      env:
+        VERSION: ${{ steps.get_verion.outputs.VERSION }}
+      run: ./install_windows_client.sh
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-build
+        path: windows*.zip

@@ -1,1 +1,4 @@
 /target
+install/
+windows/
+windows*.zip
