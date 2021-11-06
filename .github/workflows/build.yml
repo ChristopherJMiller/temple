@@ -27,6 +27,12 @@ jobs:
     - name: Get Version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: Cache target
+      id: cache-windows-target
+      uses: actions/cache@v2
+      with:
+        path: target
+        key: ${{ runner.os }}-windows-target
     - name: Build Windows Game
       env:
         VERSION: ${{ steps.get_verion.outputs.VERSION }}
