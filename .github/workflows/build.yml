@@ -35,12 +35,12 @@ jobs:
         key: ${{ runner.os }}-windows-target
     - name: Build Windows Game
       env:
-        VERSION: ${{ steps.get_verion.outputs.VERSION }}
+        VERSION: ${{ steps.get_version.outputs.VERSION }}
       run: ./install_windows_client.sh
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: windows${{ steps.get_verion.outputs.VERSION }}.zip
+        name: windows${{ steps.get_version.outputs.VERSION }}.zip
         path: windows*.zip
   build-linux:
     runs-on: ubuntu-latest
@@ -64,10 +64,10 @@ jobs:
         key: ${{ runner.os }}-linux-target
     - name: Build Linux Game
       env:
-        VERSION: ${{ steps.get_verion.outputs.VERSION }}
+        VERSION: ${{ steps.get_version.outputs.VERSION }}
       run: ./install_linux_client.sh
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: linux${{ steps.get_verion.outputs.VERSION }}.zip
+        name: linux${{ steps.get_version.outputs.VERSION }}.zip
         path: linux*.zip
