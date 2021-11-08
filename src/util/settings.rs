@@ -49,8 +49,6 @@ impl Default for GameFile {
   }
 }
 
-pub struct Version(pub String);
-
 /// Loads `game.toml`.
 pub fn get_game_file() -> GameFile {
   if let Ok(file) = fs::read_to_string(GAME_SETTING_PATH) {

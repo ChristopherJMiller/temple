@@ -3,23 +3,24 @@
 //!
 //! Check out the [github](https://github.com/ChristopherJMiller/temple) for more info.
 
-use bevy::diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin};
+use bevy::diagnostic::FrameTimeDiagnosticsPlugin;
 use bevy::prelude::*;
+use bevy_egui::EguiPlugin;
 use bevy_rapier2d::prelude::*;
 use game::GamePlugins;
 use input::InputPlugin;
 use level::LevelPlugin;
 use sprite::SpritePlugin;
-use util::cli::get_cli_args;
+use util::cli::{handle_cli_args, get_cli_args};
 use util::files::verify_files;
-use util::settings::{get_game_file, Version};
-
-use crate::util::cli::handle_cli_args;
+use util::settings::get_game_file;
+use ui::UiPlugin;
 
 mod game;
 mod input;
 mod level;
 mod sprite;
+mod ui;
 mod util;
 
 /// Game version. For dev builds, this is a timestamp.
@@ -46,73 +47,20 @@ fn main() {
       ..Default::default()
     })
     .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
-    .insert_resource(Version(version))
     .insert_resource(game_file)
     .insert_resource(cli_args)
     // 3rd Party Plugins
     .add_plugins(DefaultPlugins)
     .add_plugin(FrameTimeDiagnosticsPlugin::default())
     .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+    .add_plugin(EguiPlugin)
 
     // Game Plugins
     .add_plugin(InputPlugin)
     .add_plugin(SpritePlugin)
     .add_plugin(LevelPlugin)
     .add_plugins(GamePlugins)
+    .add_plugin(UiPlugin)
     .add_startup_system(handle_cli_args.system())
-    .add_startup_system(setup_fps_text.system())
-    .add_system(update_fps_system.system())
     .run();
-}
-
-/// Component tag for the FPS counter [Text].
-/// TODO: Should be moved into a ui module.
-struct FpsText;
-
-/// Start up system for [FpsText] UI.
-/// TODO: Should be moved into a ui module.
-fn setup_fps_text(mut commands: Commands, asset_server: Res<AssetServer>) {
-  commands.spawn_bundle(UiCameraBundle::default());
-  commands
-    .spawn_bundle(TextBundle {
-      style: Style {
-        align_self: AlignSelf::FlexEnd,
-        ..Default::default()
-      },
-      text: Text {
-        sections: vec![
-          TextSection {
-            value: "FPS: ".to_string(),
-            style: TextStyle {
-              font: asset_server.load("fonts/Vollkorn-Bold.ttf"),
-              font_size: 30.0,
-              color: Color::WHITE,
-            },
-          },
-          TextSection {
-            value: "".to_string(),
-            style: TextStyle {
-              font: asset_server.load("fonts/Vollkorn-Medium.ttf"),
-              font_size: 30.0,
-              color: Color::GOLD,
-            },
-          },
-        ],
-        ..Default::default()
-      },
-      ..Default::default()
-    })
-    .insert(FpsText);
-}
-
-/// System that updates FPS counter via [FrameTimeDiagnosticsPlugin].
-/// TODO: Should be moved into a ui module.
-fn update_fps_system(diagnostics: Res<Diagnostics>, mut query: Query<&mut Text, With<FpsText>>) {
-  for mut text in query.iter_mut() {
-    if let Some(fps) = diagnostics.get(FrameTimeDiagnosticsPlugin::FPS) {
-      if let Some(average) = fps.average() {
-        text.sections[1].value = format!("{:.0}", average);
-      }
-    }
-  }
 }
