@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["setup_fps_text","Start up system for [FpsText] UI."],["update_fps_system","System that updates FPS counter via [FrameTimeDiagnosticsPlugin]."]],"struct":[["FpsText","Component tag for the FPS counter [Text]."]]});
