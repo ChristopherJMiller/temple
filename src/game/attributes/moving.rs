@@ -98,7 +98,9 @@ impl MovingSprite {
   /// Calculates a impulse that is applied to the player when on the sprite, to
   /// keep them from falling off.
   pub fn get_passenger_force(&self) -> Vec2 {
-    -((2.0 * PI) / self.duration) * (((2.0 * PI) / self.duration) * self.current_time + PI + PI/6.0).sin() * self.vec_dir
+    -((2.0 * PI) / self.duration)
+      * (((2.0 * PI) / self.duration) * self.current_time + PI + PI / 6.0).sin()
+      * self.vec_dir
   }
 }
 
@@ -170,7 +172,7 @@ pub fn move_player(
 ) {
   if let Ok((mut forces, player_c)) = player.single_mut() {
     if let Some(entity) = player_c.on_moving_entity {
-      if let Ok(moving) =  moving_sprite.get_component::<MovingSprite>(entity) {
+      if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {
         let force: Vector<Real> = (7.0 * moving.get_passenger_force()).into();
         forces.force = force;
       }

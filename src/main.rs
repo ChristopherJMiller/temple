@@ -6,16 +6,16 @@
 use bevy::diagnostic::FrameTimeDiagnosticsPlugin;
 use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
+use bevy_kira_audio::AudioPlugin;
 use bevy_rapier2d::prelude::*;
 use game::GamePlugins;
 use input::InputPlugin;
 use level::LevelPlugin;
 use sprite::SpritePlugin;
-use util::cli::{handle_cli_args, get_cli_args};
+use ui::UiPlugin;
+use util::cli::{get_cli_args, handle_cli_args};
 use util::files::verify_files;
 use util::settings::get_game_file;
-use ui::UiPlugin;
-use bevy_kira_audio::AudioPlugin;
 
 mod game;
 mod input;

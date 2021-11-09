@@ -145,7 +145,6 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 }
               }
 
-
               let music_path = Path::new("audio/music").join(level.music.as_str());
               let level_obj = Level {
                 id: level.id,

@@ -1,11 +1,12 @@
 //! Represents the player. `player()`
 
 use bevy::prelude::*;
+use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use super::{Attribute, Checkpoint, PlayerReachedCheckpoint};
-use crate::game::{collision_groups::*, sfx::SfxHandles};
-use bevy_kira_audio::Audio;
+use crate::game::collision_groups::*;
+use crate::game::sfx::{AudioChannels, SfxHandles};
 
 pub struct PlayerDied;
 
@@ -99,16 +100,17 @@ pub fn on_checkpoint_system(
   mut commands: Commands,
   checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerReachedCheckpoint>>,
   mut player: Query<&mut Player>,
-  audio: Res<Audio>, 
-  sfx_handles: Res<SfxHandles>
+  audio: Res<Audio>,
+  sfx_handles: Res<SfxHandles>,
+  channels: Res<AudioChannels>,
 ) {
   if let Ok(mut player) = player.single_mut() {
     checkpoint_reached.for_each(|(ent, checkpoint)| {
       if player.respawn_pos != checkpoint.0 {
         player.respawn_pos = checkpoint.0;
-        audio.play(sfx_handles.checkpoint.clone());
+        audio.play_in_channel(sfx_handles.checkpoint.clone(), &channels.sfx.0);
       }
-      
+
       commands.entity(ent).remove::<PlayerReachedCheckpoint>();
     });
   }

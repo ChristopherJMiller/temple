@@ -45,7 +45,7 @@ fn target_camera(
 
     let dir = (target - camera_trans.translation).normalize_or_zero();
     let speed = ((target - camera_trans.translation).length() * SPRITE_SIZE as f32).min(cam_speed.0);
-    
+
     camera_trans.translation += dir * speed * time.delta_seconds();
   }
 }
@@ -59,7 +59,7 @@ pub struct CameraTrackingSpeed(pub f32);
 impl Plugin for CameraPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .insert_resource::<CameraTrackingSpeed>(CameraTrackingSpeed(SPRITE_SIZE as f32  * 64.0))
+      .insert_resource::<CameraTrackingSpeed>(CameraTrackingSpeed(SPRITE_SIZE as f32 * 64.0))
       .add_system(target_camera.system());
   }
 }

@@ -2,6 +2,7 @@
 
 use bevy::diagnostic::{Diagnostics, FrameTimeDiagnosticsPlugin};
 use bevy::prelude::*;
+
 use crate::util::cli::CliArgs;
 
 /// Component tag for the FPS counter [Text].

@@ -1,7 +1,6 @@
 //! Contains Plugins for modifying aspects of the rapier physics pipeline
 
 use bevy::prelude::*;
-
 use bevy_rapier2d::physics::TimestepMode;
 use bevy_rapier2d::prelude::*;
 
@@ -13,7 +12,7 @@ use crate::sprite::SPRITE_SIZE;
 #[derive(Debug, Hash, PartialEq, Eq, Clone, SystemLabel)]
 pub enum PlayerSimulationSteps {
   ApplyMoving,
-  ApplyJumping
+  ApplyJumping,
 }
 
 /// Startup system to configure rapier physics for sprites
@@ -27,7 +26,6 @@ pub struct ModifyPhysicsPlugin;
 
 impl Plugin for ModifyPhysicsPlugin {
   fn build(&self, app: &mut AppBuilder) {
-    app
-      .add_startup_system(configure_rapier.system());
+    app.add_startup_system(configure_rapier.system());
   }
 }

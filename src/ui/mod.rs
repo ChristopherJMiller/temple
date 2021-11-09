@@ -1,14 +1,12 @@
 //! Handles all UI elements for the game.
 
 use bevy::prelude::*;
-
 use diagnostic::{setup_fps_text, update_fps_system};
-use title_screen::{setup_title_screen, title_menu_buttons, delete_title_screen, TitleMenuState};
-
 pub use title_screen::LoadTitleScreen;
+use title_screen::{delete_title_screen, setup_title_screen, title_menu_buttons, TitleMenuState};
 
-mod title_screen;
 mod diagnostic;
+mod title_screen;
 
 // Spawns a [UiCameraBundle]
 fn setup_uicamera(mut commands: Commands) {

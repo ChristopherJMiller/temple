@@ -9,12 +9,13 @@
 
 use bevy::asset::LoadState;
 use bevy::prelude::*;
+use bevy_kira_audio::{Audio, AudioSource};
 
 use super::{LevelId, LevelMap};
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
+use crate::game::sfx::AudioChannels;
 use crate::sprite::{GameSprite, SpriteMap, SPRITE_SIZE};
-use bevy_kira_audio::{AudioSource, Audio};
 
 /// Instruction to load a new level
 pub struct LoadLevel(pub LevelId);
@@ -38,7 +39,8 @@ pub fn load_level(
   sprites: Res<SpriteMap>,
   levels: Res<LevelMap>,
   asset_server: Res<AssetServer>,
-  audio: Res<Audio>
+  audio: Res<Audio>,
+  channels: Res<AudioChannels>,
 ) {
   query.for_each(|(e, load_level)| {
     let level_id = load_level.0;
@@ -52,14 +54,14 @@ pub fn load_level(
 
     // Load music
     if asset_server.get_load_state(&music) == LoadState::Loaded {
-      audio.play_looped(music);
+      audio.play_looped_in_channel(music, &channels.music.0);
     } else if asset_server.get_load_state(&music) != LoadState::Loading {
       let _: Handle<AudioSource> = asset_server.load(level.music_file.as_str());
       return;
     } else {
       // Wait for load
       return;
-    }    
+    }
 
     let mut player_trans = Vec3::ZERO;
 

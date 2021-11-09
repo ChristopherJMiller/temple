@@ -5,25 +5,26 @@ use bevy::app::PluginGroupBuilder;
 use bevy::prelude::*;
 use camera::CameraPlugin;
 use collision::CollisionPlugin;
-use player::PlayerPlugin;
 use physics::ModifyPhysicsPlugin;
-
-use crate::{level::load::LoadLevel, util::settings::{GameFile, LevelTransistionType}};
+use player::PlayerPlugin;
 
 use self::sfx::SfxPlugin;
+use crate::level::load::LoadLevel;
+use crate::util::settings::{GameFile, LevelTransistionType};
 
-pub mod physics;
 pub mod attributes;
 pub mod camera;
 pub mod collision;
 pub mod collision_groups;
+pub mod physics;
 pub mod player;
 pub mod sfx;
 
 /// Command to begin the game
 pub struct BeginGame;
 
-/// Begins the game by command [BeginGame]. Uses the options in [GameFile] to determine what to load.
+/// Begins the game by command [BeginGame]. Uses the options in [GameFile] to
+/// determine what to load.
 fn bootstrap_game(mut commands: Commands, query: Query<Entity, With<BeginGame>>, game_file: Res<GameFile>) {
   if let Ok(ent) = query.single() {
     match game_file.level_transistion {
@@ -48,7 +49,6 @@ impl Plugin for BootstrapPlugin {
     app.add_system(bootstrap_game.system());
   }
 }
-
 
 /// [PluginGroup] for game modules.
 pub struct GamePlugins;

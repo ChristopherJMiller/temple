@@ -5,9 +5,8 @@ use clap::{App, Arg};
 
 use crate::level::load::LoadLevel;
 use crate::level::LevelId;
-use crate::util::settings::GameFile;
 use crate::ui::LoadTitleScreen;
-
+use crate::util::settings::GameFile;
 
 /// `load` argument.
 pub const LOAD_ARG: &str = "load";
@@ -53,7 +52,7 @@ impl CliArgsBuilder {
   pub fn build(self) -> CliArgs {
     CliArgs {
       load_level: self.load_level,
-      show_fps_counter: self.show_fps_counter
+      show_fps_counter: self.show_fps_counter,
     }
   }
 }
@@ -77,13 +76,13 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
         .short("l")
         .long("load")
         .value_name("LEVEL_ID")
-        .help("Load into a specific level id")
+        .help("Load into a specific level id"),
     )
     .arg(
       Arg::with_name(FPS_ARG)
-      .long("fps")
-      .takes_value(false)
-      .help("Enables the in-game fps counter")
+        .long("fps")
+        .takes_value(false)
+        .help("Enables the in-game fps counter"),
     );
 
   let matches = cli.get_matches();
@@ -94,7 +93,10 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
     if let Ok(id) = l.parse::<u32>() {
       builder = builder.load_level(id);
     } else {
-      panic!("Invalid entry for the load level argument. Expected an integer, found \"{}\"", l);
+      panic!(
+        "Invalid entry for the load level argument. Expected an integer, found \"{}\"",
+        l
+      );
     }
   }
 
