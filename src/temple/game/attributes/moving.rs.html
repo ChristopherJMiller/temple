@@ -177,6 +177,8 @@
 <span id="177">177</span>
 <span id="178">178</span>
 <span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! TODO: `speed` should be changed to `dist`, for easier usage.</span>
@@ -277,7 +279,9 @@
   <span class="doccomment">/// Calculates a impulse that is applied to the player when on the sprite, to</span>
   <span class="doccomment">/// keep them from falling off.</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_passenger_force</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec2</span> {
-    <span class="op">-</span>((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>) <span class="op">*</span> (((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>) <span class="op">*</span> <span class="self">self</span>.<span class="ident">current_time</span> <span class="op">+</span> <span class="ident">PI</span> <span class="op">+</span> <span class="ident">PI</span><span class="op">/</span><span class="number">6.0</span>).<span class="ident">sin</span>() <span class="op">*</span> <span class="self">self</span>.<span class="ident">vec_dir</span>
+    <span class="op">-</span>((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>)
+      <span class="op">*</span> (((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>) <span class="op">*</span> <span class="self">self</span>.<span class="ident">current_time</span> <span class="op">+</span> <span class="ident">PI</span> <span class="op">+</span> <span class="ident">PI</span> <span class="op">/</span> <span class="number">6.0</span>).<span class="ident">sin</span>()
+      <span class="op">*</span> <span class="self">self</span>.<span class="ident">vec_dir</span>
   }
 }
 
@@ -349,7 +353,7 @@
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">forces</span>, <span class="ident">player_c</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">entity</span>) <span class="op">=</span> <span class="ident">player_c</span>.<span class="ident">on_moving_entity</span> {
-      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">moving</span>) <span class="op">=</span>  <span class="ident">moving_sprite</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">MovingSprite</span><span class="op">&gt;</span>(<span class="ident">entity</span>) {
+      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">moving</span>) <span class="op">=</span> <span class="ident">moving_sprite</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">MovingSprite</span><span class="op">&gt;</span>(<span class="ident">entity</span>) {
         <span class="kw">let</span> <span class="ident">force</span>: <span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">Real</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">7.0</span> <span class="op">*</span> <span class="ident">moving</span>.<span class="ident">get_passenger_force</span>()).<span class="ident">into</span>();
         <span class="ident">forces</span>.<span class="ident">force</span> <span class="op">=</span> <span class="ident">force</span>;
       }

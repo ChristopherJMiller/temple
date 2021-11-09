@@ -167,6 +167,12 @@
 <span id="167">167</span>
 <span id="168">168</span>
 <span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all config manifest loading for levels.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Level manifests are loaded on game boot and</span>
@@ -203,6 +209,8 @@
   <span class="kw">pub</span> <span class="ident">sprite_map</span>: <span class="ident">String</span>,
   <span class="doccomment">/// Sprites used in level</span>
   <span class="kw">pub</span> <span class="ident">sprites</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LevelSpriteEntry</span><span class="op">&gt;</span>,
+  <span class="doccomment">/// Music track for the level</span>
+  <span class="kw">pub</span> <span class="ident">music</span>: <span class="ident">String</span>,
 }
 
 <span class="doccomment">/// Sprite Entry for a [Level]</span>
@@ -230,6 +238,8 @@
   <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">LevelId</span>,
   <span class="doccomment">/// List of sprites in the level.</span>
   <span class="kw">pub</span> <span class="ident">sprites</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LevelSprite</span><span class="op">&gt;</span>,
+  <span class="doccomment">/// Music track for the level (will be loaded by the asset server).</span>
+  <span class="kw">pub</span> <span class="ident">music_file</span>: <span class="ident">String</span>,
 }
 
 <span class="doccomment">/// System that loads all levels into the [LevelMap] resource</span>
@@ -310,9 +320,11 @@
                 }
               }
 
+              <span class="kw">let</span> <span class="ident">music_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="string">&quot;audio/music&quot;</span>).<span class="ident">join</span>(<span class="ident">level</span>.<span class="ident">music</span>.<span class="ident">as_str</span>());
               <span class="kw">let</span> <span class="ident">level_obj</span> <span class="op">=</span> <span class="ident">Level</span> {
                 <span class="ident">id</span>: <span class="ident">level</span>.<span class="ident">id</span>,
                 <span class="ident">sprites</span>: <span class="ident">level_sprites</span>,
+                <span class="ident">music_file</span>: <span class="ident">music_path</span>.<span class="ident">to_str</span>().<span class="ident">unwrap</span>().<span class="ident">to_string</span>(),
               };
 
               <span class="kw">if</span> <span class="ident">levels</span>.<span class="ident">insert</span>(<span class="ident">level</span>.<span class="ident">id</span>, <span class="ident">level_obj</span>).<span class="ident">is_some</span>() {

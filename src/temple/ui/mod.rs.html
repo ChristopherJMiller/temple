@@ -28,19 +28,15 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
-<span id="31">31</span>
-<span id="32">32</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all UI elements for the game.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
-
 <span class="kw">use</span> <span class="ident">diagnostic</span>::{<span class="ident">setup_fps_text</span>, <span class="ident">update_fps_system</span>};
-<span class="kw">use</span> <span class="ident">title_screen</span>::{<span class="ident">setup_title_screen</span>, <span class="ident">title_menu_buttons</span>, <span class="ident">delete_title_screen</span>, <span class="ident">TitleMenuState</span>};
-
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">title_screen::LoadTitleScreen</span>;
+<span class="kw">use</span> <span class="ident">title_screen</span>::{<span class="ident">delete_title_screen</span>, <span class="ident">setup_title_screen</span>, <span class="ident">title_menu_buttons</span>, <span class="ident">TitleMenuState</span>};
 
-<span class="kw">mod</span> <span class="ident">title_screen</span>;
 <span class="kw">mod</span> <span class="ident">diagnostic</span>;
+<span class="kw">mod</span> <span class="ident">title_screen</span>;
 
 <span class="comment">// Spawns a [UiCameraBundle]</span>
 <span class="kw">fn</span> <span class="ident">setup_uicamera</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>) {

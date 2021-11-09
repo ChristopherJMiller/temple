@@ -64,6 +64,8 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Temple is a platform built with the [Bevy Engine](https://docs.rs/bevy/) and has a focus on</span>
 <span class="doccomment">//! configurability.</span>
 <span class="doccomment">//!</span>
@@ -72,15 +74,16 @@
 <span class="kw">use</span> <span class="ident">bevy::diagnostic::FrameTimeDiagnosticsPlugin</span>;
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_egui::EguiPlugin</span>;
+<span class="kw">use</span> <span class="ident">bevy_kira_audio::AudioPlugin</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">game::GamePlugins</span>;
 <span class="kw">use</span> <span class="ident">input::InputPlugin</span>;
 <span class="kw">use</span> <span class="ident">level::LevelPlugin</span>;
 <span class="kw">use</span> <span class="ident">sprite::SpritePlugin</span>;
-<span class="kw">use</span> <span class="ident">util::cli</span>::{<span class="ident">handle_cli_args</span>, <span class="ident">get_cli_args</span>};
+<span class="kw">use</span> <span class="ident">ui::UiPlugin</span>;
+<span class="kw">use</span> <span class="ident">util::cli</span>::{<span class="ident">get_cli_args</span>, <span class="ident">handle_cli_args</span>};
 <span class="kw">use</span> <span class="ident">util::files::verify_files</span>;
 <span class="kw">use</span> <span class="ident">util::settings::get_game_file</span>;
-<span class="kw">use</span> <span class="ident">ui::UiPlugin</span>;
 
 <span class="kw">mod</span> <span class="ident">game</span>;
 <span class="kw">mod</span> <span class="ident">input</span>;
@@ -120,6 +123,7 @@
     .<span class="ident">add_plugin</span>(<span class="ident">FrameTimeDiagnosticsPlugin::default</span>())
     .<span class="ident">add_plugin</span>(<span class="ident">RapierPhysicsPlugin</span>::<span class="op">&lt;</span><span class="ident">NoUserData</span><span class="op">&gt;</span><span class="ident">::default</span>())
     .<span class="ident">add_plugin</span>(<span class="ident">EguiPlugin</span>)
+    .<span class="ident">add_plugin</span>(<span class="ident">AudioPlugin</span>)
 
     <span class="comment">// Game Plugins</span>
     .<span class="ident">add_plugin</span>(<span class="ident">InputPlugin</span>)

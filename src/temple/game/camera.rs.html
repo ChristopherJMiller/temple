@@ -110,7 +110,7 @@
 
     <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> (<span class="ident">target</span> <span class="op">-</span> <span class="ident">camera_trans</span>.<span class="ident">translation</span>).<span class="ident">normalize_or_zero</span>();
     <span class="kw">let</span> <span class="ident">speed</span> <span class="op">=</span> ((<span class="ident">target</span> <span class="op">-</span> <span class="ident">camera_trans</span>.<span class="ident">translation</span>).<span class="ident">length</span>() <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>).<span class="ident">min</span>(<span class="ident">cam_speed</span>.<span class="number">0</span>);
-    
+
     <span class="ident">camera_trans</span>.<span class="ident">translation</span> <span class="op">+</span><span class="op">=</span> <span class="ident">dir</span> <span class="op">*</span> <span class="ident">speed</span> <span class="op">*</span> <span class="ident">time</span>.<span class="ident">delta_seconds</span>();
   }
 }
@@ -124,7 +124,7 @@
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">CameraPlugin</span> {
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">AppBuilder</span>) {
     <span class="ident">app</span>
-      .<span class="ident">insert_resource</span>::<span class="op">&lt;</span><span class="ident">CameraTrackingSpeed</span><span class="op">&gt;</span>(<span class="ident">CameraTrackingSpeed</span>(<span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>  <span class="op">*</span> <span class="number">64.0</span>))
+      .<span class="ident">insert_resource</span>::<span class="op">&lt;</span><span class="ident">CameraTrackingSpeed</span><span class="op">&gt;</span>(<span class="ident">CameraTrackingSpeed</span>(<span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="number">64.0</span>))
       .<span class="ident">add_system</span>(<span class="ident">target_camera</span>.<span class="ident">system</span>());
   }
 }
