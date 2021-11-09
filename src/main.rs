@@ -15,6 +15,7 @@ use util::cli::{handle_cli_args, get_cli_args};
 use util::files::verify_files;
 use util::settings::get_game_file;
 use ui::UiPlugin;
+use bevy_kira_audio::AudioPlugin;
 
 mod game;
 mod input;
@@ -54,6 +55,7 @@ fn main() {
     .add_plugin(FrameTimeDiagnosticsPlugin::default())
     .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
     .add_plugin(EguiPlugin)
+    .add_plugin(AudioPlugin)
 
     // Game Plugins
     .add_plugin(InputPlugin)

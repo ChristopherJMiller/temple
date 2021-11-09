@@ -7,10 +7,12 @@ use bevy::prelude::*;
 use bevy_rapier2d::na::Vector2;
 use bevy_rapier2d::prelude::*;
 use kurinji::Kurinji;
+use bevy_kira_audio::Audio;
 
 use super::attributes::{MovingSprite, Player};
 use super::collision_groups::*;
 use super::physics::PlayerSimulationSteps;
+use super::sfx::SfxHandles;
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
 use crate::sprite::SPRITE_SIZE;
 
@@ -134,13 +136,14 @@ fn handle_player_slow_fall(input: Res<Kurinji>, mut player: Query<&mut RigidBody
 }
 
 /// Consumes [Kurinji] inputs for player jumping.
-fn handle_player_jump(input: Res<Kurinji>, time: Res<Time>, mut player: Query<(&mut Player, &mut RigidBodyVelocity)>) {
+fn handle_player_jump(input: Res<Kurinji>, time: Res<Time>, mut player: Query<(&mut Player, &mut RigidBodyVelocity)>, audio: Res<Audio>, sfx_handles: Res<SfxHandles>) {
   if let Some((mut player_c, mut vel)) = player.iter_mut().next() {
     // Start Jump
     if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
       player_c.jump_in_progress = true;
       player_c.grounded = false;
       player_c.jump_boost_time = Player::JUMP_BOOST_TIME;
+      audio.play(sfx_handles.jump.clone());
     }
 
     // Apply Forces of the Jump

@@ -34,6 +34,8 @@ pub struct LevelDefinition {
   pub sprite_map: String,
   /// Sprites used in level
   pub sprites: Vec<LevelSpriteEntry>,
+  /// Music track for the level
+  pub music: String,
 }
 
 /// Sprite Entry for a [Level]
@@ -61,6 +63,8 @@ pub struct Level {
   pub id: LevelId,
   /// List of sprites in the level.
   pub sprites: Vec<LevelSprite>,
+  /// Music track for the level (will be loaded by the asset server).
+  pub music_file: String,
 }
 
 /// System that loads all levels into the [LevelMap] resource
@@ -141,9 +145,12 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 }
               }
 
+
+              let music_path = Path::new("audio/music").join(level.music.as_str());
               let level_obj = Level {
                 id: level.id,
                 sprites: level_sprites,
+                music_file: music_path.to_str().unwrap().to_string(),
               };
 
               if levels.insert(level.id, level_obj).is_some() {

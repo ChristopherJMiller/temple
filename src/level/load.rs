@@ -7,12 +7,14 @@
 //! [LevelLoadedSprite]. Instruction [UnloadLevel] can be added to the original
 //! [LoadLevel] entity to instruct an unload.
 
+use bevy::asset::LoadState;
 use bevy::prelude::*;
 
 use super::{LevelId, LevelMap};
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::sprite::{GameSprite, SpriteMap, SPRITE_SIZE};
+use bevy_kira_audio::{AudioSource, Audio};
 
 /// Instruction to load a new level
 pub struct LoadLevel(pub LevelId);
@@ -35,6 +37,8 @@ pub fn load_level(
   query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>,
   sprites: Res<SpriteMap>,
   levels: Res<LevelMap>,
+  asset_server: Res<AssetServer>,
+  audio: Res<Audio>
 ) {
   query.for_each(|(e, load_level)| {
     let level_id = load_level.0;
@@ -43,6 +47,19 @@ pub fn load_level(
     let level = levels
       .get(&level_id)
       .unwrap_or_else(|| panic!("Attempted to load invalid level id {}", level_id));
+
+    let music: Handle<AudioSource> = asset_server.get_handle(level.music_file.as_str());
+
+    // Load music
+    if asset_server.get_load_state(&music) == LoadState::Loaded {
+      audio.play_looped(music);
+    } else if asset_server.get_load_state(&music) != LoadState::Loading {
+      let _: Handle<AudioSource> = asset_server.load(level.music_file.as_str());
+      return;
+    } else {
+      // Wait for load
+      return;
+    }    
 
     let mut player_trans = Vec3::ZERO;
 

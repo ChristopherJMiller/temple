@@ -3,6 +3,7 @@ version = 1
 [[levels]]
 id = 0
 sprite_map = "levels/0.png"
+music = "walkintherain.ogg"
 
 [[levels.sprites]]
 color = 0x000000

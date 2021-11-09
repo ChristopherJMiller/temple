@@ -5,7 +5,7 @@ authors = ["Christopher Miller <cmiller548@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-bevy = "0.5.0"
+bevy = { version = "0.5.0", default-features = false, features = ["bevy_dynamic_plugin", "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11"] }
 bevy_rapier2d = { version = "^0.11", features = [ "simd-stable" ] }
 kurinji = { git = "https://github.com/ChristopherJMiller/kurinji", branch = "upgrade_bevy_0.5" }
 bevy_egui = "^0.7"
@@ -17,6 +17,7 @@ env_logger = "^0.8"
 clap = "^2.33"
 console = "^0.14"
 dialoguer = "^0.8"
+bevy_kira_audio = { version = "0.6", features = ["wav"] }
 
 [build-dependencies]
 chrono = "^0.4"
@@ -32,4 +33,4 @@ opt-level = 3
 codegen-units = 1
 
 [features]
-debug = []
+debug = ["bevy/trace"]

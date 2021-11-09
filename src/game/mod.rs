@@ -10,12 +10,15 @@ use physics::ModifyPhysicsPlugin;
 
 use crate::{level::load::LoadLevel, util::settings::{GameFile, LevelTransistionType}};
 
+use self::sfx::SfxPlugin;
+
 pub mod physics;
 pub mod attributes;
 pub mod camera;
 pub mod collision;
 pub mod collision_groups;
 pub mod player;
+pub mod sfx;
 
 /// Command to begin the game
 pub struct BeginGame;
@@ -58,6 +61,7 @@ impl PluginGroup for GamePlugins {
       .add(AttributePlugin)
       .add(CollisionPlugin)
       .add(ModifyPhysicsPlugin)
-      .add(BootstrapPlugin);
+      .add(BootstrapPlugin)
+      .add(SfxPlugin);
   }
 }
