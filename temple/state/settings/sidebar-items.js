@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Settings",""]]});
+initSidebarItems({"struct":[["Settings","Settings entries"]]});

@@ -159,8 +159,6 @@
 <span class="doccomment">//! [LevelLoadedSprite]. Instruction [UnloadLevel] can be added to the original</span>
 <span class="doccomment">//! [LoadLevel] entity to instruct an unload.</span>
 
-<span class="kw">use</span> <span class="ident">std::path::Path</span>;
-
 <span class="kw">use</span> <span class="ident">bevy::asset::LoadState</span>;
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_kira_audio</span>::{<span class="ident">Audio</span>, <span class="ident">AudioSource</span>};
@@ -262,8 +260,10 @@
   });
 }
 
+<span class="doccomment">/// Tag to track a level having save files applied to it.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LevelSaveApplied</span>;
 
+<span class="doccomment">/// Applies the checkpoint location if an active save warrants it.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">apply_save_on_load</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RigidBodyPosition</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Player</span>)<span class="op">&gt;</span>,
