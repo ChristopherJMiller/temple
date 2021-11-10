@@ -66,6 +66,9 @@
 <span id="66">66</span>
 <span id="67">67</span>
 <span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Temple is a platform built with the [Bevy Engine](https://docs.rs/bevy/) and has a focus on</span>
 <span class="doccomment">//! configurability.</span>
 <span class="doccomment">//!</span>
@@ -80,6 +83,7 @@
 <span class="kw">use</span> <span class="ident">input::InputPlugin</span>;
 <span class="kw">use</span> <span class="ident">level::LevelPlugin</span>;
 <span class="kw">use</span> <span class="ident">sprite::SpritePlugin</span>;
+<span class="kw">use</span> <span class="ident">state::StatePlugin</span>;
 <span class="kw">use</span> <span class="ident">ui::UiPlugin</span>;
 <span class="kw">use</span> <span class="ident">util::cli</span>::{<span class="ident">get_cli_args</span>, <span class="ident">handle_cli_args</span>};
 <span class="kw">use</span> <span class="ident">util::files::verify_files</span>;
@@ -89,6 +93,7 @@
 <span class="kw">mod</span> <span class="ident">input</span>;
 <span class="kw">mod</span> <span class="ident">level</span>;
 <span class="kw">mod</span> <span class="ident">sprite</span>;
+<span class="kw">mod</span> <span class="ident">state</span>;
 <span class="kw">mod</span> <span class="ident">ui</span>;
 <span class="kw">mod</span> <span class="ident">util</span>;
 
@@ -126,6 +131,7 @@
     .<span class="ident">add_plugin</span>(<span class="ident">AudioPlugin</span>)
 
     <span class="comment">// Game Plugins</span>
+    .<span class="ident">add_plugin</span>(<span class="ident">StatePlugin</span>)
     .<span class="ident">add_plugin</span>(<span class="ident">InputPlugin</span>)
     .<span class="ident">add_plugin</span>(<span class="ident">SpritePlugin</span>)
     .<span class="ident">add_plugin</span>(<span class="ident">LevelPlugin</span>)

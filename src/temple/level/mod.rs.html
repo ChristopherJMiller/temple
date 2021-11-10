@@ -30,13 +30,14 @@
 <span id="30">30</span>
 <span id="31">31</span>
 <span id="32">32</span>
+<span id="33">33</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Level config management and level loading.</span>
 
 <span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">config</span>::{<span class="ident">load_level_files</span>, <span class="ident">Level</span>, <span class="ident">LevelFileVersion</span>};
-<span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">load_level</span>, <span class="ident">unload_level</span>};
+<span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">unload_level</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sprite::SpritePluginSteps</span>;
 
@@ -59,7 +60,8 @@
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">LevelMap</span><span class="op">&gt;</span>()
       .<span class="ident">add_startup_system</span>(<span class="ident">load_level_files</span>.<span class="ident">system</span>().<span class="ident">after</span>(<span class="ident">SpritePluginSteps::LoadSprites</span>))
       .<span class="ident">add_system</span>(<span class="ident">load_level</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">unload_level</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">unload_level</span>.<span class="ident">system</span>())
+      .<span class="ident">add_system</span>(<span class="ident">apply_save_on_load</span>.<span class="ident">system</span>());
   }
 }
 </code></pre></div>

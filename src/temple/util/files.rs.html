@@ -83,6 +83,18 @@
 <span id="83">83</span>
 <span id="84">84</span>
 <span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles manifest validation</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # About</span>
@@ -95,7 +107,9 @@
 <span class="doccomment">//! - Parses them from their TOML string.</span>
 <span class="doccomment">//! - Reports any found issues.</span>
 
+<span class="kw">use</span> <span class="ident">std::env::current_exe</span>;
 <span class="kw">use</span> <span class="ident">std::fs</span>;
+<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
 <span class="kw">use</span> <span class="ident">toml::de::Error</span>;
 
@@ -115,16 +129,26 @@
 <span class="doccomment">/// `types.toml` location</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPRITE_TYPE_FILE_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/sprites/types.toml&quot;</span>;
 
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_game_root</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PathBuf</span> {
+  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">base</span> <span class="op">=</span> <span class="ident">current_exe</span>().<span class="ident">unwrap</span>();
+  <span class="ident">base</span>.<span class="ident">pop</span>();
+  <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">debug_assertions</span>) {
+    <span class="ident">base</span>.<span class="ident">join</span>(<span class="string">&quot;../..&quot;</span>).<span class="ident">join</span>(<span class="ident">path</span>)
+  } <span class="kw">else</span> {
+    <span class="ident">base</span>.<span class="ident">join</span>(<span class="ident">path</span>)
+  }
+}
+
 <span class="doccomment">/// Verifies all game config files are found and valid.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">verify_files</span>() {
-  <span class="kw">let</span> <span class="ident">game_settings_file</span> <span class="op">=</span>
-    <span class="ident">fs::read_to_string</span>(<span class="ident">GAME_SETTING_PATH</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {}&quot;</span>, <span class="ident">GAME_SETTING_PATH</span>));
-  <span class="kw">let</span> <span class="ident">level_file</span> <span class="op">=</span>
-    <span class="ident">fs::read_to_string</span>(<span class="ident">LEVEL_FILE_PATH</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {}&quot;</span>, <span class="ident">LEVEL_FILE_PATH</span>));
-  <span class="kw">let</span> <span class="ident">sprite_file</span> <span class="op">=</span>
-    <span class="ident">fs::read_to_string</span>(<span class="ident">SPRITE_FILE_PATH</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {}&quot;</span>, <span class="ident">SPRITE_FILE_PATH</span>));
-  <span class="kw">let</span> <span class="ident">sprite_types_file</span> <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">SPRITE_TYPE_FILE_PATH</span>)
-    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {}&quot;</span>, <span class="ident">SPRITE_TYPE_FILE_PATH</span>));
+  <span class="kw">let</span> <span class="ident">game_settings_file</span> <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">GAME_SETTING_PATH</span>))
+    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {:?}&quot;</span>, <span class="ident">from_game_root</span>(<span class="ident">GAME_SETTING_PATH</span>)));
+  <span class="kw">let</span> <span class="ident">level_file</span> <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">LEVEL_FILE_PATH</span>))
+    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {}&quot;</span>, <span class="ident">LEVEL_FILE_PATH</span>));
+  <span class="kw">let</span> <span class="ident">sprite_file</span> <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">SPRITE_FILE_PATH</span>))
+    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {}&quot;</span>, <span class="ident">SPRITE_FILE_PATH</span>));
+  <span class="kw">let</span> <span class="ident">sprite_types_file</span> <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">SPRITE_TYPE_FILE_PATH</span>))
+    .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="macro">panic!</span>(<span class="string">&quot;Failed to open file {:?}&quot;</span>, <span class="ident">from_game_root</span>(<span class="ident">SPRITE_TYPE_FILE_PATH</span>)));
 
   <span class="kw">let</span> <span class="ident">verify_game_settings</span> <span class="op">=</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">GameFile</span><span class="op">&gt;</span>(<span class="ident">game_settings_file</span>.<span class="ident">as_str</span>());
   <span class="kw">let</span> <span class="ident">verify_level_file</span> <span class="op">=</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">LevelFile</span><span class="op">&gt;</span>(<span class="ident">level_file</span>.<span class="ident">as_str</span>());

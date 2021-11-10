@@ -58,12 +58,16 @@
 <span id="58">58</span>
 <span id="59">59</span>
 <span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Input config management and associated systems.</span>
 
 <span class="kw">use</span> <span class="ident">std::fs</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">kurinji</span>::{<span class="ident">Kurinji</span>, <span class="ident">KurinjiPlugin</span>};
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files::from_game_root</span>;
 
 <span class="doccomment">/// Input key for up direction input</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UP</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;UP&quot;</span>;
@@ -80,7 +84,7 @@
 
 <span class="doccomment">/// Loads [Kurinji] input config files</span>
 <span class="kw">fn</span> <span class="ident">setup_inputs</span>(<span class="kw-2">mut</span> <span class="ident">kurinji</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">bindings</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="string">&quot;assets/inputs/keyboard.ron&quot;</span>) {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">bindings</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/inputs/keyboard.ron&quot;</span>)) {
     <span class="ident">kurinji</span>.<span class="ident">set_bindings_with_ron</span>(<span class="kw-2">&amp;</span><span class="ident">bindings</span>);
   } <span class="kw">else</span> {
     <span class="macro">panic!</span>(<span class="string">&quot;Unable to load input file!&quot;</span>);

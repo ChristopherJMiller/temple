@@ -188,7 +188,7 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">LevelId</span>, <span class="ident">LevelMap</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sprite</span>::{<span class="ident">SpriteId</span>, <span class="ident">SpriteMap</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files::LEVEL_FILE_PATH</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::{<span class="ident">from_game_root</span>, <span class="ident">LEVEL_FILE_PATH</span>};
 
 <span class="doccomment">/// Global config file version.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LevelFileVersion</span>(<span class="kw">pub</span> <span class="ident">u32</span>);
@@ -247,7 +247,7 @@
   <span class="kw">let</span> <span class="ident">version_num</span> <span class="op">=</span> <span class="ident">version</span>.<span class="number">0</span>;
 
   <span class="comment">// Load LevelFile</span>
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">LEVEL_FILE_PATH</span>) {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">LEVEL_FILE_PATH</span>)) {
     <span class="comment">// Deserialize</span>
     <span class="kw">match</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">LevelFile</span><span class="op">&gt;</span>(<span class="ident">file</span>.<span class="ident">as_str</span>()) {
       <span class="comment">// Check for valid version</span>
@@ -262,7 +262,7 @@
         <span class="comment">// Load level sprite definitions into map</span>
         <span class="kw">for</span> <span class="ident">level</span> <span class="kw">in</span> <span class="ident">level_list</span>.<span class="ident">levels</span>.<span class="ident">iter</span>() {
           <span class="comment">// Load level map</span>
-          <span class="kw">let</span> <span class="ident">full_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="string">&quot;assets/textures&quot;</span>).<span class="ident">join</span>(<span class="ident">level</span>.<span class="ident">sprite_map</span>.<span class="ident">as_str</span>());
+          <span class="kw">let</span> <span class="ident">full_path</span> <span class="op">=</span> <span class="ident">from_game_root</span>(<span class="ident">Path::new</span>(<span class="string">&quot;assets/textures&quot;</span>).<span class="ident">join</span>(<span class="ident">level</span>.<span class="ident">sprite_map</span>.<span class="ident">as_str</span>()));
           <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">bitmap</span>) <span class="op">=</span> <span class="ident">fs::File::open</span>(<span class="ident">full_path</span>) {
             <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder::new</span>(<span class="ident">bitmap</span>);
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">info</span>, <span class="kw-2">mut</span> <span class="ident">reader</span>)) <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">read_info</span>() {
@@ -320,7 +320,7 @@
                 }
               }
 
-              <span class="kw">let</span> <span class="ident">music_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="string">&quot;audio/music&quot;</span>).<span class="ident">join</span>(<span class="ident">level</span>.<span class="ident">music</span>.<span class="ident">as_str</span>());
+              <span class="kw">let</span> <span class="ident">music_path</span> <span class="op">=</span> <span class="ident">from_game_root</span>(<span class="ident">Path::new</span>(<span class="string">&quot;assets/audio/music&quot;</span>).<span class="ident">join</span>(<span class="ident">level</span>.<span class="ident">music</span>.<span class="ident">as_str</span>()));
               <span class="kw">let</span> <span class="ident">level_obj</span> <span class="op">=</span> <span class="ident">Level</span> {
                 <span class="ident">id</span>: <span class="ident">level</span>.<span class="ident">id</span>,
                 <span class="ident">sprites</span>: <span class="ident">level_sprites</span>,

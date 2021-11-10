@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["game_state",""],["settings",""]],"struct":[["StatePlugin","[Plugin] for manging persistent game states (settings, saves, etc.)"]]});

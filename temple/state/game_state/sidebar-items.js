@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["SAVES_PATH",""]],"enum":[["LevelClearState","Describes the clear state of a given visted level."]],"fn":[["bootstrap_and_get_saves",""],["write_save",""],["write_saves",""]],"struct":[["ActiveSave",""],["AvaliableSaves",""],["GameSaveState","Game save file to manage game flags and level clears"]]});

@@ -218,7 +218,7 @@
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::{<span class="ident">SPRITE_FILE_PATH</span>, <span class="ident">SPRITE_TYPE_FILE_PATH</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::{<span class="ident">from_game_root</span>, <span class="ident">SPRITE_FILE_PATH</span>, <span class="ident">SPRITE_TYPE_FILE_PATH</span>};
 
 <span class="doccomment">/// Conversion of game unit to pixel.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPRITE_SIZE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">16</span>;
@@ -280,7 +280,7 @@
 <span class="kw">fn</span> <span class="ident">load_sprite_types</span>(<span class="ident">version</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">SpriteFileVersion</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">sprite_types</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">SpriteTypeMap</span><span class="op">&gt;</span>) {
   <span class="kw">let</span> <span class="ident">version_num</span> <span class="op">=</span> <span class="ident">version</span>.<span class="number">0</span>;
 
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">SPRITE_TYPE_FILE_PATH</span>) {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">SPRITE_TYPE_FILE_PATH</span>)) {
     <span class="kw">match</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">SpriteTypesFile</span><span class="op">&gt;</span>(<span class="ident">file</span>.<span class="ident">as_str</span>()) {
       <span class="prelude-val">Ok</span>(<span class="ident">types</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="comment">// Ensure is same version number as sprites definition file</span>
@@ -322,7 +322,7 @@
   <span class="kw">let</span> <span class="ident">version_num</span> <span class="op">=</span> <span class="ident">version</span>.<span class="number">0</span>;
 
   <span class="comment">// Load Sprite File</span>
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">SPRITE_FILE_PATH</span>) {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">SPRITE_FILE_PATH</span>)) {
     <span class="kw">match</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">SpriteFile</span><span class="op">&gt;</span>(<span class="ident">file</span>.<span class="ident">as_str</span>()) {
       <span class="prelude-val">Ok</span>(<span class="ident">sprites</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">sprites</span>.<span class="ident">version</span> <span class="op">!</span><span class="op">=</span> <span class="ident">version_num</span> {
@@ -334,7 +334,7 @@
 
         <span class="kw">for</span> <span class="ident">sprite</span> <span class="kw">in</span> <span class="ident">sprites</span>.<span class="ident">sprites</span>.<span class="ident">iter</span>() {
           <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">sprite_type</span>) <span class="op">=</span> <span class="ident">sprite_types</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">sprite</span>.<span class="ident">sprite_type</span>) {
-            <span class="kw">let</span> <span class="ident">full_path</span> <span class="op">=</span> <span class="ident">Path::new</span>(<span class="string">&quot;textures&quot;</span>).<span class="ident">join</span>(<span class="ident">sprite</span>.<span class="ident">texture</span>.<span class="ident">as_str</span>());
+            <span class="kw">let</span> <span class="ident">full_path</span> <span class="op">=</span> <span class="ident">from_game_root</span>(<span class="ident">Path::new</span>(<span class="string">&quot;assets/textures&quot;</span>).<span class="ident">join</span>(<span class="ident">sprite</span>.<span class="ident">texture</span>.<span class="ident">as_str</span>()));
 
             <span class="kw">if</span> <span class="op">!</span><span class="ident">Path::new</span>(<span class="string">&quot;assets&quot;</span>).<span class="ident">join</span>(<span class="ident">full_path</span>.<span class="ident">clone</span>()).<span class="ident">is_file</span>() {
               <span class="macro">panic!</span>(
