@@ -7,8 +7,6 @@
 //! [LevelLoadedSprite]. Instruction [UnloadLevel] can be added to the original
 //! [LoadLevel] entity to instruct an unload.
 
-use std::path::Path;
-
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioSource};
@@ -110,8 +108,10 @@ pub fn load_level(
   });
 }
 
+/// Tag to track a level having save files applied to it.
 pub struct LevelSaveApplied;
 
+/// Applies the checkpoint location if an active save warrants it.
 pub fn apply_save_on_load(
   mut commands: Commands,
   mut player: Query<(&mut RigidBodyPosition, &mut Player)>,

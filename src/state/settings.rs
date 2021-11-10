@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+/// Settings entries
 #[derive(Serialize, Deserialize, Default)]
 pub struct Settings {
   // Volume Settings

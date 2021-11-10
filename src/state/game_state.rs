@@ -24,6 +24,7 @@ pub struct GameSaveState {
 }
 
 impl GameSaveState {
+  /// Creates a valid string key for use in TOML (numbers can't be used)
   pub fn key(id: LevelId) -> String {
     format!("L{}", id)
   }
@@ -38,11 +39,14 @@ impl GameSaveState {
 
 const SAVES_PATH: &str = "saves";
 
+/// [Res] of loaded save files
 pub struct AvaliableSaves(pub HashMap<String, GameSaveState>);
 
+/// [Res] of the selected save file.
 #[derive(Clone, Default)]
 pub struct ActiveSave(pub Option<GameSaveState>);
 
+/// Loads the `saves/` directory and any valid present save files
 pub fn bootstrap_and_get_saves() -> HashMap<String, GameSaveState> {
   let saves_dir = from_game_root(SAVES_PATH);
   if !saves_dir.is_dir() {
@@ -72,6 +76,7 @@ pub fn bootstrap_and_get_saves() -> HashMap<String, GameSaveState> {
   saves
 }
 
+/// Writes a save file
 pub fn write_save(save: &GameSaveState) {
   let saves_dir = from_game_root(SAVES_PATH);
   let mut save_path = saves_dir.join(save.name.clone());
@@ -82,6 +87,7 @@ pub fn write_save(save: &GameSaveState) {
   }
 }
 
+/// Writes the [HashMap] of save files used by [AvaliableSaves]
 pub fn write_saves(saves: &HashMap<String, GameSaveState>) {
   for (_, save) in saves {
     write_save(save);
