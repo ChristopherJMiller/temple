@@ -1,0 +1,41 @@
+use std::borrow::Cow;
+use std::fs::read;
+
+use bevy::prelude::*;
+use bevy_egui::egui::{self, FontDefinitions};
+use bevy_egui::EguiContext;
+
+use crate::util::files::from_game_root;
+
+pub fn setup_egui_font(egui_ctx: ResMut<EguiContext>) {
+  let ctx = &mut egui_ctx.ctx();
+
+  let mut fonts = FontDefinitions::default();
+
+  fonts.font_data.insert(
+    "Vollkorn-Medium".to_owned(),
+    Cow::from(read(from_game_root("assets/fonts/Vollkorn-Medium.ttf")).unwrap()),
+  );
+
+  fonts
+    .fonts_for_family
+    .insert(egui::FontFamily::Proportional, vec!["Vollkorn-Medium".to_owned()]);
+
+  fonts
+    .family_and_size
+    .insert(egui::TextStyle::Heading, (egui::FontFamily::Proportional, 30.0));
+
+  fonts
+    .family_and_size
+    .insert(egui::TextStyle::Body, (egui::FontFamily::Proportional, 22.0));
+
+  fonts
+    .family_and_size
+    .insert(egui::TextStyle::Button, (egui::FontFamily::Proportional, 24.0));
+
+  fonts
+    .family_and_size
+    .insert(egui::TextStyle::Small, (egui::FontFamily::Proportional, 15.0));
+
+  ctx.set_fonts(fonts);
+}

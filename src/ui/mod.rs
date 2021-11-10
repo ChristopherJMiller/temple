@@ -2,10 +2,12 @@
 
 use bevy::prelude::*;
 use diagnostic::{setup_fps_text, update_fps_system};
+use font::setup_egui_font;
 pub use title_screen::LoadTitleScreen;
 use title_screen::{delete_title_screen, setup_title_screen, title_menu_buttons, TitleMenuState};
 
 mod diagnostic;
+mod font;
 mod title_screen;
 
 // Spawns a [UiCameraBundle]
@@ -20,6 +22,7 @@ impl Plugin for UiPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
       .init_resource::<TitleMenuState>()
+      .add_startup_system(setup_egui_font.system())
       .add_startup_system(setup_uicamera.system())
       .add_startup_system(setup_fps_text.system())
       .add_system(setup_title_screen.system())

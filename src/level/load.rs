@@ -7,15 +7,19 @@
 //! [LevelLoadedSprite]. Instruction [UnloadLevel] can be added to the original
 //! [LoadLevel] entity to instruct an unload.
 
+use std::path::Path;
+
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioSource};
+use bevy_rapier2d::prelude::RigidBodyPosition;
 
 use super::{LevelId, LevelMap};
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
 use crate::sprite::{GameSprite, SpriteMap, SPRITE_SIZE};
+use crate::state::game_state::{ActiveSave, GameSaveState, LevelClearState};
 
 /// Instruction to load a new level
 pub struct LoadLevel(pub LevelId);
@@ -104,6 +108,31 @@ pub fn load_level(
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);
   });
+}
+
+pub struct LevelSaveApplied;
+
+pub fn apply_save_on_load(
+  mut commands: Commands,
+  mut player: Query<(&mut RigidBodyPosition, &mut Player)>,
+  level: Query<(Entity, &LoadLevel), (With<LevelLoadComplete>, Without<LevelSaveApplied>)>,
+  active_save: Res<ActiveSave>,
+) {
+  if let Ok((ent, load)) = level.single() {
+    if let Some(save) = &active_save.0 {
+      if let Some(level_state) = save.level_clears.get(&GameSaveState::key(load.0)) {
+        if let LevelClearState::AtCheckpoint(x, y) = level_state {
+          if let Ok((mut trans, mut player)) = player.single_mut() {
+            let pos = Vec2::new(*x, *y);
+            player.respawn_pos = pos;
+            trans.position.translation = pos.into();
+          }
+        }
+      }
+    }
+
+    commands.entity(ent).insert(LevelSaveApplied);
+  }
 }
 
 /// System that unloads a currently loaded level using the [UnloadLevel] tag

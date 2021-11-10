@@ -10,7 +10,9 @@
 //! - Parses them from their TOML string.
 //! - Reports any found issues.
 
+use std::env::current_exe;
 use std::fs;
+use std::path::{Path, PathBuf};
 
 use toml::de::Error;
 
@@ -30,16 +32,26 @@ pub const SPRITE_FILE_PATH: &str = "assets/sprites/sprites.toml";
 /// `types.toml` location
 pub const SPRITE_TYPE_FILE_PATH: &str = "assets/sprites/types.toml";
 
+pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
+  let mut base = current_exe().unwrap();
+  base.pop();
+  if cfg!(debug_assertions) {
+    base.join("../..").join(path)
+  } else {
+    base.join(path)
+  }
+}
+
 /// Verifies all game config files are found and valid.
 pub fn verify_files() {
-  let game_settings_file =
-    fs::read_to_string(GAME_SETTING_PATH).unwrap_or_else(|_| panic!("Failed to open file {}", GAME_SETTING_PATH));
-  let level_file =
-    fs::read_to_string(LEVEL_FILE_PATH).unwrap_or_else(|_| panic!("Failed to open file {}", LEVEL_FILE_PATH));
-  let sprite_file =
-    fs::read_to_string(SPRITE_FILE_PATH).unwrap_or_else(|_| panic!("Failed to open file {}", SPRITE_FILE_PATH));
-  let sprite_types_file = fs::read_to_string(SPRITE_TYPE_FILE_PATH)
-    .unwrap_or_else(|_| panic!("Failed to open file {}", SPRITE_TYPE_FILE_PATH));
+  let game_settings_file = fs::read_to_string(from_game_root(GAME_SETTING_PATH))
+    .unwrap_or_else(|_| panic!("Failed to open file {:?}", from_game_root(GAME_SETTING_PATH)));
+  let level_file = fs::read_to_string(from_game_root(LEVEL_FILE_PATH))
+    .unwrap_or_else(|_| panic!("Failed to open file {}", LEVEL_FILE_PATH));
+  let sprite_file = fs::read_to_string(from_game_root(SPRITE_FILE_PATH))
+    .unwrap_or_else(|_| panic!("Failed to open file {}", SPRITE_FILE_PATH));
+  let sprite_types_file = fs::read_to_string(from_game_root(SPRITE_TYPE_FILE_PATH))
+    .unwrap_or_else(|_| panic!("Failed to open file {:?}", from_game_root(SPRITE_TYPE_FILE_PATH)));
 
   let verify_game_settings = toml::from_str::<GameFile>(game_settings_file.as_str());
   let verify_level_file = toml::from_str::<LevelFile>(level_file.as_str());

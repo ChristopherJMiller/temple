@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 use bevy::prelude::*;
 use config::{load_level_files, Level, LevelFileVersion};
-use load::{load_level, unload_level};
+use load::{apply_save_on_load, load_level, unload_level};
 
 use crate::sprite::SpritePluginSteps;
 
@@ -27,6 +27,7 @@ impl Plugin for LevelPlugin {
       .init_resource::<LevelMap>()
       .add_startup_system(load_level_files.system().after(SpritePluginSteps::LoadSprites))
       .add_system(load_level.system())
-      .add_system(unload_level.system());
+      .add_system(unload_level.system())
+      .add_system(apply_save_on_load.system());
   }
 }

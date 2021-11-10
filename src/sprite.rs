@@ -15,7 +15,7 @@ use std::vec::Vec;
 use bevy::prelude::*;
 use serde::Deserialize;
 
-use crate::util::files::{SPRITE_FILE_PATH, SPRITE_TYPE_FILE_PATH};
+use crate::util::files::{from_game_root, SPRITE_FILE_PATH, SPRITE_TYPE_FILE_PATH};
 
 /// Conversion of game unit to pixel.
 pub const SPRITE_SIZE: u32 = 16;
@@ -77,7 +77,7 @@ pub struct GameSprite {
 fn load_sprite_types(version: Res<SpriteFileVersion>, mut sprite_types: ResMut<SpriteTypeMap>) {
   let version_num = version.0;
 
-  if let Ok(file) = fs::read_to_string(SPRITE_TYPE_FILE_PATH) {
+  if let Ok(file) = fs::read_to_string(from_game_root(SPRITE_TYPE_FILE_PATH)) {
     match toml::from_str::<SpriteTypesFile>(file.as_str()) {
       Ok(types) => {
         // Ensure is same version number as sprites definition file
@@ -119,7 +119,7 @@ fn load_sprites(
   let version_num = version.0;
 
   // Load Sprite File
-  if let Ok(file) = fs::read_to_string(SPRITE_FILE_PATH) {
+  if let Ok(file) = fs::read_to_string(from_game_root(SPRITE_FILE_PATH)) {
     match toml::from_str::<SpriteFile>(file.as_str()) {
       Ok(sprites) => {
         if sprites.version != version_num {
@@ -131,7 +131,7 @@ fn load_sprites(
 
         for sprite in sprites.sprites.iter() {
           if let Some(sprite_type) = sprite_types.get(&sprite.sprite_type) {
-            let full_path = Path::new("textures").join(sprite.texture.as_str());
+            let full_path = from_game_root(Path::new("assets/textures").join(sprite.texture.as_str()));
 
             if !Path::new("assets").join(full_path.clone()).is_file() {
               panic!(

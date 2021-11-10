@@ -12,6 +12,7 @@ use game::GamePlugins;
 use input::InputPlugin;
 use level::LevelPlugin;
 use sprite::SpritePlugin;
+use state::StatePlugin;
 use ui::UiPlugin;
 use util::cli::{get_cli_args, handle_cli_args};
 use util::files::verify_files;
@@ -21,6 +22,7 @@ mod game;
 mod input;
 mod level;
 mod sprite;
+mod state;
 mod ui;
 mod util;
 
@@ -58,6 +60,7 @@ fn main() {
     .add_plugin(AudioPlugin)
 
     // Game Plugins
+    .add_plugin(StatePlugin)
     .add_plugin(InputPlugin)
     .add_plugin(SpritePlugin)
     .add_plugin(LevelPlugin)

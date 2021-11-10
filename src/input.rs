@@ -5,6 +5,8 @@ use std::fs;
 use bevy::prelude::*;
 use kurinji::{Kurinji, KurinjiPlugin};
 
+use crate::util::files::from_game_root;
+
 /// Input key for up direction input
 pub const UP: &str = "UP";
 /// Input key for right direction input
@@ -20,7 +22,7 @@ pub const MENU: &str = "MENU";
 
 /// Loads [Kurinji] input config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
-  if let Ok(bindings) = fs::read_to_string("assets/inputs/keyboard.ron") {
+  if let Ok(bindings) = fs::read_to_string(from_game_root("assets/inputs/keyboard.ron")) {
     kurinji.set_bindings_with_ron(&bindings);
   } else {
     panic!("Unable to load input file!");

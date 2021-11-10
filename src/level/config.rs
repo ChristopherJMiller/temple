@@ -13,7 +13,7 @@ use serde::Deserialize;
 
 use super::{LevelId, LevelMap};
 use crate::sprite::{SpriteId, SpriteMap};
-use crate::util::files::LEVEL_FILE_PATH;
+use crate::util::files::{from_game_root, LEVEL_FILE_PATH};
 
 /// Global config file version.
 pub struct LevelFileVersion(pub u32);
@@ -72,7 +72,7 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
   let version_num = version.0;
 
   // Load LevelFile
-  if let Ok(file) = fs::read_to_string(LEVEL_FILE_PATH) {
+  if let Ok(file) = fs::read_to_string(from_game_root(LEVEL_FILE_PATH)) {
     // Deserialize
     match toml::from_str::<LevelFile>(file.as_str()) {
       // Check for valid version
@@ -87,7 +87,7 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
         // Load level sprite definitions into map
         for level in level_list.levels.iter() {
           // Load level map
-          let full_path = Path::new("assets/textures").join(level.sprite_map.as_str());
+          let full_path = from_game_root(Path::new("assets/textures").join(level.sprite_map.as_str()));
           if let Ok(bitmap) = fs::File::open(full_path) {
             let decoder = Decoder::new(bitmap);
             if let Ok((info, mut reader)) = decoder.read_info() {
@@ -145,7 +145,7 @@ pub fn load_level_files(version: Res<LevelFileVersion>, sprites: Res<SpriteMap>,
                 }
               }
 
-              let music_path = Path::new("audio/music").join(level.music.as_str());
+              let music_path = from_game_root(Path::new("assets/audio/music").join(level.music.as_str()));
               let level_obj = Level {
                 id: level.id,
                 sprites: level_sprites,

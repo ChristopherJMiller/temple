@@ -5,6 +5,7 @@ use std::vec::Vec;
 
 use serde::{Deserialize, Serialize};
 
+use super::files::from_game_root;
 use crate::util::files::GAME_SETTING_PATH;
 
 /// Describes what method should be used to allow players to move from one level
@@ -51,7 +52,7 @@ impl Default for GameFile {
 
 /// Loads `game.toml`.
 pub fn get_game_file() -> GameFile {
-  if let Ok(file) = fs::read_to_string(GAME_SETTING_PATH) {
+  if let Ok(file) = fs::read_to_string(from_game_root(GAME_SETTING_PATH)) {
     match toml::from_str::<GameFile>(file.as_str()) {
       Ok(game_file) => game_file,
       Err(err) => panic!("Error while loading game file: {}", err),

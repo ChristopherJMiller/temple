@@ -7,6 +7,8 @@ use bevy_rapier2d::prelude::*;
 use super::{Attribute, Checkpoint, PlayerReachedCheckpoint};
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
+use crate::level::load::{LevelLoadComplete, LoadLevel};
+use crate::state::game_state::{write_save, ActiveSave, GameSaveState, LevelClearState};
 
 pub struct PlayerDied;
 
@@ -103,12 +105,23 @@ pub fn on_checkpoint_system(
   audio: Res<Audio>,
   sfx_handles: Res<SfxHandles>,
   channels: Res<AudioChannels>,
+  loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
+  mut active_save: ResMut<ActiveSave>,
 ) {
   if let Ok(mut player) = player.single_mut() {
     checkpoint_reached.for_each(|(ent, checkpoint)| {
       if player.respawn_pos != checkpoint.0 {
         player.respawn_pos = checkpoint.0;
         audio.play_in_channel(sfx_handles.checkpoint.clone(), &channels.sfx.0);
+        if let Some(save) = &mut active_save.0 {
+          if let Ok(level) = loaded_level.single() {
+            save.level_clears.insert(
+              GameSaveState::key(level.0),
+              LevelClearState::AtCheckpoint(checkpoint.0.x, checkpoint.0.y),
+            );
+            write_save(save);
+          }
+        }
       }
 
       commands.entity(ent).remove::<PlayerReachedCheckpoint>();
