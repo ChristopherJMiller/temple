@@ -282,7 +282,7 @@
 
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">SPRITE_TYPE_FILE_PATH</span>)) {
     <span class="kw">match</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">SpriteTypesFile</span><span class="op">&gt;</span>(<span class="ident">file</span>.<span class="ident">as_str</span>()) {
-      <span class="prelude-val">Ok</span>(<span class="ident">types</span>) <span class="op">=</span><span class="op">&gt;</span> {
+      <span class="prelude-val">Ok</span>(<span class="ident">types</span>) =&gt; {
         <span class="comment">// Ensure is same version number as sprites definition file</span>
         <span class="kw">if</span> <span class="ident">types</span>.<span class="ident">version</span> <span class="op">!</span><span class="op">=</span> <span class="ident">version_num</span> {
           <span class="macro">panic!</span>(
@@ -302,7 +302,7 @@
 
         <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;load_sprite_types&quot;</span>, <span class="string">&quot;{} sprite types registered&quot;</span>, <span class="ident">types</span>.<span class="ident">types</span>.<span class="ident">len</span>());
       },
-      <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
+      <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
         <span class="macro">panic!</span>(<span class="string">&quot;Failed to parse sprite types file: {}&quot;</span>, <span class="ident">err</span>);
       },
     }
@@ -324,7 +324,7 @@
   <span class="comment">// Load Sprite File</span>
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">SPRITE_FILE_PATH</span>)) {
     <span class="kw">match</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">SpriteFile</span><span class="op">&gt;</span>(<span class="ident">file</span>.<span class="ident">as_str</span>()) {
-      <span class="prelude-val">Ok</span>(<span class="ident">sprites</span>) <span class="op">=</span><span class="op">&gt;</span> {
+      <span class="prelude-val">Ok</span>(<span class="ident">sprites</span>) =&gt; {
         <span class="kw">if</span> <span class="ident">sprites</span>.<span class="ident">version</span> <span class="op">!</span><span class="op">=</span> <span class="ident">version_num</span> {
           <span class="macro">panic!</span>(
             <span class="string">&quot;Incorrect file version, should be {} but found {}&quot;</span>,
@@ -369,7 +369,7 @@
 
         <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;load_sprites&quot;</span>, <span class="string">&quot;{} sprites registered&quot;</span>, <span class="ident">sprites</span>.<span class="ident">sprites</span>.<span class="ident">len</span>());
       },
-      <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> {
+      <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
         <span class="macro">panic!</span>(<span class="string">&quot;Failed to parse sprite file: {}&quot;</span>, <span class="ident">err</span>);
       },
     }

@@ -79,7 +79,7 @@
   <span class="ident">entity</span>: <span class="ident">Entity</span>,
   <span class="ident">has_deadly</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Deadly</span><span class="op">&gt;</span>,
   <span class="ident">has_checkpoint</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Checkpoint</span><span class="op">&gt;</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
   <span class="kw">if</span> <span class="ident">has_deadly</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Deadly</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_ok</span>() {
     <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">Deadly::KEY</span>.<span class="ident">to_string</span>());
   } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">has_checkpoint</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Checkpoint</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_ok</span>() {
@@ -93,13 +93,13 @@
 <span class="doccomment">/// collision event.</span>
 <span class="kw">fn</span> <span class="ident">on_contact_with_player</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Commands</span>, <span class="ident">tag</span>: <span class="ident">String</span>, <span class="ident">collision_entity</span>: <span class="ident">Entity</span>) {
   <span class="kw">match</span> <span class="ident">tag</span>.<span class="ident">as_str</span>() {
-    <span class="ident">Deadly::KEY</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="ident">Deadly::KEY</span> =&gt; {
       <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">PlayerDied</span>);
     },
-    <span class="ident">Checkpoint::KEY</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="ident">Checkpoint::KEY</span> =&gt; {
       <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">collision_entity</span>).<span class="ident">insert</span>(<span class="ident">PlayerReachedCheckpoint</span>);
     },
-    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {},
+    <span class="kw">_</span> =&gt; {},
   };
 }
 

@@ -211,24 +211,24 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MovingDirection</span> {
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_param</span>(<span class="ident">value</span>: <span class="ident">i32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_param</span>(<span class="ident">value</span>: <span class="ident">i32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
     <span class="kw">match</span> <span class="ident">value</span> {
-      <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Right</span>),
-      <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Down</span>),
-      <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Left</span>),
-      <span class="number">3</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Up</span>),
-      <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+      <span class="number">0</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Right</span>),
+      <span class="number">1</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Down</span>),
+      <span class="number">2</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Left</span>),
+      <span class="number">3</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Up</span>),
+      <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
     }
   }
 }
 
 <span class="kw">impl</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Vec2</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">MovingDirection</span> {
-  <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec2</span> {
+  <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) -&gt; <span class="ident">Vec2</span> {
     <span class="kw">match</span> <span class="self">self</span> {
-      <span class="ident"><span class="self">Self</span>::Right</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Vec2::X</span>,
-      <span class="ident"><span class="self">Self</span>::Left</span> <span class="op">=</span><span class="op">&gt;</span> <span class="op">-</span><span class="ident">Vec2::X</span>,
-      <span class="ident"><span class="self">Self</span>::Up</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Vec2::Y</span>,
-      <span class="ident"><span class="self">Self</span>::Down</span> <span class="op">=</span><span class="op">&gt;</span> <span class="op">-</span><span class="ident">Vec2::Y</span>,
+      <span class="ident"><span class="self">Self</span>::Right</span> =&gt; <span class="ident">Vec2::X</span>,
+      <span class="ident"><span class="self">Self</span>::Left</span> =&gt; <span class="op">-</span><span class="ident">Vec2::X</span>,
+      <span class="ident"><span class="self">Self</span>::Up</span> =&gt; <span class="ident">Vec2::Y</span>,
+      <span class="ident"><span class="self">Self</span>::Down</span> =&gt; <span class="op">-</span><span class="ident">Vec2::Y</span>,
     }
   }
 }
@@ -247,7 +247,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MovingSprite</span> {
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">dir</span>: <span class="ident">MovingDirection</span>, <span class="ident">distance</span>: <span class="ident">i32</span>, <span class="ident">duration</span>: <span class="ident">i32</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">dir</span>: <span class="ident">MovingDirection</span>, <span class="ident">distance</span>: <span class="ident">i32</span>, <span class="ident">duration</span>: <span class="ident">i32</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>) -&gt; <span class="self">Self</span> {
     <span class="kw">let</span> <span class="ident">sprite_distance</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="ident">distance</span> <span class="kw">as</span> <span class="ident">f32</span>;
     <span class="kw">let</span> <span class="ident">vec_dir</span>: <span class="ident">Vec2</span> <span class="op">=</span> <span class="ident">dir</span>.<span class="ident">into</span>();
     <span class="ident">MovingSprite</span> {
@@ -268,17 +268,17 @@
   }
 
   <span class="doccomment">/// Returns the position of the sprite, per current time</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec2</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec2</span> {
     <span class="self">self</span>.<span class="ident">starting_position</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">get_position_delta</span>()
   }
 
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_position_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec2</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_position_delta</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec2</span> {
     <span class="self">self</span>.<span class="ident">delta</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">movement_vect</span>
   }
 
   <span class="doccomment">/// Calculates a impulse that is applied to the player when on the sprite, to</span>
   <span class="doccomment">/// keep them from falling off.</span>
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_passenger_force</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec2</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_passenger_force</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec2</span> {
     <span class="op">-</span>((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>)
       <span class="op">*</span> (((<span class="number">2.0</span> <span class="op">*</span> <span class="ident">PI</span>) <span class="op">/</span> <span class="self">self</span>.<span class="ident">duration</span>) <span class="op">*</span> <span class="self">self</span>.<span class="ident">current_time</span> <span class="op">+</span> <span class="ident">PI</span> <span class="op">+</span> <span class="ident">PI</span> <span class="op">/</span> <span class="number">6.0</span>).<span class="ident">sin</span>()
       <span class="op">*</span> <span class="self">self</span>.<span class="ident">vec_dir</span>
@@ -286,7 +286,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">MovingSprite</span> {
-  <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
     <span class="self">Self</span> {
       <span class="ident">dir</span>: <span class="ident">MovingDirection::Right</span>,
       <span class="ident">duration</span>: <span class="number">0.0</span>,

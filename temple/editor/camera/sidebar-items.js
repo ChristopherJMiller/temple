@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["get_camera_speed",""],["handle_camera_input",""],["handle_camera_zooming",""],["lerp",""]],"struct":[["CameraMoveSpeed",""],["EditorCamera",""],["EditorCameraPlugin","[Plugin] for camera systems."]]});

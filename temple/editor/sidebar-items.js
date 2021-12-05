@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["camera",""]],"struct":[["EditorMode","Flags that the engine is in editor mode"],["EditorPlugins","[PluginGroup] for the editor."]]});

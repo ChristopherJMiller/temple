@@ -103,7 +103,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">GameFile</span> {
-  <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
     <span class="self">Self</span> {
       <span class="ident">title</span>: <span class="ident">String::from</span>(<span class="string">&quot;Temple&quot;</span>),
       <span class="ident">authors</span>: <span class="macro">vec!</span>[<span class="ident">String::from</span>(<span class="string">&quot;ALUMUX (Chris M.)&quot;</span>)],
@@ -114,11 +114,11 @@
 }
 
 <span class="doccomment">/// Loads `game.toml`.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_game_file</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">GameFile</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_game_file</span>() -&gt; <span class="ident">GameFile</span> {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read_to_string</span>(<span class="ident">from_game_root</span>(<span class="ident">GAME_SETTING_PATH</span>)) {
     <span class="kw">match</span> <span class="ident">toml::from_str</span>::<span class="op">&lt;</span><span class="ident">GameFile</span><span class="op">&gt;</span>(<span class="ident">file</span>.<span class="ident">as_str</span>()) {
-      <span class="prelude-val">Ok</span>(<span class="ident">game_file</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">game_file</span>,
-      <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic!</span>(<span class="string">&quot;Error while loading game file: {}&quot;</span>, <span class="ident">err</span>),
+      <span class="prelude-val">Ok</span>(<span class="ident">game_file</span>) =&gt; <span class="ident">game_file</span>,
+      <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Error while loading game file: {}&quot;</span>, <span class="ident">err</span>),
     }
   } <span class="kw">else</span> {
     <span class="macro">panic!</span>(<span class="string">&quot;Failed to find game file at path {}&quot;</span>, <span class="ident">GAME_SETTING_PATH</span>);

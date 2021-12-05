@@ -237,7 +237,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">TitleMenuState</span> {
-  <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
     <span class="self">Self</span> {
       <span class="ident">show_title_menu_egui</span>: <span class="bool-val">false</span>,
       <span class="ident">state</span>: <span class="ident">TitleMenuStates::MainButtons</span>,
@@ -354,7 +354,7 @@
   }
 
   <span class="kw">match</span> <span class="ident">title_menu_state</span>.<span class="ident">state</span> {
-    <span class="ident">TitleMenuStates::MainButtons</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="ident">TitleMenuStates::MainButtons</span> =&gt; {
       <span class="ident">egui::Area::new</span>(<span class="string">&quot;Menu&quot;</span>)
         .<span class="ident">fixed_pos</span>(<span class="ident">egui::pos2</span>((<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>) <span class="op">-</span> <span class="number">100.0</span>, <span class="ident">window_desc</span>.<span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>))
         .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
@@ -365,7 +365,7 @@
           });
         });
     },
-    <span class="ident">TitleMenuStates::SelectSaves</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="ident">TitleMenuStates::SelectSaves</span> =&gt; {
       <span class="ident">egui::Area::new</span>(<span class="string">&quot;Saves&quot;</span>)
         .<span class="ident">fixed_pos</span>(<span class="ident">egui::pos2</span>((<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>) <span class="op">-</span> <span class="number">200.0</span>, <span class="ident">window_desc</span>.<span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>))
         .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
@@ -385,7 +385,7 @@
           });
         });
     },
-    <span class="ident">TitleMenuStates::NewSavePrompt</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="ident">TitleMenuStates::NewSavePrompt</span> =&gt; {
       <span class="ident">egui::Area::new</span>(<span class="string">&quot;NewSave&quot;</span>)
         .<span class="ident">fixed_pos</span>(<span class="ident">egui::pos2</span>((<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>) <span class="op">-</span> <span class="number">100.0</span>, <span class="ident">window_desc</span>.<span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>))
         .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {

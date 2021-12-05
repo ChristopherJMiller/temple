@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["temple"] = [{"text":"impl PluginGroup for <a class=\"struct\" href=\"temple/game/struct.GamePlugins.html\" title=\"struct temple::game::GamePlugins\">GamePlugins</a>","synthetic":false,"types":["temple::game::GamePlugins"]}];
+implementors["temple"] = [{"text":"impl PluginGroup for <a class=\"struct\" href=\"temple/editor/struct.EditorPlugins.html\" title=\"struct temple::editor::EditorPlugins\">EditorPlugins</a>","synthetic":false,"types":["temple::editor::EditorPlugins"]},{"text":"impl PluginGroup for <a class=\"struct\" href=\"temple/game/struct.GamePlugins.html\" title=\"struct temple::game::GamePlugins\">GamePlugins</a>","synthetic":false,"types":["temple::game::GamePlugins"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

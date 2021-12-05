@@ -71,7 +71,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ChannelState</span>(<span class="kw">pub</span> <span class="ident">AudioChannel</span>, <span class="kw">pub</span> <span class="ident">f32</span>);
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ChannelState</span> {
-  <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
     <span class="self">Self</span>(<span class="ident">Default::default</span>(), <span class="number">0.7</span>)
   }
 }
@@ -82,7 +82,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">AudioChannels</span> {
-  <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
     <span class="self">Self</span> {
       <span class="ident">main_volume</span>: <span class="number">1.0</span>,
       <span class="ident">music</span>: <span class="ident">Default::default</span>(),
