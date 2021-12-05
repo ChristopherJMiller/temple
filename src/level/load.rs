@@ -13,6 +13,8 @@ use bevy_kira_audio::{Audio, AudioSource};
 use bevy_rapier2d::prelude::RigidBodyPosition;
 
 use super::{LevelId, LevelMap};
+use crate::editor::EditorMode;
+use crate::editor::camera::EditorCamera;
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
@@ -38,6 +40,7 @@ pub struct LevelLoadedSprite;
 pub fn load_level(
   mut commands: Commands,
   query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>,
+  edit_mode: Query<Entity, With<EditorMode>>,
   sprites: Res<SpriteMap>,
   levels: Res<LevelMap>,
   asset_server: Res<AssetServer>,
@@ -46,6 +49,7 @@ pub fn load_level(
 ) {
   query.for_each(|(e, load_level)| {
     let level_id = load_level.0;
+    let in_edit_mode= edit_mode.single().is_ok();
 
     // Get level by id
     let level = levels
@@ -55,14 +59,16 @@ pub fn load_level(
     let music: Handle<AudioSource> = asset_server.get_handle(level.music_file.as_str());
 
     // Load music
-    if asset_server.get_load_state(&music) == LoadState::Loaded {
-      audio.play_looped_in_channel(music, &channels.music.0);
-    } else if asset_server.get_load_state(&music) != LoadState::Loading {
-      let _: Handle<AudioSource> = asset_server.load(level.music_file.as_str());
-      return;
-    } else {
-      // Wait for load
-      return;
+    if !in_edit_mode {
+      if asset_server.get_load_state(&music) == LoadState::Loaded {
+        audio.play_looped_in_channel(music, &channels.music.0);
+      } else if asset_server.get_load_state(&music) != LoadState::Loading {
+        let _: Handle<AudioSource> = asset_server.load(level.music_file.as_str());
+        return;
+      } else {
+        // Wait for load
+        return;
+      }
     }
 
     let mut player_trans = Vec3::ZERO;
@@ -94,14 +100,25 @@ pub fn load_level(
       }
     }
 
-    let mut camera = OrthographicCameraBundle::new_2d();
-    camera.transform.translation = player_trans;
-    camera.orthographic_projection.scale = 1.0 / 3.0;
+    if !in_edit_mode {
+      let mut camera = OrthographicCameraBundle::new_2d();
+      camera.transform.translation = player_trans;
+      camera.orthographic_projection.scale = 1.0 / 3.0;
+  
+      commands
+        .spawn_bundle(camera)
+        .insert(LevelLoadedSprite)
+        .insert(MainCamera);
+    } else {
+      let mut camera = OrthographicCameraBundle::new_2d();
+      camera.transform.translation = player_trans;
+      camera.orthographic_projection.scale = 1.0 / 3.0;
 
-    commands
-      .spawn_bundle(camera)
-      .insert(LevelLoadedSprite)
-      .insert(MainCamera);
+      commands
+        .spawn_bundle(camera)
+        .insert(LevelLoadedSprite)
+        .insert(EditorCamera);
+    }
 
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);

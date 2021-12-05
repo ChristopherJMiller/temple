@@ -19,6 +19,10 @@ pub const DOWN: &str = "DOWN";
 pub const JUMP: &str = "JUMP";
 /// Input key for menu action
 pub const MENU: &str = "MENU";
+/// Input key for edit mode zoom out
+pub const EDIT_ZOOM_OUT: &str = "EDIT_ZOOM_OUT";
+/// Input key for edit mode zoom in
+pub const EDIT_ZOOM_IN: &str = "EDIT_ZOOM_IN";
 
 /// Loads [Kurinji] input config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {

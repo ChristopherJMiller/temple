@@ -3,6 +3,7 @@
 use bevy::prelude::*;
 use clap::{App, Arg};
 
+use crate::editor::EditorMode;
 use crate::level::load::LoadLevel;
 use crate::level::LevelId;
 use crate::ui::LoadTitleScreen;
@@ -14,6 +15,9 @@ pub const LOAD_ARG: &str = "load";
 /// `fps` argument.
 pub const FPS_ARG: &str = "fps";
 
+/// `editor` argument.
+pub const EDITOR_ARG: &str = "editor";
+
 /// Website about the Temple project
 const TEMPLE_URL: &str = "https://github.com/ChristopherJMiller/temple";
 
@@ -24,6 +28,7 @@ const TEMPLE_URL: &str = "https://github.com/ChristopherJMiller/temple";
 pub struct CliArgs {
   pub load_level: Option<LevelId>,
   pub show_fps_counter: bool,
+  pub edit_mode: bool,
 }
 
 impl CliArgs {
@@ -36,6 +41,7 @@ impl CliArgs {
 pub struct CliArgsBuilder {
   pub load_level: Option<LevelId>,
   pub show_fps_counter: bool,
+  pub edit_mode: bool
 }
 
 impl CliArgsBuilder {
@@ -49,10 +55,16 @@ impl CliArgsBuilder {
     self
   }
 
+  pub fn enable_editor(mut self) -> Self {
+    self.edit_mode = true;
+    self
+  }
+
   pub fn build(self) -> CliArgs {
     CliArgs {
       load_level: self.load_level,
       show_fps_counter: self.show_fps_counter,
+      edit_mode: self.edit_mode,
     }
   }
 }
@@ -83,6 +95,11 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
         .long("fps")
         .takes_value(false)
         .help("Enables the in-game fps counter"),
+    )
+    .arg(
+      Arg::with_name(EDITOR_ARG)
+        .long("editor")
+        .help("Enters the editor")
     );
 
   let matches = cli.get_matches();
@@ -104,6 +121,10 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
     builder = builder.show_fps_counter();
   }
 
+  if matches.is_present(EDITOR_ARG) {
+    builder = builder.enable_editor();
+  }
+
   builder.build()
 }
 
@@ -114,5 +135,9 @@ pub fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
     commands.spawn().insert(LoadLevel(level));
   } else {
     commands.spawn().insert(LoadTitleScreen);
+  }
+
+  if cli_args.edit_mode {
+    commands.spawn().insert(EditorMode);
   }
 }

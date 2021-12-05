@@ -5,6 +5,8 @@
     A: "LEFT",
     S: "DOWN",
     Space: "JUMP",
-    Escape: "MENU"
+    Escape: "MENU",
+    F: "EDIT_ZOOM_OUT",
+    R: "EDIT_ZOOM_IN"
   }
 )

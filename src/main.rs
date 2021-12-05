@@ -8,16 +8,19 @@ use bevy::prelude::*;
 use bevy_egui::EguiPlugin;
 use bevy_kira_audio::AudioPlugin;
 use bevy_rapier2d::prelude::*;
+use editor::EditorPlugins;
 use game::GamePlugins;
+use game::sfx::SfxPlugin;
 use input::InputPlugin;
 use level::LevelPlugin;
 use sprite::SpritePlugin;
 use state::StatePlugin;
 use ui::UiPlugin;
-use util::cli::{get_cli_args, handle_cli_args};
+use util::cli::{get_cli_args, handle_cli_args, CliArgs};
 use util::files::verify_files;
-use util::settings::get_game_file;
+use util::settings::{get_game_file, GameFile};
 
+mod editor;
 mod game;
 mod input;
 mod level;
@@ -40,8 +43,15 @@ fn main() {
   let game_file = get_game_file();
   let cli_args = get_cli_args(version.clone(), &game_file);
 
-  // Bevy Bootstrapping
-  App::build()
+  if cli_args.edit_mode {
+    start_editor(game_file, cli_args);
+  } else {
+    start_game(game_file, cli_args);
+  }
+}
+
+fn build_base_app(app: &mut AppBuilder, game_file: GameFile, cli_args: CliArgs) {
+  app
     .insert_resource(WindowDescriptor {
       title: game_file.title.clone(),
       width: 1170.,
@@ -52,10 +62,10 @@ fn main() {
     .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
     .insert_resource(game_file)
     .insert_resource(cli_args)
+
     // 3rd Party Plugins
     .add_plugins(DefaultPlugins)
     .add_plugin(FrameTimeDiagnosticsPlugin::default())
-    .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
     .add_plugin(EguiPlugin)
     .add_plugin(AudioPlugin)
 
@@ -64,8 +74,33 @@ fn main() {
     .add_plugin(InputPlugin)
     .add_plugin(SpritePlugin)
     .add_plugin(LevelPlugin)
-    .add_plugins(GamePlugins)
     .add_plugin(UiPlugin)
-    .add_startup_system(handle_cli_args.system())
+    .add_startup_system(handle_cli_args.system());
+}
+
+/// Start Game
+fn start_game(game_file: GameFile, cli_args: CliArgs) {
+  let mut app = App::build();
+  build_base_app(&mut app, game_file, cli_args);
+
+  app
+    // 3rd Party Plugins
+    .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+
+    // Game Plugins
+    .add_plugins(GamePlugins)
     .run();
+}
+
+fn start_editor(game_file: GameFile, cli_args: CliArgs) {
+  let mut app = App::build();
+  build_base_app(&mut app, game_file, cli_args);
+
+  // Add required resource plugins
+  app.add_plugin(SfxPlugin);
+
+  // Editor plugins
+  app.add_plugins(EditorPlugins);
+
+  app.run();
 }
