@@ -14,7 +14,7 @@ use super::collision_groups::*;
 use super::physics::PlayerSimulationSteps;
 use super::sfx::{AudioChannels, SfxHandles};
 use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
-use crate::sprite::SPRITE_SIZE;
+use crate::level::config::SPRITE_SIZE;
 
 const PLAYER_MOVE_SPEED: i32 = 15;
 const PLAYER_JUMP_FORCE: u32 = 10;

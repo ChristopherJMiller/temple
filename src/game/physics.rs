@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::physics::TimestepMode;
 use bevy_rapier2d::prelude::*;
 
-use crate::sprite::SPRITE_SIZE;
+use crate::level::config::SPRITE_SIZE;
 
 /// Simulation steps for moving sprites.
 /// Used for applying force to the player when riding a moving sprite.

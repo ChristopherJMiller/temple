@@ -1,21 +1,17 @@
 //! Level config management and level loading.
 
-use std::collections::HashMap;
-
 use bevy::prelude::*;
-use config::{load_level_files, Level, LevelFileVersion};
 use load::{apply_save_on_load, load_level, unload_level};
 
-use crate::sprite::SpritePluginSteps;
+use self::load::prepare_level;
+use self::verify::verify_level_files;
 
 pub mod config;
 pub mod load;
+pub mod util;
+pub mod verify;
 
-/// ID type for level map
 pub type LevelId = u32;
-
-/// Type for storing all loaded levels
-pub type LevelMap = HashMap<LevelId, Level>;
 
 /// [Plugin] for level management systems
 pub struct LevelPlugin;
@@ -23,9 +19,8 @@ pub struct LevelPlugin;
 impl Plugin for LevelPlugin {
   fn build(&self, app: &mut AppBuilder) {
     app
-      .insert_resource::<LevelFileVersion>(LevelFileVersion(1))
-      .init_resource::<LevelMap>()
-      .add_startup_system(load_level_files.system().after(SpritePluginSteps::LoadSprites))
+      .add_startup_system(verify_level_files.system())
+      .add_system(prepare_level.system())
       .add_system(load_level.system())
       .add_system(unload_level.system())
       .add_system(apply_save_on_load.system());

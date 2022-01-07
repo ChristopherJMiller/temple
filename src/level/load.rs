@@ -12,17 +12,22 @@ use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioSource};
 use bevy_rapier2d::prelude::RigidBodyPosition;
 
-use super::{LevelId, LevelMap};
-use crate::editor::EditorMode;
+use super::config::Level;
+use super::util::{get_manifest_by_id, get_map_by_id, prepare_level_from_manifests};
+use super::LevelId;
 use crate::editor::camera::EditorCamera;
+use crate::editor::EditorMode;
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
-use crate::sprite::{GameSprite, SpriteMap, SPRITE_SIZE};
+use crate::level::config::SPRITE_SIZE;
 use crate::state::game_state::{ActiveSave, GameSaveState, LevelClearState};
 
 /// Instruction to load a new level
 pub struct LoadLevel(pub LevelId);
+
+/// Loaded level manifests, as part of the load level process
+pub struct PreparedLevel(pub Level);
 
 /// Tag that LoadLevel has completed. Added to same entity as [LoadLevel]
 pub struct LevelLoadComplete;
@@ -35,35 +40,52 @@ pub struct UnloadLevel;
 /// instruction is given
 pub struct LevelLoadedSprite;
 
+/// System that prepares the level from files, to be loaded by [load_level]
+pub fn prepare_level(
+  mut commands: Commands,
+  asset_server: Res<AssetServer>,
+  query: Query<(Entity, &LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
+) {
+  query.for_each(|(e, load_level)| {
+    let id = load_level.0;
+    let manifest = get_manifest_by_id(id).unwrap_or_else(|| panic!("Attempted to load invalid level manifest {}", id));
+    let map = get_map_by_id(id).unwrap_or_else(|| panic!("Attempted to load invalid level map {}", id));
+    let level = prepare_level_from_manifests(&asset_server, manifest, map);
+    commands.entity(e).insert(PreparedLevel(level));
+  });
+}
+
 /// System that loads sprites in a given level.
 /// Can be tracked with [LevelLoadComplete]
 pub fn load_level(
   mut commands: Commands,
-  query: Query<(Entity, &LoadLevel), Without<LevelLoadComplete>>,
+  query: Query<(Entity, &LoadLevel, &PreparedLevel), Without<LevelLoadComplete>>,
   edit_mode: Query<Entity, With<EditorMode>>,
-  sprites: Res<SpriteMap>,
-  levels: Res<LevelMap>,
   asset_server: Res<AssetServer>,
   audio: Res<Audio>,
   channels: Res<AudioChannels>,
 ) {
-  query.for_each(|(e, load_level)| {
+  query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
-    let in_edit_mode= edit_mode.single().is_ok();
+    let in_edit_mode = edit_mode.single().is_ok();
+    let level = &prepared_level.0;
 
-    // Get level by id
-    let level = levels
-      .get(&level_id)
-      .unwrap_or_else(|| panic!("Attempted to load invalid level id {}", level_id));
+    let music: Handle<AudioSource> = asset_server.get_handle(level.music.as_str());
 
-    let music: Handle<AudioSource> = asset_server.get_handle(level.music_file.as_str());
+    // Ensure sprites are loaded
+    for sprite in &level.sprites {
+      if asset_server.get_load_state(sprite.texture.clone()) == LoadState::Loading {
+        // Wait for Load
+        return;
+      }
+    }
 
     // Load music
     if !in_edit_mode {
       if asset_server.get_load_state(&music) == LoadState::Loaded {
         audio.play_looped_in_channel(music, &channels.music.0);
       } else if asset_server.get_load_state(&music) != LoadState::Loading {
-        let _: Handle<AudioSource> = asset_server.load(level.music_file.as_str());
+        let _: Handle<AudioSource> = asset_server.load(level.music.as_str());
         return;
       } else {
         // Wait for load
@@ -75,23 +97,19 @@ pub fn load_level(
 
     // Get all sprites in level
     for sprite in level.sprites.iter() {
-      let sprite_data: &GameSprite = sprites
-        .get(&sprite.id)
-        .unwrap_or_else(|| panic!("Attempted to load invalid sprite id {}", sprite.id));
-
       let unit_pos = Vec3::new(sprite.pos.x as f32, sprite.pos.y as f32, 0.0);
       let sprite_pos = unit_pos * SPRITE_SIZE as f32;
 
       let entity = commands
         .spawn_bundle(SpriteBundle {
-          material: sprite_data.texture.clone(),
+          material: sprite.texture.clone(),
           transform: Transform::from_translation(sprite_pos),
           ..Default::default()
         })
         .insert(LevelLoadedSprite)
         .id();
 
-      for attribute in sprite_data.attributes.iter() {
+      for attribute in sprite.attributes.iter() {
         let position = Vec2::new(unit_pos.x, unit_pos.y);
         if attribute == Player::KEY {
           player_trans = unit_pos;
@@ -104,7 +122,7 @@ pub fn load_level(
       let mut camera = OrthographicCameraBundle::new_2d();
       camera.transform.translation = player_trans;
       camera.orthographic_projection.scale = 1.0 / 3.0;
-  
+
       commands
         .spawn_bundle(camera)
         .insert(LevelLoadedSprite)

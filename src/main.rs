@@ -9,11 +9,10 @@ use bevy_egui::EguiPlugin;
 use bevy_kira_audio::AudioPlugin;
 use bevy_rapier2d::prelude::*;
 use editor::EditorPlugins;
-use game::GamePlugins;
 use game::sfx::SfxPlugin;
+use game::GamePlugins;
 use input::InputPlugin;
 use level::LevelPlugin;
-use sprite::SpritePlugin;
 use state::StatePlugin;
 use ui::UiPlugin;
 use util::cli::{get_cli_args, handle_cli_args, CliArgs};
@@ -24,7 +23,6 @@ mod editor;
 mod game;
 mod input;
 mod level;
-mod sprite;
 mod state;
 mod ui;
 mod util;
@@ -72,7 +70,6 @@ fn build_base_app(app: &mut AppBuilder, game_file: GameFile, cli_args: CliArgs) 
     // Game Plugins
     .add_plugin(StatePlugin)
     .add_plugin(InputPlugin)
-    .add_plugin(SpritePlugin)
     .add_plugin(LevelPlugin)
     .add_plugin(UiPlugin)
     .add_startup_system(handle_cli_args.system());

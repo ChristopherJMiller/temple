@@ -9,7 +9,7 @@ use bevy::prelude::*;
 use bevy::render::camera::Camera;
 
 use crate::game::attributes::Player;
-use crate::sprite::SPRITE_SIZE;
+use crate::level::config::SPRITE_SIZE;
 
 /// Tag for a non-player camera focus.
 pub struct CameraTarget;

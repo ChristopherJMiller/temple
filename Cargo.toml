@@ -18,6 +18,7 @@ clap = "^2.33"
 console = "^0.14"
 dialoguer = "^0.8"
 bevy_kira_audio = { version = "0.6", features = ["wav"] }
+rmp-serde = "0.15"
 
 [build-dependencies]
 chrono = "^0.4"

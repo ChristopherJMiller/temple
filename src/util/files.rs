@@ -16,21 +16,20 @@ use std::path::{Path, PathBuf};
 
 use toml::de::Error;
 
-use crate::level::config::LevelFile;
-use crate::sprite::{SpriteFile, SpriteTypesFile};
+use crate::level::config::LevelManifest;
 use crate::util::settings::{GameFile, LevelTransistionType};
 
 /// `game.toml` location
 pub const GAME_SETTING_PATH: &str = "assets/game.toml";
 
-/// `levels.toml` location
-pub const LEVEL_FILE_PATH: &str = "assets/levels.toml";
+/// `/levels/` location
+pub const LEVEL_DIR_PATH: &str = "assets/levels/";
 
-/// `sprites.toml` location
-pub const SPRITE_FILE_PATH: &str = "assets/sprites/sprites.toml";
+/// `/levelmaps/` location
+pub const LEVEL_MAP_DIR_PATH: &str = "assets/levelmaps/";
 
-/// `types.toml` location
-pub const SPRITE_TYPE_FILE_PATH: &str = "assets/sprites/types.toml";
+/// `/textures/` location
+pub const TEXTURE_DIR_PATH: &str = "assets/textures/";
 
 pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
   let mut base = current_exe().unwrap();
@@ -46,25 +45,30 @@ pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
 pub fn verify_files() {
   let game_settings_file = fs::read_to_string(from_game_root(GAME_SETTING_PATH))
     .unwrap_or_else(|_| panic!("Failed to open file {:?}", from_game_root(GAME_SETTING_PATH)));
-  let level_file = fs::read_to_string(from_game_root(LEVEL_FILE_PATH))
-    .unwrap_or_else(|_| panic!("Failed to open file {}", LEVEL_FILE_PATH));
-  let sprite_file = fs::read_to_string(from_game_root(SPRITE_FILE_PATH))
-    .unwrap_or_else(|_| panic!("Failed to open file {}", SPRITE_FILE_PATH));
-  let sprite_types_file = fs::read_to_string(from_game_root(SPRITE_TYPE_FILE_PATH))
-    .unwrap_or_else(|_| panic!("Failed to open file {:?}", from_game_root(SPRITE_TYPE_FILE_PATH)));
+  let level_dir = fs::read_dir(from_game_root(LEVEL_DIR_PATH))
+    .unwrap_or_else(|_| panic!("Failed to find directory {}", LEVEL_DIR_PATH));
 
   let verify_game_settings = toml::from_str::<GameFile>(game_settings_file.as_str());
-  let verify_level_file = toml::from_str::<LevelFile>(level_file.as_str());
-  let verify_sprite_file = toml::from_str::<SpriteFile>(sprite_file.as_str());
-  let verify_sprite_types_file = toml::from_str::<SpriteTypesFile>(sprite_types_file.as_str());
-  let game_settings_copy = verify_game_settings.clone();
 
-  let toml_problems: Vec<Option<String>> = vec![
-    find_toml_problems(GAME_SETTING_PATH, verify_game_settings),
-    find_toml_problems(LEVEL_FILE_PATH, verify_level_file),
-    find_toml_problems(SPRITE_FILE_PATH, verify_sprite_file),
-    find_toml_problems(SPRITE_TYPE_FILE_PATH, verify_sprite_types_file),
-  ];
+  let mut toml_problems: Vec<Option<String>> =
+    vec![find_toml_problems(GAME_SETTING_PATH, verify_game_settings.clone())];
+
+  // Verify level manifests
+  for entry in level_dir {
+    if let Ok(entry) = entry {
+      if !entry.path().is_dir() {
+        let level =
+          fs::read_to_string(entry.path()).unwrap_or_else(|_| panic!("Failed to open file {:?}", entry.path()));
+
+        toml_problems.push(find_toml_problems(
+          entry.path().to_str().unwrap(),
+          toml::from_str::<LevelManifest>(&level),
+        ));
+      }
+    }
+  }
+
+  let game_settings_copy = verify_game_settings.clone();
 
   let found_problems = toml_problems
     .iter()

@@ -41,7 +41,7 @@ impl CliArgs {
 pub struct CliArgsBuilder {
   pub load_level: Option<LevelId>,
   pub show_fps_counter: bool,
-  pub edit_mode: bool
+  pub edit_mode: bool,
 }
 
 impl CliArgsBuilder {
@@ -96,11 +96,7 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
         .takes_value(false)
         .help("Enables the in-game fps counter"),
     )
-    .arg(
-      Arg::with_name(EDITOR_ARG)
-        .long("editor")
-        .help("Enters the editor")
-    );
+    .arg(Arg::with_name(EDITOR_ARG).long("editor").help("Enters the editor"));
 
   let matches = cli.get_matches();
 
@@ -130,14 +126,15 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
 
 /// Consumes incoming CLI arguments within Bevy
 pub fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
-  // --load <level>
-  if let Some(level) = cli_args.load_level {
-    commands.spawn().insert(LoadLevel(level));
-  } else {
-    commands.spawn().insert(LoadTitleScreen);
-  }
-
+  // --editor
   if cli_args.edit_mode {
     commands.spawn().insert(EditorMode);
+  } else {
+    // --load <level>
+    if let Some(level) = cli_args.load_level {
+      commands.spawn().insert(LoadLevel(level));
+    } else {
+      commands.spawn().insert(LoadTitleScreen);
+    }
   }
 }
