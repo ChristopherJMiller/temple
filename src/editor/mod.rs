@@ -5,11 +5,7 @@ use camera::EditorCameraPlugin;
 use self::ui::EditorUiPlugin;
 
 pub mod camera;
-pub mod state;
 pub mod ui;
-
-/// Flags that the engine is in editor mode
-pub struct EditorMode;
 
 /// [PluginGroup] for the editor.
 pub struct EditorPlugins;

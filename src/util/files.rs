@@ -31,6 +31,9 @@ pub const LEVEL_MAP_DIR_PATH: &str = "assets/levelmaps/";
 /// `/textures/` location
 pub const TEXTURE_DIR_PATH: &str = "assets/textures/";
 
+/// `/audio/music` location
+pub const MUSIC_DIR_PATH: &str = "assets/audio/music/";
+
 pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
   let mut base = current_exe().unwrap();
   base.pop();

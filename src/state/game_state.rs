@@ -7,6 +7,21 @@ use serde::{Deserialize, Serialize};
 use crate::level::LevelId;
 use crate::util::files::from_game_root;
 
+#[derive(Clone, Debug, Default)]
+pub struct TempleState {
+  edit_mode: bool,
+}
+
+impl TempleState {
+  pub fn edit_mode() -> Self {
+    TempleState { edit_mode: true }
+  }
+
+  pub fn in_edit_mode(&self) -> bool {
+    self.edit_mode
+  }
+}
+
 /// Describes the clear state of a given visted level.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(untagged)]

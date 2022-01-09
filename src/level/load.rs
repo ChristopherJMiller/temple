@@ -12,16 +12,16 @@ use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioSource};
 use bevy_rapier2d::prelude::RigidBodyPosition;
 
-use super::config::Level;
+use super::config::{Level, LevelManifest, LevelMap};
 use super::util::{get_manifest_by_id, get_map_by_id, prepare_level_from_manifests};
 use super::LevelId;
 use crate::editor::camera::EditorCamera;
-use crate::editor::EditorMode;
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
 use crate::level::config::SPRITE_SIZE;
-use crate::state::game_state::{ActiveSave, GameSaveState, LevelClearState};
+use crate::state::game_state::{ActiveSave, GameSaveState, LevelClearState, TempleState};
+use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
 
 /// Instruction to load a new level
 pub struct LoadLevel(pub LevelId);
@@ -44,12 +44,30 @@ pub struct LevelLoadedSprite;
 pub fn prepare_level(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
+  temple_state: Res<TempleState>,
   query: Query<(Entity, &LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
 ) {
   query.for_each(|(e, load_level)| {
+    let in_edit_mode = temple_state.in_edit_mode();
     let id = load_level.0;
-    let manifest = get_manifest_by_id(id).unwrap_or_else(|| panic!("Attempted to load invalid level manifest {}", id));
-    let map = get_map_by_id(id).unwrap_or_else(|| panic!("Attempted to load invalid level map {}", id));
+    // If in edit mode, a lack of manifest is forgiven.
+    let manifest = if let Some(manifest) = get_manifest_by_id(id) {
+      manifest
+    } else if in_edit_mode {
+      LevelManifest::default()
+    } else {
+      panic!("Attempted to load invalid level manifest {}", id)
+    };
+
+    // If in edit mode, a lack of level map is forgiven.
+    let map = if let Some(map) = get_map_by_id(id) {
+      map
+    } else if in_edit_mode {
+      LevelMap::default()
+    } else {
+      panic!("Attempted to load invalid level map {}", id)
+    };
+
     let level = prepare_level_from_manifests(&asset_server, manifest, map);
     commands.entity(e).insert(PreparedLevel(level));
   });
@@ -60,17 +78,18 @@ pub fn prepare_level(
 pub fn load_level(
   mut commands: Commands,
   query: Query<(Entity, &LoadLevel, &PreparedLevel), Without<LevelLoadComplete>>,
-  edit_mode: Query<Entity, With<EditorMode>>,
   asset_server: Res<AssetServer>,
+  temple_state: Res<TempleState>,
   audio: Res<Audio>,
   channels: Res<AudioChannels>,
 ) {
   query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
-    let in_edit_mode = edit_mode.single().is_ok();
+    let in_edit_mode = temple_state.in_edit_mode();
     let level = &prepared_level.0;
 
-    let music: Handle<AudioSource> = asset_server.get_handle(level.music.as_str());
+    let music_path = from_game_root(MUSIC_DIR_PATH).join(level.music.clone());
+    let music: Handle<AudioSource> = asset_server.get_handle(music_path.clone().into_os_string().to_str().unwrap());
 
     // Ensure sprites are loaded
     for sprite in &level.sprites {
@@ -85,7 +104,7 @@ pub fn load_level(
       if asset_server.get_load_state(&music) == LoadState::Loaded {
         audio.play_looped_in_channel(music, &channels.music.0);
       } else if asset_server.get_load_state(&music) != LoadState::Loading {
-        let _: Handle<AudioSource> = asset_server.load(level.music.as_str());
+        let _: Handle<AudioSource> = asset_server.load(music_path.into_os_string().to_str().unwrap());
         return;
       } else {
         // Wait for load

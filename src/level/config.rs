@@ -18,7 +18,7 @@ use crate::util::files::{from_game_root, TEXTURE_DIR_PATH};
 pub const SPRITE_SIZE: u32 = 16;
 
 /// Structure of a level toml file.
-#[derive(Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Default)]
 pub struct LevelManifest {
   /// Level Name
   pub name: String,
@@ -43,7 +43,7 @@ pub struct LevelSpriteEntry {
 }
 
 /// Map of [Level], stored as a binary file in `levelmaps/`
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Default)]
 pub struct LevelMap {
   pub sprites: Vec<LevelMapSpriteEntry>,
 }
@@ -101,6 +101,31 @@ impl JoinedLevelSpriteEntry {
       })
       .collect()
   }
+
+  pub fn decompose(list: Vec<JoinedLevelSpriteEntry>) -> (Vec<LevelMapSpriteEntry>, Vec<LevelSpriteEntry>) {
+    let mut map_sprite_entries: Vec<LevelMapSpriteEntry> = Vec::default();
+    let mut level_sprites: HashMap<String, LevelSpriteEntry> = HashMap::default();
+    for entry in list {
+      if !level_sprites.contains_key(&entry.name) {
+        level_sprites.insert(
+          entry.name.clone(),
+          LevelSpriteEntry {
+            name: entry.name.clone(),
+            offset: entry.offset,
+            texture: entry.texture,
+            attributes: entry.attributes,
+          },
+        );
+      }
+
+      map_sprite_entries.push(LevelMapSpriteEntry {
+        name: entry.name,
+        pos: entry.pos,
+      });
+    }
+
+    (map_sprite_entries, level_sprites.values().cloned().collect())
+  }
 }
 
 /// Sprite with loaded texture, to be used in game.
@@ -109,6 +134,7 @@ pub struct HandledSprite {
   pub name: String,
   pub pos: UVec2,
   pub offset: IVec2,
+  pub texture_path: String,
   pub texture: Handle<ColorMaterial>,
   pub attributes: Vec<String>,
 }
@@ -119,8 +145,21 @@ impl HandledSprite {
       name: entry.name.clone(),
       pos: entry.pos,
       offset: entry.offset,
+      texture_path: entry.texture.clone(),
       texture: asset_server.load(from_game_root(Path::new(TEXTURE_DIR_PATH).join(entry.texture.as_str()))),
       attributes: entry.attributes.clone(),
+    }
+  }
+}
+
+impl Into<JoinedLevelSpriteEntry> for &HandledSprite {
+  fn into(self) -> JoinedLevelSpriteEntry {
+    JoinedLevelSpriteEntry {
+      name: self.name.clone(),
+      pos: self.pos,
+      offset: self.offset,
+      texture: self.texture_path.clone(),
+      attributes: self.attributes.clone(),
     }
   }
 }
@@ -137,6 +176,7 @@ pub struct Level {
   pub sprites: Vec<HandledSprite>,
 }
 
+/// Form Level from Manifest Components
 impl From<(LevelManifest, Vec<HandledSprite>)> for Level {
   fn from((manifest, map): (LevelManifest, Vec<HandledSprite>)) -> Self {
     Self {
@@ -144,5 +184,22 @@ impl From<(LevelManifest, Vec<HandledSprite>)> for Level {
       music: manifest.music,
       sprites: map,
     }
+  }
+}
+
+/// Decompose Level into Manifest Forms
+impl Into<(LevelManifest, LevelMap)> for Level {
+  fn into(self) -> (LevelManifest, LevelMap) {
+    let joined_entries: Vec<JoinedLevelSpriteEntry> = self.sprites.iter().map(|x| x.into()).collect();
+    let (map_sprites, level_sprites) = JoinedLevelSpriteEntry::decompose(joined_entries);
+    let manifest = LevelManifest {
+      name: self.name,
+      music: self.music,
+      sprites: level_sprites,
+    };
+
+    let map = LevelMap { sprites: map_sprites };
+
+    (manifest, map)
   }
 }

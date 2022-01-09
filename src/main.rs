@@ -12,7 +12,9 @@ use editor::EditorPlugins;
 use game::sfx::SfxPlugin;
 use game::GamePlugins;
 use input::InputPlugin;
+use level::save::LevelSavePlugin;
 use level::LevelPlugin;
+use state::game_state::TempleState;
 use state::StatePlugin;
 use ui::UiPlugin;
 use util::cli::{get_cli_args, handle_cli_args, CliArgs};
@@ -86,6 +88,9 @@ fn start_game(game_file: GameFile, cli_args: CliArgs) {
 
     // Game Plugins
     .add_plugins(GamePlugins)
+
+    // Init Temple State
+    .insert_resource(TempleState::default())
     .run();
 }
 
@@ -93,11 +98,13 @@ fn start_editor(game_file: GameFile, cli_args: CliArgs) {
   let mut app = App::build();
   build_base_app(&mut app, game_file, cli_args);
 
-  // Add required resource plugins
-  app.add_plugin(SfxPlugin);
-
-  // Editor plugins
-  app.add_plugins(EditorPlugins);
-
-  app.run();
+  app
+    // Add required resource plugins
+    .add_plugin(SfxPlugin)
+    // Editor plugins
+    .add_plugins(EditorPlugins)
+    .add_plugin(LevelSavePlugin)
+    // Init Temple State
+    .insert_resource(TempleState::edit_mode())
+    .run();
 }

@@ -3,9 +3,9 @@
 use bevy::prelude::*;
 use clap::{App, Arg};
 
-use crate::editor::EditorMode;
 use crate::level::load::LoadLevel;
 use crate::level::LevelId;
+use crate::state::game_state::TempleState;
 use crate::ui::LoadTitleScreen;
 use crate::util::settings::GameFile;
 
@@ -125,11 +125,9 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
 }
 
 /// Consumes incoming CLI arguments within Bevy
-pub fn handle_cli_args(mut commands: Commands, cli_args: Res<CliArgs>) {
-  // --editor
-  if cli_args.edit_mode {
-    commands.spawn().insert(EditorMode);
-  } else {
+pub fn handle_cli_args(mut commands: Commands, temple_state: Res<TempleState>, cli_args: Res<CliArgs>) {
+  // Command line cli is for play mode only
+  if !temple_state.in_edit_mode() {
     // --load <level>
     if let Some(level) = cli_args.load_level {
       commands.spawn().insert(LoadLevel(level));
