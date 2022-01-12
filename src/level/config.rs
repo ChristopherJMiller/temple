@@ -4,13 +4,12 @@
 //! are stored in a Bevy Resource.
 
 use std::collections::HashMap;
-use std::path::Path;
 use std::vec::Vec;
 
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::util::files::{from_game_root, TEXTURE_DIR_PATH};
+use super::util::load_sprite_texture;
 
 // ==== Asset File Definitions
 
@@ -29,7 +28,7 @@ pub struct LevelManifest {
 }
 
 /// Sprites used in a [Level], defined in a [LevelManifest]
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Default, Serialize, Deserialize, Clone)]
 pub struct LevelSpriteEntry {
   /// Sprite name and identifier.
   pub name: String,
@@ -140,13 +139,17 @@ pub struct HandledSprite {
 }
 
 impl HandledSprite {
-  pub fn from_joined_entry(entry: &JoinedLevelSpriteEntry, asset_server: &Res<AssetServer>) -> Self {
+  pub fn from_joined_entry(
+    entry: &JoinedLevelSpriteEntry,
+    asset_server: &Res<AssetServer>,
+    materials: &mut ResMut<Assets<ColorMaterial>>,
+  ) -> Self {
     Self {
       name: entry.name.clone(),
       pos: entry.pos,
       offset: entry.offset,
       texture_path: entry.texture.clone(),
-      texture: asset_server.load(from_game_root(Path::new(TEXTURE_DIR_PATH).join(entry.texture.as_str()))),
+      texture: load_sprite_texture(asset_server, materials, &entry.texture),
       attributes: entry.attributes.clone(),
     }
   }

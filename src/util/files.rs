@@ -30,6 +30,7 @@ pub const LEVEL_MAP_DIR_PATH: &str = "assets/levelmaps/";
 
 /// `/textures/` location
 pub const TEXTURE_DIR_PATH: &str = "assets/textures/";
+pub const SPRITE_TEXTURE_DIR_PATH: &str = "assets/textures/sprites/";
 
 /// `/audio/music` location
 pub const MUSIC_DIR_PATH: &str = "assets/audio/music/";

@@ -62,6 +62,8 @@ fn derive_attribute_entry(entry: String) -> AttributeEntry {
   }
 }
 
+pub const REGISTERED_ATTRIBUTES: [&str; 5] = [Player::KEY, Solid::KEY, MovingSprite::KEY, Deadly::KEY, Checkpoint::KEY];
+
 /// Constructs attribute onto a given [Entity]. Used during level load (see
 /// [crate::level::load::load_level]).
 pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entity, position: Vec2) {

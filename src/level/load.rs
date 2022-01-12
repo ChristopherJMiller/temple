@@ -44,6 +44,7 @@ pub struct LevelLoadedSprite;
 pub fn prepare_level(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
+  mut materials: ResMut<Assets<ColorMaterial>>,
   temple_state: Res<TempleState>,
   query: Query<(Entity, &LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
 ) {
@@ -68,7 +69,7 @@ pub fn prepare_level(
       panic!("Attempted to load invalid level map {}", id)
     };
 
-    let level = prepare_level_from_manifests(&asset_server, manifest, map);
+    let level = prepare_level_from_manifests(&asset_server, &mut materials, manifest, map);
     commands.entity(e).insert(PreparedLevel(level));
   });
 }
