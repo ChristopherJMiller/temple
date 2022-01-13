@@ -1,13 +1,17 @@
 use bevy::prelude::*;
 use bevy::render::camera::OrthographicProjection;
+use kurinji::Kurinji;
 
 use super::camera::EditorCamera;
-use crate::level::config::{LevelSpriteEntry, SPRITE_SIZE};
+use super::ui::EditorState;
+use crate::input::SELECT;
+use crate::level::config::{LevelSpriteEntry, SPRITE_SIZE, HandledSprite};
+use crate::level::load::{PreparedLevel, LevelLoadComplete};
 use crate::level::util::load_sprite_texture;
 
 #[derive(Default)]
 pub struct SelectedSprite(pub Option<LevelSpriteEntry>);
-pub struct SelectedSpriteEntity(pub String);
+pub struct SelectedSpriteEntity(pub String, pub LevelSpriteEntry);
 
 pub fn create_selected_sprite_cursor(
   mut commands: Commands,
@@ -31,7 +35,7 @@ pub fn create_selected_sprite_cursor(
           transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
           ..Default::default()
         })
-        .insert(SelectedSpriteEntity(sprite.name.clone()));
+        .insert(SelectedSpriteEntity(sprite.name.clone(), sprite.clone()));
     }
   }
 }
@@ -62,6 +66,33 @@ pub fn handle_selected_sprite(
   }
 }
 
+pub fn handle_placing_sprite (
+  mut commands: Commands,
+  sprite_on_cursor: Query<(&SelectedSpriteEntity, &Handle<ColorMaterial>, &Transform)>,
+  mut loaded_level: Query<&mut PreparedLevel, With<LevelLoadComplete>>,
+  input: Res<Kurinji>,
+  mut editor_state: ResMut<EditorState>
+) {
+  if let Ok((sprite, material, transform)) = sprite_on_cursor.single() {
+    if input.is_action_active(SELECT) {
+      println!("Selected!");
+      let pos = IVec2::new(transform.translation.x as i32, transform.translation.y as i32);
+      if !editor_state.placed_sprites.contains_key(&pos) {
+        editor_state.placed_sprites.insert(pos, sprite.0.clone());
+        let mut level = loaded_level.single_mut().unwrap();
+        let handled_sprite: HandledSprite = (sprite.1.clone(), pos / SPRITE_SIZE as i32, material.clone()).into();
+        level.0.sprites.push(handled_sprite);
+        commands
+          .spawn_bundle(SpriteBundle {
+            material: material.clone(),
+            transform: transform.clone(),
+            ..Default::default()
+          });
+      }
+    }
+  }
+}
+
 /// [Plugin] for manging level sprites within the editor
 pub struct EditorSpritePlugin;
 
@@ -70,6 +101,7 @@ impl Plugin for EditorSpritePlugin {
     app
       .init_resource::<SelectedSprite>()
       .add_system(create_selected_sprite_cursor.system())
-      .add_system(handle_selected_sprite.system());
+      .add_system(handle_selected_sprite.system())
+      .add_system(handle_placing_sprite.system());
   }
 }

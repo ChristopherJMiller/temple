@@ -8,5 +8,8 @@
     Escape: "MENU",
     F: "EDIT_ZOOM_OUT",
     R: "EDIT_ZOOM_IN"
+  },
+  MouseButtons: {
+    Left: "SELECT"
   }
 )

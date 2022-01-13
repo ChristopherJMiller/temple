@@ -1,10 +1,12 @@
+use std::collections::HashMap;
+
 use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 
 use super::sprite::SelectedSprite;
 use super::util::{
   format_menu_item, get_level_menu_items, get_music_files, get_sprite_texture_files, load_level_sprite_entries,
-  validate_add_sprite_form, AddSpriteForm,
+  validate_add_sprite_form, AddSpriteForm, get_sprite_table,
 };
 use crate::level::config::{LevelManifest, LevelSpriteEntry};
 use crate::level::load::{LevelLoadComplete, LoadLevel, PreparedLevel};
@@ -48,6 +50,7 @@ pub struct EditorState {
   pub add_sprite_form: AddSpriteForm,
   pub add_sprite_sidebar: AddSpriteSidebarState,
   pub sprite_texture_items: Vec<String>,
+  pub placed_sprites: HashMap<IVec2, String>,
 }
 
 /// Toolbar UI
@@ -122,6 +125,9 @@ pub fn editor_open_menu(
               commands.spawn().insert(LoadLevel(id));
               if let Some(sprites) = load_level_sprite_entries(id) {
                 toolbar_state.loaded_sprites = sprites;
+              }
+              if let Some(table) = get_sprite_table(id) {
+                toolbar_state.placed_sprites = table;
               }
             }
           }

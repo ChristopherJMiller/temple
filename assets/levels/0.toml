@@ -1,3 +1,11 @@
 name = 'Boneyard'
 music = 'walkintherain.ogg'
-sprites = []
+
+[[sprites]]
+name = 'middle_ground'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_middle.png'
+attributes = ['solid']

@@ -62,8 +62,10 @@ pub fn prepare_level(
 
     // If in edit mode, a lack of level map is forgiven.
     let map = if let Some(map) = get_map_by_id(id) {
+      println!("{:?}", map);
       map
     } else if in_edit_mode {
+      info!(target: "prepare_level", "Could not find level map! Since in edit mode generating a blank one...");
       LevelMap::default()
     } else {
       panic!("Attempted to load invalid level map {}", id)

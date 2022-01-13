@@ -42,16 +42,16 @@ pub struct LevelSpriteEntry {
 }
 
 /// Map of [Level], stored as a binary file in `levelmaps/`
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone, Default, Debug)]
 pub struct LevelMap {
   pub sprites: Vec<LevelMapSpriteEntry>,
 }
 
 /// Sprite definitions for a level
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct LevelMapSpriteEntry {
-  /// Position in the level
-  pub pos: UVec2,
+  /// Position in the level (tile size independent)
+  pub pos: IVec2,
   /// Sprite Name, as defined in [LevelManifest]
   pub name: String,
 }
@@ -64,7 +64,7 @@ pub struct JoinedLevelSpriteEntry {
   /// Sprite name and identifier.
   pub name: String,
   /// Position in a level
-  pub pos: UVec2,
+  pub pos: IVec2,
   /// Sprite offset within tile, defaults to [0, 0]
   pub offset: IVec2,
   /// Sprites texture
@@ -131,7 +131,7 @@ impl JoinedLevelSpriteEntry {
 #[derive(Debug, Clone, Default)]
 pub struct HandledSprite {
   pub name: String,
-  pub pos: UVec2,
+  pub pos: IVec2,
   pub offset: IVec2,
   pub texture_path: String,
   pub texture: Handle<ColorMaterial>,
@@ -163,6 +163,19 @@ impl Into<JoinedLevelSpriteEntry> for &HandledSprite {
       offset: self.offset,
       texture: self.texture_path.clone(),
       attributes: self.attributes.clone(),
+    }
+  }
+}
+
+impl From<(LevelSpriteEntry, IVec2, Handle<ColorMaterial>)> for HandledSprite {
+  fn from((entry, pos, handle): (LevelSpriteEntry, IVec2, Handle<ColorMaterial>)) -> Self {
+    HandledSprite {
+      name: entry.name,
+      pos: pos,
+      offset: entry.offset,
+      texture_path: entry.texture,
+      texture: handle,
+      attributes: entry.attributes,
     }
   }
 }

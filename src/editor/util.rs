@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs;
 
 use bevy::math::IVec2;
@@ -5,7 +6,7 @@ use bevy::math::IVec2;
 use super::ui::LevelMenuItem;
 use crate::game::attributes::REGISTERED_ATTRIBUTES;
 use crate::level::config::LevelSpriteEntry;
-use crate::level::util::{get_level_manifests, get_manifest_by_id};
+use crate::level::util::{get_level_manifests, get_manifest_by_id, get_map_by_id};
 use crate::level::LevelId;
 use crate::util::files::{from_game_root, MUSIC_DIR_PATH, SPRITE_TEXTURE_DIR_PATH};
 
@@ -86,6 +87,19 @@ pub fn validate_add_sprite_form(form: &AddSpriteForm) -> bool {
 pub fn load_level_sprite_entries(id: LevelId) -> Option<Vec<LevelSpriteEntry>> {
   if let Some(manifest) = get_manifest_by_id(id) {
     Some(manifest.sprites)
+  } else {
+    None
+  }
+}
+
+pub fn get_sprite_table(id: LevelId) -> Option<HashMap<IVec2, String>> {
+  if let Some(map) = get_map_by_id(id) {
+    let mut result: HashMap<IVec2, String> = HashMap::new();
+    for sprite in map.sprites.iter() {
+      result.insert(sprite.pos, sprite.name.clone());
+    }
+
+    Some(result)
   } else {
     None
   }
