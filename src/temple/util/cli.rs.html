@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;util&#x2F;cli.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>cli.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../temple/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;util&#x2F;cli.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>cli.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../temple/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -136,19 +137,14 @@
 <span id="136">136</span>
 <span id="137">137</span>
 <span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
-<span id="142">142</span>
-<span id="143">143</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles the CLI options</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">clap</span>::{<span class="ident">App</span>, <span class="ident">Arg</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::editor::EditorMode</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state::TempleState</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ui::LoadTitleScreen</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings::GameFile</span>;
 
@@ -184,7 +180,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CliArgsBuilder</span> {
   <span class="kw">pub</span> <span class="ident">load_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">LevelId</span><span class="op">&gt;</span>,
   <span class="kw">pub</span> <span class="ident">show_fps_counter</span>: <span class="ident">bool</span>,
-  <span class="kw">pub</span> <span class="ident">edit_mode</span>: <span class="ident">bool</span>
+  <span class="kw">pub</span> <span class="ident">edit_mode</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">CliArgsBuilder</span> {
@@ -239,11 +235,7 @@
         .<span class="ident">takes_value</span>(<span class="bool-val">false</span>)
         .<span class="ident">help</span>(<span class="string">&quot;Enables the in-game fps counter&quot;</span>),
     )
-    .<span class="ident">arg</span>(
-      <span class="ident">Arg::with_name</span>(<span class="ident">EDITOR_ARG</span>)
-        .<span class="ident">long</span>(<span class="string">&quot;editor&quot;</span>)
-        .<span class="ident">help</span>(<span class="string">&quot;Enters the editor&quot;</span>)
-    );
+    .<span class="ident">arg</span>(<span class="ident">Arg::with_name</span>(<span class="ident">EDITOR_ARG</span>).<span class="ident">long</span>(<span class="string">&quot;editor&quot;</span>).<span class="ident">help</span>(<span class="string">&quot;Enters the editor&quot;</span>));
 
   <span class="kw">let</span> <span class="ident">matches</span> <span class="op">=</span> <span class="ident">cli</span>.<span class="ident">get_matches</span>();
 
@@ -272,19 +264,17 @@
 }
 
 <span class="doccomment">/// Consumes incoming CLI arguments within Bevy</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_cli_args</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">cli_args</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">CliArgs</span><span class="op">&gt;</span>) {
-  <span class="comment">// --load &lt;level&gt;</span>
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level</span>) <span class="op">=</span> <span class="ident">cli_args</span>.<span class="ident">load_level</span> {
-    <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="ident">level</span>));
-  } <span class="kw">else</span> {
-    <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadTitleScreen</span>);
-  }
-
-  <span class="kw">if</span> <span class="ident">cli_args</span>.<span class="ident">edit_mode</span> {
-    <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">EditorMode</span>);
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_cli_args</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>, <span class="ident">cli_args</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">CliArgs</span><span class="op">&gt;</span>) {
+  <span class="comment">// Command line cli is for play mode only</span>
+  <span class="kw">if</span> <span class="op">!</span><span class="ident">temple_state</span>.<span class="ident">in_edit_mode</span>() {
+    <span class="comment">// --load &lt;level&gt;</span>
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level</span>) <span class="op">=</span> <span class="ident">cli_args</span>.<span class="ident">load_level</span> {
+      <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="ident">level</span>));
+    } <span class="kw">else</span> {
+      <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadTitleScreen</span>);
+    }
   }
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="temple" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>

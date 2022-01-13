@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["save_loaded_level",""]],"struct":[["LevelSavePlugin","[Plugin] for saving levels, to be used in edit mode."],["SaveLevel","Command to save loaded level"]]});

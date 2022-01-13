@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["format_menu_item",""],["get_asset_dir_files",""],["get_level_menu_items",""],["get_music_files",""],["get_sprite_table",""],["get_sprite_texture_files",""],["load_level_sprite_entries",""],["validate_add_sprite_form",""]],"struct":[["AddSpriteForm",""]]});
