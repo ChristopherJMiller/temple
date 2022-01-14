@@ -2,6 +2,33 @@ name = 'Boneyard'
 music = 'walkintherain.ogg'
 
 [[sprites]]
+name = 'player'
+offset = [
+    0,
+    0,
+]
+texture = 'spirit.png'
+attributes = ['player']
+
+[[sprites]]
+name = 'center_ground_nonsolid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_center.png'
+attributes = []
+
+[[sprites]]
+name = 'center_ground_solid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_center.png'
+attributes = ['solid']
+
+[[sprites]]
 name = 'middle_ground'
 offset = [
     0,

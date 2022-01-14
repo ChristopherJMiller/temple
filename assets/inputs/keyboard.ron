@@ -6,8 +6,8 @@
     S: "DOWN",
     Space: "JUMP",
     Escape: "MENU",
-    F: "EDIT_ZOOM_OUT",
-    R: "EDIT_ZOOM_IN"
+    F2: "EDIT_ZOOM_OUT",
+    F1: "EDIT_ZOOM_IN"
   },
   MouseButtons: {
     Left: "SELECT",
