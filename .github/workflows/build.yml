@@ -7,12 +7,12 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  ITCH_USERNAME: alumux
+  ITCH_GAME_ID: temple
 
 jobs:
   build-windows:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
       with:
@@ -39,11 +39,15 @@ jobs:
       env:
         VERSION: ${{ steps.get_version.outputs.VERSION }}
       run: ./install_windows_client.sh
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+    - name: Publish to Itch.io
+      uses: KikimoraGames/itch-publish@v0.0.3
       with:
-        name: windows${{ steps.get_version.outputs.VERSION }}.zip
-        path: windows
+        butlerApiKey: ${{ secrets.BUTLER_API_KEY }}
+        gameData: windows
+        itchUsername: ${{ env.ITCH_USERNAME }}
+        itchGameId: ${{ env.ITCH_GAME_ID }}
+        buildNumber: ${{ steps.get_version.outputs.VERSION }}
+        buildChannel: windows
   build-linux:
     runs-on: ubuntu-latest
     steps:
@@ -70,8 +74,12 @@ jobs:
       env:
         VERSION: ${{ steps.get_version.outputs.VERSION }}
       run: ./install_linux_client.sh
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+    - name: Publish to Itch.io
+      uses: KikimoraGames/itch-publish@v0.0.3
       with:
-        name: linux${{ steps.get_version.outputs.VERSION }}.zip
-        path: linux
+        butlerApiKey: ${{ secrets.BUTLER_API_KEY }}
+        gameData: linux
+        itchUsername: ${{ env.ITCH_USERNAME }}
+        itchGameId: ${{ env.ITCH_GAME_ID }}
+        buildNumber: ${{ steps.get_version.outputs.VERSION }}
+        buildChannel: linux
