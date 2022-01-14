@@ -3,10 +3,10 @@ use bevy::render::camera::OrthographicProjection;
 use kurinji::Kurinji;
 
 use super::camera::EditorCamera;
-use super::ui::EditorState;
+use super::ui::{EditorState, EDITOR_ERASER_NAME};
 use crate::input::{SELECT, RETURN};
 use crate::level::config::{LevelSpriteEntry, SPRITE_SIZE, HandledSprite};
-use crate::level::load::{PreparedLevel, LevelLoadComplete};
+use crate::level::load::{PreparedLevel, LevelLoadComplete, LevelLoadedSprite};
 use crate::level::util::load_sprite_texture;
 
 #[derive(Default)]
@@ -75,32 +75,62 @@ pub fn handle_placing_sprite (
   mut commands: Commands,
   sprite_on_cursor: Query<(&SelectedSpriteEntity, &Handle<ColorMaterial>, &Transform)>,
   mut loaded_level: Query<&mut PreparedLevel, With<LevelLoadComplete>>,
+  loaded_sprites: Query<(Entity, &Transform), With<LevelLoadedSprite>>,
   input: Res<Kurinji>,
   mut editor_state: ResMut<EditorState>
 ) {
+  // Cursor is active
   if let Ok((sprite, material, transform)) = sprite_on_cursor.single() {
+    // "Left Click" is activated
     if input.is_action_active(SELECT) {
       let pos = IVec2::new(transform.translation.x as i32, transform.translation.y as i32);
       let tile_pos = pos / SPRITE_SIZE as i32;
+      // Nothing placed in that position
       if !editor_state.placed_sprites.contains_key(&tile_pos) {
-        editor_state.placed_sprites.insert(pos, sprite.0.clone());
-        let mut level = loaded_level.single_mut().unwrap();
-        let handled_sprite: HandledSprite = (sprite.1.clone(), tile_pos, material.clone()).into();
-        level.0.sprites.push(handled_sprite);
-        commands
-          .spawn_bundle(SpriteBundle {
-            material: material.clone(),
-            transform: transform.clone(),
-            ..Default::default()
-          });
+        // Make sure it's not the eraser
+        if sprite.0.ne(EDITOR_ERASER_NAME) {
+          // Insert
+          info!(target: "handle_placing_sprite", "Inserted");
+          editor_state.placed_sprites.insert(tile_pos, sprite.0.clone());
+          let mut level = loaded_level.single_mut().unwrap();
+          let handled_sprite: HandledSprite = (sprite.1.clone(), tile_pos, material.clone()).into();
+          level.0.sprites.push(handled_sprite);
+          commands
+            .spawn_bundle(SpriteBundle {
+              material: material.clone(),
+              transform: transform.clone(),
+              ..Default::default()
+            });
+        }
+      // If it does exist, and using the eraser, delete the sprite
+      } else if sprite.0.eq(EDITOR_ERASER_NAME) {
+        // Remove from table
+        info!(target: "handle_placing_sprite", "Deleted");
+        editor_state.placed_sprites.remove(&tile_pos);
+
+        // Remove from level entries
+        let sprites = loaded_level.single_mut().unwrap().0.sprites.clone();
+        for (i, sprite) in sprites.iter().enumerate() {
+          if sprite.pos.eq(&tile_pos) {
+            loaded_level.single_mut().unwrap().0.sprites.swap_remove(i);
+            break;
+          }
+        }
+
+        // Remove from bevy world
+        loaded_sprites.for_each(|(entity, trans)| {
+          if trans.translation == Vec3::new(pos.x as f32, pos.y as f32, 0.0) {
+            commands.entity(entity).despawn();
+          }
+        });
       }
     }
   }
 }
 
-pub fn handle_deselecting_sprite (
+pub fn handle_deselect (
   input: Res<Kurinji>,
-  mut selected_sprite: ResMut<SelectedSprite>
+  mut selected_sprite: ResMut<SelectedSprite>,
 ) {
   if input.is_action_active(RETURN) {
     if selected_sprite.0.is_some() {
@@ -119,6 +149,6 @@ impl Plugin for EditorSpritePlugin {
       .add_system(create_selected_sprite_cursor.system())
       .add_system(handle_selected_sprite.system())
       .add_system(handle_placing_sprite.system())
-      .add_system(handle_deselecting_sprite.system());
+      .add_system(handle_deselect.system());
   }
 }

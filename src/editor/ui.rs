@@ -136,6 +136,8 @@ pub fn editor_open_menu(
   }
 }
 
+pub const EDITOR_ERASER_NAME: &str = "__EDITOR_ERASER";
+
 /// Sidebar to select sprites and configure manifest while editing a level.
 pub fn sidebar(
   mut selected_sprite: ResMut<SelectedSprite>,
@@ -165,6 +167,15 @@ pub fn sidebar(
             toolbar_state.show_music_menu = true;
           };
         });
+
+        if ui.button("Eraser").clicked() {
+          selected_sprite.0 = Some(LevelSpriteEntry {
+            name: EDITOR_ERASER_NAME.to_string(),
+            offset: (0, 0).into(),
+            texture: "eraser.png".to_string(),
+            attributes: vec![]
+          });
+        }
 
         // Level Sprites
         ui.vertical_centered(|ui| {
