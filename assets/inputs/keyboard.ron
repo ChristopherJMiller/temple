@@ -10,6 +10,7 @@
     R: "EDIT_ZOOM_IN"
   },
   MouseButtons: {
-    Left: "SELECT"
+    Left: "SELECT",
+    Right: "RETURN",
   }
 )

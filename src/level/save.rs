@@ -2,6 +2,8 @@ use std::fs;
 
 use bevy::prelude::*;
 
+use crate::level::config::LevelMapFile;
+
 use super::load::{LevelLoadComplete, LoadLevel, PreparedLevel};
 use super::util::{get_level_manifest_path_from_id, get_level_map_path_from_id};
 
@@ -25,7 +27,7 @@ pub fn save_loaded_level(
 
     // Save map
     let map_path = get_level_map_path_from_id(level_id);
-    let map_contents = rmp_serde::to_vec(&map).unwrap();
+    let map_contents = rmp_serde::to_vec::<LevelMapFile>(&map.into()).unwrap();
     if fs::write(map_path, map_contents).is_err() {
       warn!(target: "save_loaded_level", "Was unable to save the level map!");
     }

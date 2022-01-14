@@ -25,6 +25,8 @@ pub const EDIT_ZOOM_OUT: &str = "EDIT_ZOOM_OUT";
 pub const EDIT_ZOOM_IN: &str = "EDIT_ZOOM_IN";
 /// Input key for "left click" select
 pub const SELECT: &str = "SELECT";
+/// Input key for "right click" return
+pub const RETURN: &str = "RETURN";
 
 /// Loads [Kurinji] input config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {

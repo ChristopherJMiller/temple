@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 use bevy::prelude::*;
 
-use super::config::{HandledSprite, JoinedLevelSpriteEntry, Level, LevelManifest, LevelMap};
+use super::config::{HandledSprite, JoinedLevelSpriteEntry, Level, LevelManifest, LevelMap, LevelMapFile};
 use super::LevelId;
 use crate::util::files::{from_game_root, LEVEL_DIR_PATH, LEVEL_MAP_DIR_PATH, SPRITE_TEXTURE_DIR_PATH};
 
@@ -61,8 +61,8 @@ pub fn get_manifest_by_id(id: LevelId) -> Option<LevelManifest> {
 pub fn get_map_by_id(id: LevelId) -> Option<LevelMap> {
   let path = get_level_map_path_from_id(id);
   if let Ok(file) = fs::read(path) {
-    if let Ok(map) = rmp_serde::from_read_ref::<_, LevelMap>(&file) {
-      Some(map)
+    if let Ok(map) = rmp_serde::from_read_ref::<_, LevelMapFile>(&file) {
+      Some(map.into())
     } else {
       None
     }

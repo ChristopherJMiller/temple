@@ -3,7 +3,7 @@
 //! Level manifests are loaded on game boot and
 //! are stored in a Bevy Resource.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::vec::Vec;
 
 use bevy::prelude::*;
@@ -41,19 +41,81 @@ pub struct LevelSpriteEntry {
   pub attributes: Vec<String>,
 }
 
-/// Map of [Level], stored as a binary file in `levelmaps/`
+/// File form of a [LevelMap], size optimized with a look up table for sprite names.
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
+pub struct LevelMapFile {
+  /// Look up table of sprite names to ids
+  pub sprite_types: HashMap<u32, String>,
+  /// Sprite entries for the level
+  pub sprite_entries: Vec<LevelMapFileSpriteEntry>
+}
+
+impl Into<LevelMap> for LevelMapFile {
+  fn into(self) -> LevelMap {
+    LevelMap {
+      sprites: self.sprite_entries.iter().map(|x| LevelMapSpriteEntry::new(self.sprite_types.get(&x.id).unwrap().clone(), x.pos)).collect()
+    }
+  }
+}
+
+
+#[derive(Serialize, Deserialize, Clone, Default, Debug)]
+pub struct LevelMapFileSpriteEntry {
+  /// Position in the level (tile size independent)
+  pub pos: IVec2,
+  /// Sprite Id, as mapped within [LevelMapFile::sprite_types]
+  pub id: u32,
+}
+
+impl LevelMapFileSpriteEntry {
+  pub fn new(id: u32, pos: IVec2) -> Self {
+    Self {
+      pos,
+      id
+    }
+  }
+}
+
+/// Map of [Level], stored as a binary file in `levelmaps/`
+#[derive(Clone, Default, Debug)]
 pub struct LevelMap {
   pub sprites: Vec<LevelMapSpriteEntry>,
 }
 
+impl Into<LevelMapFile> for LevelMap {
+  fn into(self) -> LevelMapFile {
+    let mut name_set: HashSet<String> = HashSet::new();
+    // Generate types
+    for entry in self.sprites.iter() {
+      name_set.insert(entry.name.clone());
+    }
+
+    let sprite_types: HashMap<u32, String> = name_set.iter().enumerate().map(|(i, name)| (i as u32, name.clone())).collect();
+    let inverse_table: HashMap<String, u32> = name_set.iter().enumerate().map(|(i, name)| (name.clone(), i as u32)).collect();
+
+    LevelMapFile {
+      sprite_types,
+      sprite_entries: self.sprites.iter().map(|x| LevelMapFileSpriteEntry::new(inverse_table.get(&x.name).unwrap().clone(), x.pos)).collect()
+    }
+  }
+}
+
 /// Sprite definitions for a level
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct LevelMapSpriteEntry {
   /// Position in the level (tile size independent)
   pub pos: IVec2,
   /// Sprite Name, as defined in [LevelManifest]
   pub name: String,
+}
+
+impl LevelMapSpriteEntry {
+  pub fn new(name: String, pos: IVec2) -> Self {
+    Self {
+      name,
+      pos
+    }
+  }
 }
 
 // ==== In Engine Definitions (Consumes Manifests)

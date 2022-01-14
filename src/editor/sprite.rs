@@ -4,7 +4,7 @@ use kurinji::Kurinji;
 
 use super::camera::EditorCamera;
 use super::ui::EditorState;
-use crate::input::SELECT;
+use crate::input::{SELECT, RETURN};
 use crate::level::config::{LevelSpriteEntry, SPRITE_SIZE, HandledSprite};
 use crate::level::load::{PreparedLevel, LevelLoadComplete};
 use crate::level::util::load_sprite_texture;
@@ -36,6 +36,11 @@ pub fn create_selected_sprite_cursor(
           ..Default::default()
         })
         .insert(SelectedSpriteEntity(sprite.name.clone(), sprite.clone()));
+    }
+  } else {
+    if let Ok((ent, _)) = query.single() {
+      info!(target: "create_selected_sprite_cursor", "Deleting cursor");
+      commands.entity(ent).despawn();
     }
   }
 }
@@ -75,12 +80,12 @@ pub fn handle_placing_sprite (
 ) {
   if let Ok((sprite, material, transform)) = sprite_on_cursor.single() {
     if input.is_action_active(SELECT) {
-      println!("Selected!");
       let pos = IVec2::new(transform.translation.x as i32, transform.translation.y as i32);
-      if !editor_state.placed_sprites.contains_key(&pos) {
+      let tile_pos = pos / SPRITE_SIZE as i32;
+      if !editor_state.placed_sprites.contains_key(&tile_pos) {
         editor_state.placed_sprites.insert(pos, sprite.0.clone());
         let mut level = loaded_level.single_mut().unwrap();
-        let handled_sprite: HandledSprite = (sprite.1.clone(), pos / SPRITE_SIZE as i32, material.clone()).into();
+        let handled_sprite: HandledSprite = (sprite.1.clone(), tile_pos, material.clone()).into();
         level.0.sprites.push(handled_sprite);
         commands
           .spawn_bundle(SpriteBundle {
@@ -89,6 +94,17 @@ pub fn handle_placing_sprite (
             ..Default::default()
           });
       }
+    }
+  }
+}
+
+pub fn handle_deselecting_sprite (
+  input: Res<Kurinji>,
+  mut selected_sprite: ResMut<SelectedSprite>
+) {
+  if input.is_action_active(RETURN) {
+    if selected_sprite.0.is_some() {
+      selected_sprite.0 = None;
     }
   }
 }
@@ -102,6 +118,7 @@ impl Plugin for EditorSpritePlugin {
       .init_resource::<SelectedSprite>()
       .add_system(create_selected_sprite_cursor.system())
       .add_system(handle_selected_sprite.system())
-      .add_system(handle_placing_sprite.system());
+      .add_system(handle_placing_sprite.system())
+      .add_system(handle_deselecting_sprite.system());
   }
 }
