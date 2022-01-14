@@ -206,8 +206,6 @@
 <span id="205">205</span>
 <span id="206">206</span>
 <span id="207">207</span>
-<span id="208">208</span>
-<span id="209">209</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -272,10 +270,8 @@
 
     <span class="comment">// If in edit mode, a lack of level map is forgiven.</span>
     <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">map</span>) <span class="op">=</span> <span class="ident">get_map_by_id</span>(<span class="ident">id</span>) {
-      <span class="macro">println!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">map</span>);
       <span class="ident">map</span>
     } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">in_edit_mode</span> {
-      <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;prepare_level&quot;</span>, <span class="string">&quot;Could not find level map! Since in edit mode generating a blank one...&quot;</span>);
       <span class="ident">LevelMap::default</span>()
     } <span class="kw">else</span> {
       <span class="macro">panic!</span>(<span class="string">&quot;Attempted to load invalid level map {}&quot;</span>, <span class="ident">id</span>)

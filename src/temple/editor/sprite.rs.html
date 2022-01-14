@@ -106,15 +106,62 @@
 <span id="105">105</span>
 <span id="106">106</span>
 <span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy::render::camera::OrthographicProjection</span>;
 <span class="kw">use</span> <span class="ident">kurinji::Kurinji</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::camera::EditorCamera</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ui::EditorState</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input::SELECT</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ui</span>::{<span class="ident">EditorState</span>, <span class="ident">EDITOR_ERASER_NAME</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input</span>::{<span class="ident">SELECT</span>, <span class="ident">RETURN</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config</span>::{<span class="ident">LevelSpriteEntry</span>, <span class="ident">SPRITE_SIZE</span>, <span class="ident">HandledSprite</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load</span>::{<span class="ident">PreparedLevel</span>, <span class="ident">LevelLoadComplete</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load</span>::{<span class="ident">PreparedLevel</span>, <span class="ident">LevelLoadComplete</span>, <span class="ident">LevelLoadedSprite</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::util::load_sprite_texture</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
@@ -144,6 +191,11 @@
           ..<span class="ident">Default::default</span>()
         })
         .<span class="ident">insert</span>(<span class="ident">SelectedSpriteEntity</span>(<span class="ident">sprite</span>.<span class="ident">name</span>.<span class="ident">clone</span>(), <span class="ident">sprite</span>.<span class="ident">clone</span>()));
+    }
+  } <span class="kw">else</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ent</span>, <span class="kw">_</span>)) <span class="op">=</span> <span class="ident">query</span>.<span class="ident">single</span>() {
+      <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;create_selected_sprite_cursor&quot;</span>, <span class="string">&quot;Deleting cursor&quot;</span>);
+      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>();
     }
   }
 }
@@ -178,25 +230,66 @@
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="ident">sprite_on_cursor</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="ident">SelectedSpriteEntity</span>, <span class="kw-2">&amp;</span><span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">ColorMaterial</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="ident">Transform</span>)<span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PreparedLevel</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+  <span class="ident">loaded_sprites</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">Transform</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadedSprite</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">editor_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>
 ) {
+  <span class="comment">// Cursor is active</span>
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">sprite</span>, <span class="ident">material</span>, <span class="ident">transform</span>)) <span class="op">=</span> <span class="ident">sprite_on_cursor</span>.<span class="ident">single</span>() {
+    <span class="comment">// &quot;Left Click&quot; is activated</span>
     <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">SELECT</span>) {
-      <span class="macro">println!</span>(<span class="string">&quot;Selected!&quot;</span>);
       <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">IVec2::new</span>(<span class="ident">transform</span>.<span class="ident">translation</span>.<span class="ident">x</span> <span class="kw">as</span> <span class="ident">i32</span>, <span class="ident">transform</span>.<span class="ident">translation</span>.<span class="ident">y</span> <span class="kw">as</span> <span class="ident">i32</span>);
-      <span class="kw">if</span> <span class="op">!</span><span class="ident">editor_state</span>.<span class="ident">placed_sprites</span>.<span class="ident">contains_key</span>(<span class="kw-2">&amp;</span><span class="ident">pos</span>) {
-        <span class="ident">editor_state</span>.<span class="ident">placed_sprites</span>.<span class="ident">insert</span>(<span class="ident">pos</span>, <span class="ident">sprite</span>.<span class="number">0</span>.<span class="ident">clone</span>());
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">level</span> <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single_mut</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">handled_sprite</span>: <span class="ident">HandledSprite</span> <span class="op">=</span> (<span class="ident">sprite</span>.<span class="number">1</span>.<span class="ident">clone</span>(), <span class="ident">pos</span> <span class="op">/</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">i32</span>, <span class="ident">material</span>.<span class="ident">clone</span>()).<span class="ident">into</span>();
-        <span class="ident">level</span>.<span class="number">0</span>.<span class="ident">sprites</span>.<span class="ident">push</span>(<span class="ident">handled_sprite</span>);
-        <span class="ident">commands</span>
-          .<span class="ident">spawn_bundle</span>(<span class="ident">SpriteBundle</span> {
-            <span class="ident">material</span>: <span class="ident">material</span>.<span class="ident">clone</span>(),
-            <span class="ident">transform</span>: <span class="ident">transform</span>.<span class="ident">clone</span>(),
-            ..<span class="ident">Default::default</span>()
-          });
+      <span class="kw">let</span> <span class="ident">tile_pos</span> <span class="op">=</span> <span class="ident">pos</span> <span class="op">/</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">i32</span>;
+      <span class="comment">// Nothing placed in that position</span>
+      <span class="kw">if</span> <span class="op">!</span><span class="ident">editor_state</span>.<span class="ident">placed_sprites</span>.<span class="ident">contains_key</span>(<span class="kw-2">&amp;</span><span class="ident">tile_pos</span>) {
+        <span class="comment">// Make sure it&#39;s not the eraser</span>
+        <span class="kw">if</span> <span class="ident">sprite</span>.<span class="number">0</span>.<span class="ident">ne</span>(<span class="ident">EDITOR_ERASER_NAME</span>) {
+          <span class="comment">// Insert</span>
+          <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;handle_placing_sprite&quot;</span>, <span class="string">&quot;Inserted&quot;</span>);
+          <span class="ident">editor_state</span>.<span class="ident">placed_sprites</span>.<span class="ident">insert</span>(<span class="ident">tile_pos</span>, <span class="ident">sprite</span>.<span class="number">0</span>.<span class="ident">clone</span>());
+          <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">level</span> <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single_mut</span>().<span class="ident">unwrap</span>();
+          <span class="kw">let</span> <span class="ident">handled_sprite</span>: <span class="ident">HandledSprite</span> <span class="op">=</span> (<span class="ident">sprite</span>.<span class="number">1</span>.<span class="ident">clone</span>(), <span class="ident">tile_pos</span>, <span class="ident">material</span>.<span class="ident">clone</span>()).<span class="ident">into</span>();
+          <span class="ident">level</span>.<span class="number">0</span>.<span class="ident">sprites</span>.<span class="ident">push</span>(<span class="ident">handled_sprite</span>);
+          <span class="ident">commands</span>
+            .<span class="ident">spawn_bundle</span>(<span class="ident">SpriteBundle</span> {
+              <span class="ident">material</span>: <span class="ident">material</span>.<span class="ident">clone</span>(),
+              <span class="ident">transform</span>: <span class="ident">transform</span>.<span class="ident">clone</span>(),
+              ..<span class="ident">Default::default</span>()
+            });
+        }
+      <span class="comment">// If it does exist, and using the eraser, delete the sprite</span>
+      } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">sprite</span>.<span class="number">0</span>.<span class="ident">eq</span>(<span class="ident">EDITOR_ERASER_NAME</span>) {
+        <span class="comment">// Remove from table</span>
+        <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;handle_placing_sprite&quot;</span>, <span class="string">&quot;Deleted&quot;</span>);
+        <span class="ident">editor_state</span>.<span class="ident">placed_sprites</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">tile_pos</span>);
+
+        <span class="comment">// Remove from level entries</span>
+        <span class="kw">let</span> <span class="ident">sprites</span> <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single_mut</span>().<span class="ident">unwrap</span>().<span class="number">0</span>.<span class="ident">sprites</span>.<span class="ident">clone</span>();
+        <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">sprite</span>) <span class="kw">in</span> <span class="ident">sprites</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
+          <span class="kw">if</span> <span class="ident">sprite</span>.<span class="ident">pos</span>.<span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="ident">tile_pos</span>) {
+            <span class="ident">loaded_level</span>.<span class="ident">single_mut</span>().<span class="ident">unwrap</span>().<span class="number">0</span>.<span class="ident">sprites</span>.<span class="ident">swap_remove</span>(<span class="ident">i</span>);
+            <span class="kw">break</span>;
+          }
+        }
+
+        <span class="comment">// Remove from bevy world</span>
+        <span class="ident">loaded_sprites</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">entity</span>, <span class="ident">trans</span>)<span class="op">|</span> {
+          <span class="kw">if</span> <span class="ident">trans</span>.<span class="ident">translation</span> <span class="op">==</span> <span class="ident">Vec3::new</span>(<span class="ident">pos</span>.<span class="ident">x</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">pos</span>.<span class="ident">y</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="number">0.0</span>) {
+            <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">entity</span>).<span class="ident">despawn</span>();
+          }
+        });
       }
+    }
+  }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_deselect</span> (
+  <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">selected_sprite</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">SelectedSprite</span><span class="op">&gt;</span>,
+) {
+  <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">RETURN</span>) {
+    <span class="kw">if</span> <span class="ident">selected_sprite</span>.<span class="number">0</span>.<span class="ident">is_some</span>() {
+      <span class="ident">selected_sprite</span>.<span class="number">0</span> <span class="op">=</span> <span class="prelude-val">None</span>;
     }
   }
 }
@@ -210,7 +303,8 @@
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">SelectedSprite</span><span class="op">&gt;</span>()
       .<span class="ident">add_system</span>(<span class="ident">create_selected_sprite_cursor</span>.<span class="ident">system</span>())
       .<span class="ident">add_system</span>(<span class="ident">handle_selected_sprite</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">handle_placing_sprite</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">handle_placing_sprite</span>.<span class="ident">system</span>())
+      .<span class="ident">add_system</span>(<span class="ident">handle_deselect</span>.<span class="ident">system</span>());
   }
 }
 </code></pre></div>
