@@ -4,9 +4,9 @@ use kurinji::Kurinji;
 
 use super::camera::EditorCamera;
 use super::ui::{EditorState, EDITOR_ERASER_NAME};
-use crate::input::{SELECT, RETURN};
-use crate::level::config::{LevelSpriteEntry, SPRITE_SIZE, HandledSprite};
-use crate::level::load::{PreparedLevel, LevelLoadComplete, LevelLoadedSprite};
+use crate::input::{RETURN, SELECT};
+use crate::level::config::{HandledSprite, LevelSpriteEntry, SPRITE_SIZE};
+use crate::level::load::{LevelLoadComplete, LevelLoadedSprite, PreparedLevel};
 use crate::level::util::load_sprite_texture;
 
 #[derive(Default)]
@@ -71,13 +71,13 @@ pub fn handle_selected_sprite(
   }
 }
 
-pub fn handle_placing_sprite (
+pub fn handle_placing_sprite(
   mut commands: Commands,
   sprite_on_cursor: Query<(&SelectedSpriteEntity, &Handle<ColorMaterial>, &Transform)>,
   mut loaded_level: Query<&mut PreparedLevel, With<LevelLoadComplete>>,
   loaded_sprites: Query<(Entity, &Transform), With<LevelLoadedSprite>>,
   input: Res<Kurinji>,
-  mut editor_state: ResMut<EditorState>
+  mut editor_state: ResMut<EditorState>,
 ) {
   // Cursor is active
   if let Ok((sprite, material, transform)) = sprite_on_cursor.single() {
@@ -95,12 +95,11 @@ pub fn handle_placing_sprite (
           let mut level = loaded_level.single_mut().unwrap();
           let handled_sprite: HandledSprite = (sprite.1.clone(), tile_pos, material.clone()).into();
           level.0.sprites.push(handled_sprite);
-          commands
-            .spawn_bundle(SpriteBundle {
-              material: material.clone(),
-              transform: transform.clone(),
-              ..Default::default()
-            });
+          commands.spawn_bundle(SpriteBundle {
+            material: material.clone(),
+            transform: transform.clone(),
+            ..Default::default()
+          });
         }
       // If it does exist, and using the eraser, delete the sprite
       } else if sprite.0.eq(EDITOR_ERASER_NAME) {
@@ -128,10 +127,7 @@ pub fn handle_placing_sprite (
   }
 }
 
-pub fn handle_deselect (
-  input: Res<Kurinji>,
-  mut selected_sprite: ResMut<SelectedSprite>,
-) {
+pub fn handle_deselect(input: Res<Kurinji>, mut selected_sprite: ResMut<SelectedSprite>) {
   if input.is_action_active(RETURN) {
     if selected_sprite.0.is_some() {
       selected_sprite.0 = None;

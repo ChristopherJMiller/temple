@@ -5,8 +5,8 @@ use bevy_egui::{egui, EguiContext};
 
 use super::sprite::SelectedSprite;
 use super::util::{
-  format_menu_item, get_level_menu_items, get_music_files, get_sprite_texture_files, load_level_sprite_entries,
-  validate_add_sprite_form, AddSpriteForm, get_sprite_table,
+  format_menu_item, get_level_menu_items, get_music_files, get_sprite_table, get_sprite_texture_files,
+  load_level_sprite_entries, validate_add_sprite_form, AddSpriteForm,
 };
 use crate::level::config::{LevelManifest, LevelSpriteEntry};
 use crate::level::load::{LevelLoadComplete, LoadLevel, PreparedLevel};
@@ -173,7 +173,7 @@ pub fn sidebar(
             name: EDITOR_ERASER_NAME.to_string(),
             offset: (0, 0).into(),
             texture: "eraser.png".to_string(),
-            attributes: vec![]
+            attributes: vec![],
           });
         }
 

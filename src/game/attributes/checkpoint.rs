@@ -4,6 +4,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+use super::lex::ParseArgumentItem;
 use super::Attribute;
 use crate::game::collision_groups::*;
 use crate::level::config::SPRITE_SIZE;
@@ -14,7 +15,7 @@ pub struct Checkpoint(pub Vec2);
 impl Attribute for Checkpoint {
   const KEY: &'static str = "checkpoint";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<i32>) {
+  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<ParseArgumentItem>) {
     let player_offset = if params.len() > 0 {
       let x_offset = params.get(0);
       let y_offset = params.get(1);
@@ -22,7 +23,15 @@ impl Attribute for Checkpoint {
       if x_offset.is_none() || y_offset.is_none() {
         panic!("Attempted to construct a checkpoint with an offset, but provided too few arguments!");
       } else {
-        Vec2::new(*x_offset.unwrap() as f32, *y_offset.unwrap() as f32)
+        if let Some(ParseArgumentItem::Number(x)) = x_offset {
+          if let Some(ParseArgumentItem::Number(y)) = y_offset {
+            Vec2::new(*x as f32, *y as f32)
+          } else {
+            panic!("y coord not found!");
+          }
+        } else {
+          panic!("x coord not found!");
+        }
       }
     } else {
       Vec2::ZERO

@@ -18,6 +18,7 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+use super::lex::ParseArgumentItem;
 use super::{Attribute, Player};
 
 /// Direction of sprite movement.
@@ -30,13 +31,17 @@ pub enum MovingDirection {
 }
 
 impl MovingDirection {
-  pub fn from_param(value: i32) -> Option<Self> {
-    match value {
-      0 => Some(Self::Right),
-      1 => Some(Self::Down),
-      2 => Some(Self::Left),
-      3 => Some(Self::Up),
-      _ => None,
+  pub fn from_param(value: ParseArgumentItem) -> Option<Self> {
+    if let ParseArgumentItem::Number(value) = value {
+      match value {
+        0 => Some(Self::Right),
+        1 => Some(Self::Down),
+        2 => Some(Self::Left),
+        3 => Some(Self::Up),
+        _ => None,
+      }
+    } else {
+      panic!("Failed to parse param {:?}", value)
     }
   }
 }
@@ -122,23 +127,34 @@ impl Default for MovingSprite {
 impl Attribute for MovingSprite {
   const KEY: &'static str = "moving";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<i32>) {
+  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<ParseArgumentItem>) {
     let direction_num = params
       .get(0)
       .expect("Moving Sprite Attribute was not supplied parameter 0");
-    let direction = MovingDirection::from_param(*direction_num).unwrap_or_else(|| {
+    let direction = MovingDirection::from_param(direction_num.clone()).unwrap_or_else(|| {
       panic!(
-        "Was supplied invalid moving direction of {} for moving attribute",
+        "Was supplied invalid moving direction of {:?} for moving attribute",
         direction_num
       )
     });
 
-    let distance = *params
+    let distance_item = &*params
       .get(1)
       .expect("Moving Sprite Attribute was not supplied parameter 1");
-    let time = *params
+    let time_item = &*params
       .get(2)
       .expect("Moving Sprite Attribute was not supplied parameter 2");
+
+    let distance = if let ParseArgumentItem::Number(n) = distance_item {
+      *n as i32
+    } else {
+      panic!("Distance param was not a number!")
+    };
+    let time = if let ParseArgumentItem::Number(n) = time_item {
+      *n as i32
+    } else {
+      panic!("Distance param was not a number!")
+    };
 
     commands
       .entity(target)

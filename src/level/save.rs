@@ -2,10 +2,9 @@ use std::fs;
 
 use bevy::prelude::*;
 
-use crate::level::config::LevelMapFile;
-
 use super::load::{LevelLoadComplete, LoadLevel, PreparedLevel};
 use super::util::{get_level_manifest_path_from_id, get_level_map_path_from_id};
+use crate::level::config::LevelMapFile;
 
 /// Command to save loaded level
 pub struct SaveLevel;

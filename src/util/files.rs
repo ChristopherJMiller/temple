@@ -14,26 +14,30 @@ use std::env::current_exe;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use const_format::concatcp;
 use toml::de::Error;
 
 use crate::level::config::LevelManifest;
 use crate::util::settings::{GameFile, LevelTransistionType};
 
+/// Asset Root Location
+const ASSET_PATH: &str = "assets/";
+
 /// `game.toml` location
-pub const GAME_SETTING_PATH: &str = "assets/game.toml";
+pub const GAME_SETTING_PATH: &str = concatcp!(ASSET_PATH, "game.toml");
 
 /// `/levels/` location
-pub const LEVEL_DIR_PATH: &str = "assets/levels/";
+pub const LEVEL_DIR_PATH: &str = concatcp!(ASSET_PATH, "levels/");
 
 /// `/levelmaps/` location
-pub const LEVEL_MAP_DIR_PATH: &str = "assets/levelmaps/";
+pub const LEVEL_MAP_DIR_PATH: &str = concatcp!(ASSET_PATH, "levelmaps/");
 
 /// `/textures/` location
-pub const TEXTURE_DIR_PATH: &str = "assets/textures/";
-pub const SPRITE_TEXTURE_DIR_PATH: &str = "assets/textures/sprites/";
+pub const TEXTURE_DIR_PATH: &str = concatcp!(ASSET_PATH, "textures/");
+pub const SPRITE_TEXTURE_DIR_PATH: &str = concatcp!(TEXTURE_DIR_PATH, "sprites/");
 
 /// `/audio/music` location
-pub const MUSIC_DIR_PATH: &str = "assets/audio/music/";
+pub const MUSIC_DIR_PATH: &str = concatcp!(ASSET_PATH, "audio/music/");
 
 pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
   let mut base = current_exe().unwrap();

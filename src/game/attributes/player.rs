@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
+use super::lex::ParseArgumentItem;
 use super::{Attribute, Checkpoint, PlayerReachedCheckpoint};
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
@@ -44,7 +45,7 @@ impl Player {
 impl Attribute for Player {
   const KEY: &'static str = "player";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<i32>) {
+  fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<ParseArgumentItem>) {
     let rigid_body = RigidBodyBundle {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
