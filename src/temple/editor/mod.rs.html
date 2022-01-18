@@ -22,10 +22,14 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::app::PluginGroupBuilder</span>;
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">camera::EditorCameraPlugin</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::border::EditorBorderPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::sprite::EditorSpritePlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::ui::EditorUiPlugin</span>;
 
@@ -33,6 +37,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">sprite</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ui</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">util</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">border</span>;
 
 <span class="doccomment">/// [PluginGroup] for the editor.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EditorPlugins</span>;
@@ -42,7 +47,8 @@
     <span class="ident">group</span>
       .<span class="ident">add</span>(<span class="ident">EditorCameraPlugin</span>)
       .<span class="ident">add</span>(<span class="ident">EditorUiPlugin</span>)
-      .<span class="ident">add</span>(<span class="ident">EditorSpritePlugin</span>);
+      .<span class="ident">add</span>(<span class="ident">EditorSpritePlugin</span>)
+      .<span class="ident">add</span>(<span class="ident">EditorBorderPlugin</span>);
   }
 }
 </code></pre></div>

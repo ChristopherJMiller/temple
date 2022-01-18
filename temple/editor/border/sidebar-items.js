@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["build_border",""],["delete_border",""],["handle_input",""]],"struct":[["EditorBorderPlugin","[Plugin] for manging a border that can be placed on sprites."],["EnableBorder",""],["SpriteBorder",""]]});

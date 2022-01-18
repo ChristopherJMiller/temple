@@ -129,12 +129,14 @@
 <span id="128">128</span>
 <span id="129">129</span>
 <span id="130">130</span>
+<span id="131">131</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Represents the player. `player()`</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_kira_audio::Audio</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Checkpoint</span>, <span class="ident">PlayerReachedCheckpoint</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx</span>::{<span class="ident">AudioChannels</span>, <span class="ident">SfxHandles</span>};
@@ -175,7 +177,7 @@
 <span class="kw">impl</span> <span class="ident">Attribute</span> <span class="kw">for</span> <span class="ident">Player</span> {
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;player&quot;</span>;
 
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> <span class="ident">rigid_body</span> <span class="op">=</span> <span class="ident">RigidBodyBundle</span> {
       <span class="ident">position</span>: <span class="ident">position</span>.<span class="ident">into</span>(),
       <span class="ident">mass_properties</span>: (<span class="ident">RigidBodyMassPropsFlags::ROTATION_LOCKED</span>).<span class="ident">into</span>(),

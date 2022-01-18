@@ -104,6 +104,10 @@
 <span id="103">103</span>
 <span id="104">104</span>
 <span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles manifest validation</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # About</span>
@@ -120,26 +124,30 @@
 <span class="kw">use</span> <span class="ident">std::fs</span>;
 <span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
+<span class="kw">use</span> <span class="ident">const_format::concatcp</span>;
 <span class="kw">use</span> <span class="ident">toml::de::Error</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::LevelManifest</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings</span>::{<span class="ident">GameFile</span>, <span class="ident">LevelTransistionType</span>};
 
+<span class="doccomment">/// Asset Root Location</span>
+<span class="kw">const</span> <span class="ident">ASSET_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/&quot;</span>;
+
 <span class="doccomment">/// `game.toml` location</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">GAME_SETTING_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/game.toml&quot;</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">GAME_SETTING_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">concatcp!</span>(<span class="ident">ASSET_PATH</span>, <span class="string">&quot;game.toml&quot;</span>);
 
 <span class="doccomment">/// `/levels/` location</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LEVEL_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/levels/&quot;</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LEVEL_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">concatcp!</span>(<span class="ident">ASSET_PATH</span>, <span class="string">&quot;levels/&quot;</span>);
 
 <span class="doccomment">/// `/levelmaps/` location</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LEVEL_MAP_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/levelmaps/&quot;</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LEVEL_MAP_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">concatcp!</span>(<span class="ident">ASSET_PATH</span>, <span class="string">&quot;levelmaps/&quot;</span>);
 
 <span class="doccomment">/// `/textures/` location</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TEXTURE_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/textures/&quot;</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPRITE_TEXTURE_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/textures/sprites/&quot;</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TEXTURE_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">concatcp!</span>(<span class="ident">ASSET_PATH</span>, <span class="string">&quot;textures/&quot;</span>);
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPRITE_TEXTURE_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">concatcp!</span>(<span class="ident">TEXTURE_DIR_PATH</span>, <span class="string">&quot;sprites/&quot;</span>);
 
 <span class="doccomment">/// `/audio/music` location</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MUSIC_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;assets/audio/music/&quot;</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MUSIC_DIR_PATH</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">concatcp!</span>(<span class="ident">ASSET_PATH</span>, <span class="string">&quot;audio/music/&quot;</span>);
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_game_root</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">T</span>) -&gt; <span class="ident">PathBuf</span> {
   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">base</span> <span class="op">=</span> <span class="ident">current_exe</span>().<span class="ident">unwrap</span>();

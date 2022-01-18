@@ -102,17 +102,17 @@
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">camera_trans</span>) <span class="op">=</span> <span class="ident">camera</span>.<span class="ident">single_mut</span>() {
     <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">target</span>) <span class="op">=</span> <span class="ident">targets</span>.<span class="ident">single</span>() {
-      <span class="ident">target</span>.<span class="ident">translation</span>
+      <span class="ident">target</span>.<span class="ident">translation</span>.<span class="ident">truncate</span>()
     } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">player_trans</span>) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single</span>() {
-      <span class="ident">player_trans</span>.<span class="ident">translation</span>
+      <span class="ident">player_trans</span>.<span class="ident">translation</span>.<span class="ident">truncate</span>()
     } <span class="kw">else</span> {
-      <span class="ident">camera_trans</span>.<span class="ident">translation</span>
+      <span class="ident">camera_trans</span>.<span class="ident">translation</span>.<span class="ident">truncate</span>()
     };
 
-    <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> (<span class="ident">target</span> <span class="op">-</span> <span class="ident">camera_trans</span>.<span class="ident">translation</span>).<span class="ident">normalize_or_zero</span>();
-    <span class="kw">let</span> <span class="ident">speed</span> <span class="op">=</span> ((<span class="ident">target</span> <span class="op">-</span> <span class="ident">camera_trans</span>.<span class="ident">translation</span>).<span class="ident">length</span>() <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>).<span class="ident">min</span>(<span class="ident">cam_speed</span>.<span class="number">0</span>);
+    <span class="kw">let</span> <span class="ident">dir</span> <span class="op">=</span> (<span class="ident">target</span> <span class="op">-</span> <span class="ident">camera_trans</span>.<span class="ident">translation</span>.<span class="ident">truncate</span>()).<span class="ident">normalize_or_zero</span>();
+    <span class="kw">let</span> <span class="ident">speed</span> <span class="op">=</span> ((<span class="ident">target</span> <span class="op">-</span> <span class="ident">camera_trans</span>.<span class="ident">translation</span>.<span class="ident">truncate</span>()).<span class="ident">length</span>() <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>).<span class="ident">min</span>(<span class="ident">cam_speed</span>.<span class="number">0</span>);
 
-    <span class="ident">camera_trans</span>.<span class="ident">translation</span> <span class="op">+</span><span class="op">=</span> <span class="ident">dir</span> <span class="op">*</span> <span class="ident">speed</span> <span class="op">*</span> <span class="ident">time</span>.<span class="ident">delta_seconds</span>();
+    <span class="ident">camera_trans</span>.<span class="ident">translation</span> <span class="op">+</span><span class="op">=</span> <span class="ident">dir</span>.<span class="ident">extend</span>(<span class="number">0.0</span>) <span class="op">*</span> <span class="ident">speed</span> <span class="op">*</span> <span class="ident">time</span>.<span class="ident">delta_seconds</span>();
   }
 }
 

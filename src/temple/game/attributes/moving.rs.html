@@ -180,18 +180,24 @@
 <span id="179">179</span>
 <span id="180">180</span>
 <span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! TODO: `speed` should be changed to `dist`, for easier usage.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
-<span class="doccomment">//! `dir`: Direction of movement</span>
-<span class="doccomment">//! - `0` Right</span>
-<span class="doccomment">//! - `1` Right</span>
-<span class="doccomment">//! - `2` Right</span>
-<span class="doccomment">//! - `3` Right</span>
+<span class="doccomment">//! `dir`: Direction of movement (left, right, down, up)</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! `speed`: Max velocity of the moving sprite</span>
+<span class="doccomment">//! `distance`: Distance away from origin in direction of `dir`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! `dur`: Duration of the sprite&#39;s cycle in seconds</span>
 
@@ -200,6 +206,7 @@
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Player</span>};
 
 <span class="doccomment">/// Direction of sprite movement.</span>
@@ -212,13 +219,17 @@
 }
 
 <span class="kw">impl</span> <span class="ident">MovingDirection</span> {
-  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_param</span>(<span class="ident">value</span>: <span class="ident">i32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-    <span class="kw">match</span> <span class="ident">value</span> {
-      <span class="number">0</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Right</span>),
-      <span class="number">1</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Down</span>),
-      <span class="number">2</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Left</span>),
-      <span class="number">3</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Up</span>),
-      <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_param</span>(<span class="ident">value</span>: <span class="ident">ParseArgumentItem</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="ident">ParseArgumentItem::Str</span>(<span class="ident">str</span>) <span class="op">=</span> <span class="ident">value</span> {
+      <span class="kw">match</span> <span class="ident">str</span>.<span class="ident">as_str</span>() {
+        <span class="string">&quot;right&quot;</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Right</span>),
+        <span class="string">&quot;down&quot;</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Down</span>),
+        <span class="string">&quot;left&quot;</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Left</span>),
+        <span class="string">&quot;up&quot;</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident"><span class="self">Self</span>::Up</span>),
+        <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+      }
+    } <span class="kw">else</span> {
+      <span class="macro">panic!</span>(<span class="string">&quot;Failed to parse param {:?}&quot;</span>, <span class="ident">value</span>)
     }
   }
 }
@@ -304,23 +315,34 @@
 <span class="kw">impl</span> <span class="ident">Attribute</span> <span class="kw">for</span> <span class="ident">MovingSprite</span> {
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;moving&quot;</span>;
 
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> <span class="ident">direction_num</span> <span class="op">=</span> <span class="ident">params</span>
       .<span class="ident">get</span>(<span class="number">0</span>)
       .<span class="ident">expect</span>(<span class="string">&quot;Moving Sprite Attribute was not supplied parameter 0&quot;</span>);
-    <span class="kw">let</span> <span class="ident">direction</span> <span class="op">=</span> <span class="ident">MovingDirection::from_param</span>(<span class="kw-2">*</span><span class="ident">direction_num</span>).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> {
+    <span class="kw">let</span> <span class="ident">direction</span> <span class="op">=</span> <span class="ident">MovingDirection::from_param</span>(<span class="ident">direction_num</span>.<span class="ident">clone</span>()).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> {
       <span class="macro">panic!</span>(
-        <span class="string">&quot;Was supplied invalid moving direction of {} for moving attribute&quot;</span>,
+        <span class="string">&quot;Was supplied invalid moving direction of {:?} for moving attribute&quot;</span>,
         <span class="ident">direction_num</span>
       )
     });
 
-    <span class="kw">let</span> <span class="ident">distance</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">params</span>
+    <span class="kw">let</span> <span class="ident">distance_item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">params</span>
       .<span class="ident">get</span>(<span class="number">1</span>)
       .<span class="ident">expect</span>(<span class="string">&quot;Moving Sprite Attribute was not supplied parameter 1&quot;</span>);
-    <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">params</span>
+    <span class="kw">let</span> <span class="ident">time_item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">params</span>
       .<span class="ident">get</span>(<span class="number">2</span>)
       .<span class="ident">expect</span>(<span class="string">&quot;Moving Sprite Attribute was not supplied parameter 2&quot;</span>);
+
+    <span class="kw">let</span> <span class="ident">distance</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="ident">ParseArgumentItem::Number</span>(<span class="ident">n</span>) <span class="op">=</span> <span class="ident">distance_item</span> {
+      <span class="kw-2">*</span><span class="ident">n</span> <span class="kw">as</span> <span class="ident">i32</span>
+    } <span class="kw">else</span> {
+      <span class="macro">panic!</span>(<span class="string">&quot;Distance param was not a number!&quot;</span>)
+    };
+    <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="ident">ParseArgumentItem::Number</span>(<span class="ident">n</span>) <span class="op">=</span> <span class="ident">time_item</span> {
+      <span class="kw-2">*</span><span class="ident">n</span> <span class="kw">as</span> <span class="ident">i32</span>
+    } <span class="kw">else</span> {
+      <span class="macro">panic!</span>(<span class="string">&quot;Distance param was not a number!&quot;</span>)
+    };
 
     <span class="ident">commands</span>
       .<span class="ident">entity</span>(<span class="ident">target</span>)

@@ -206,6 +206,8 @@
 <span id="205">205</span>
 <span id="206">206</span>
 <span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -349,6 +351,7 @@
     <span class="kw">if</span> <span class="op">!</span><span class="ident">in_edit_mode</span> {
       <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">camera</span> <span class="op">=</span> <span class="ident">OrthographicCameraBundle::new_2d</span>();
       <span class="ident">camera</span>.<span class="ident">transform</span>.<span class="ident">translation</span> <span class="op">=</span> <span class="ident">player_trans</span>;
+      <span class="ident">camera</span>.<span class="ident">transform</span>.<span class="ident">translation</span>.<span class="ident">z</span> <span class="op">=</span> <span class="number">16.0</span>;
       <span class="ident">camera</span>.<span class="ident">orthographic_projection</span>.<span class="ident">scale</span> <span class="op">=</span> <span class="number">1.0</span> <span class="op">/</span> <span class="number">3.0</span>;
 
       <span class="ident">commands</span>
@@ -358,6 +361,7 @@
     } <span class="kw">else</span> {
       <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">camera</span> <span class="op">=</span> <span class="ident">OrthographicCameraBundle::new_2d</span>();
       <span class="ident">camera</span>.<span class="ident">transform</span>.<span class="ident">translation</span> <span class="op">=</span> <span class="ident">player_trans</span>;
+      <span class="ident">camera</span>.<span class="ident">transform</span>.<span class="ident">translation</span>.<span class="ident">z</span> <span class="op">=</span> <span class="number">16.0</span>;
       <span class="ident">camera</span>.<span class="ident">orthographic_projection</span>.<span class="ident">scale</span> <span class="op">=</span> <span class="number">1.0</span> <span class="op">/</span> <span class="number">3.0</span>;
 
       <span class="ident">commands</span>

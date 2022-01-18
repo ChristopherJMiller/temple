@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["camera",""],["sprite",""],["ui",""],["util",""]],"struct":[["EditorPlugins","[PluginGroup] for the editor."]]});
+initSidebarItems({"mod":[["border",""],["camera",""],["sprite",""],["ui",""],["util",""]],"struct":[["EditorPlugins","[PluginGroup] for the editor."]]});
