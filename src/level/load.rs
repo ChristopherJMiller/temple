@@ -141,6 +141,7 @@ pub fn load_level(
     if !in_edit_mode {
       let mut camera = OrthographicCameraBundle::new_2d();
       camera.transform.translation = player_trans;
+      camera.transform.translation.z = 16.0;
       camera.orthographic_projection.scale = 1.0 / 3.0;
 
       commands
@@ -150,6 +151,7 @@ pub fn load_level(
     } else {
       let mut camera = OrthographicCameraBundle::new_2d();
       camera.transform.translation = player_trans;
+      camera.transform.translation.z = 16.0;
       camera.orthographic_projection.scale = 1.0 / 3.0;
 
       commands

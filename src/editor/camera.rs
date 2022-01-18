@@ -4,14 +4,21 @@ use kurinji::Kurinji;
 
 use crate::input::{DOWN, EDIT_ZOOM_IN, EDIT_ZOOM_OUT, LEFT, RIGHT, UP};
 
+use super::ui::EditorState;
+
 pub struct EditorCamera;
 
 pub fn handle_camera_input(
   input: Res<Kurinji>,
   time: Res<Time>,
   move_speed: Res<CameraMoveSpeed>,
+  editor_state: Res<EditorState>,
   mut camera: Query<&mut Transform, With<EditorCamera>>,
 ) {
+  if editor_state.ui_open() {
+    return;
+  }
+
   if let Ok(mut trans) = camera.single_mut() {
     if input.is_action_active(UP) {
       trans.translation.y += time.delta_seconds() * move_speed.0;
@@ -43,8 +50,13 @@ pub fn handle_camera_zooming(
   input: Res<Kurinji>,
   time: Res<Time>,
   mut speed: ResMut<CameraMoveSpeed>,
+  editor_state: Res<EditorState>,
   mut camera: Query<(&mut Camera, &mut OrthographicProjection), With<EditorCamera>>,
 ) {
+  if editor_state.ui_open() {
+    return;
+  }
+
   if let Ok((mut camera, mut proj)) = camera.single_mut() {
     if input.is_action_active(EDIT_ZOOM_IN) {
       proj.scale = (proj.scale + time.delta_seconds()).min(2.0);

@@ -1,15 +1,10 @@
 //! Defines a cyclically moving sprite. `moving(dir, distance, time)`
 //!
-//! TODO: `speed` should be changed to `dist`, for easier usage.
 //!
 //! # Usage
-//! `dir`: Direction of movement
-//! - `0` Right
-//! - `1` Right
-//! - `2` Right
-//! - `3` Right
+//! `dir`: Direction of movement (left, right, down, up)
 //!
-//! `speed`: Max velocity of the moving sprite
+//! `distance`: Distance away from origin in direction of `dir`
 //!
 //! `dur`: Duration of the sprite's cycle in seconds
 
@@ -32,12 +27,12 @@ pub enum MovingDirection {
 
 impl MovingDirection {
   pub fn from_param(value: ParseArgumentItem) -> Option<Self> {
-    if let ParseArgumentItem::Number(value) = value {
-      match value {
-        0 => Some(Self::Right),
-        1 => Some(Self::Down),
-        2 => Some(Self::Left),
-        3 => Some(Self::Up),
+    if let ParseArgumentItem::Str(str) = value {
+      match str.as_str() {
+        "right" => Some(Self::Right),
+        "down" => Some(Self::Down),
+        "left" => Some(Self::Left),
+        "up" => Some(Self::Up),
         _ => None,
       }
     } else {

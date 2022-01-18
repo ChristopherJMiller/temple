@@ -4,7 +4,6 @@ use std::fs;
 use bevy::math::IVec2;
 
 use super::ui::LevelMenuItem;
-use crate::game::attributes::REGISTERED_ATTRIBUTES;
 use crate::level::config::LevelSpriteEntry;
 use crate::level::util::{get_level_manifests, get_manifest_by_id, get_map_by_id};
 use crate::level::LevelId;
@@ -18,7 +17,7 @@ pub struct AddSpriteForm {
   /// Sprites texture
   pub texture: String,
   /// Sprites attributes
-  pub attributes: Vec<(String, bool)>,
+  pub attributes: Vec<String>,
 }
 
 impl Default for AddSpriteForm {
@@ -27,7 +26,7 @@ impl Default for AddSpriteForm {
       name: Default::default(),
       offset: ["0".to_string(), "0".to_string()],
       texture: Default::default(),
-      attributes: REGISTERED_ATTRIBUTES.iter().map(|x| (x.to_string(), false)).collect(),
+      attributes: Default::default(),
     }
   }
 }
@@ -39,12 +38,7 @@ impl Into<LevelSpriteEntry> for AddSpriteForm {
       name: self.name,
       offset: IVec2::new(offsets[0], offsets[1]),
       texture: self.texture,
-      attributes: self
-        .attributes
-        .iter()
-        .filter(|(_, selected)| *selected)
-        .map(|(attr, _)| attr.clone())
-        .collect(),
+      attributes: self.attributes,
     }
   }
 }

@@ -53,6 +53,13 @@ pub struct EditorState {
   pub placed_sprites: HashMap<IVec2, String>,
 }
 
+impl EditorState {
+  /// Returns true if any "popover" style ui is open. Used to prevent camera inputs while typing.
+  pub fn ui_open(&self) -> bool {
+    self.show_file_menu || self.show_open_levels_menu || self.show_music_menu || self.show_add_sprite_menu
+  }
+}
+
 /// Toolbar UI
 pub fn toolbar(egui_context: Res<EguiContext>, mut toolbar_state: ResMut<EditorState>) {
   egui::Area::new("Toolbar")
@@ -306,8 +313,23 @@ pub fn show_add_sprite_menu(egui_context: Res<EguiContext>, mut toolbar_state: R
                   toolbar_state.add_sprite_sidebar = AddSpriteSidebarState::Hide;
                 }
 
-                for (attr, selected) in toolbar_state.add_sprite_form.attributes.iter_mut() {
-                  ui.checkbox(selected, attr.as_str());
+                if ui.button("New Attribute").clicked() {
+                  toolbar_state.add_sprite_form.attributes.push(Default::default());
+                }
+
+                let mut to_delete = Vec::new();
+
+                for (i, attr) in toolbar_state.add_sprite_form.attributes.iter_mut().enumerate() {
+                  ui.horizontal(|ui| {
+                    ui.text_edit_singleline(attr);
+                    if ui.button("X").clicked() {
+                      to_delete.push(i);
+                    }
+                  });
+                }
+
+                for i in to_delete {
+                  toolbar_state.add_sprite_form.attributes.remove(i);
                 }
               });
             },

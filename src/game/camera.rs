@@ -36,17 +36,17 @@ fn target_camera(
 ) {
   if let Ok(mut camera_trans) = camera.single_mut() {
     let target = if let Ok(target) = targets.single() {
-      target.translation
+      target.translation.truncate()
     } else if let Ok(player_trans) = player.single() {
-      player_trans.translation
+      player_trans.translation.truncate()
     } else {
-      camera_trans.translation
+      camera_trans.translation.truncate()
     };
 
-    let dir = (target - camera_trans.translation).normalize_or_zero();
-    let speed = ((target - camera_trans.translation).length() * SPRITE_SIZE as f32).min(cam_speed.0);
+    let dir = (target - camera_trans.translation.truncate()).normalize_or_zero();
+    let speed = ((target - camera_trans.translation.truncate()).length() * SPRITE_SIZE as f32).min(cam_speed.0);
 
-    camera_trans.translation += dir * speed * time.delta_seconds();
+    camera_trans.translation += dir.extend(0.0) * speed * time.delta_seconds();
   }
 }
 

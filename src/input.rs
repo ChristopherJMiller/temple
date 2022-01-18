@@ -27,6 +27,8 @@ pub const EDIT_ZOOM_IN: &str = "EDIT_ZOOM_IN";
 pub const SELECT: &str = "SELECT";
 /// Input key for "right click" return
 pub const RETURN: &str = "RETURN";
+/// Input key for toggling sprite borders in edit mode
+pub const EDIT_TOGGLE_BORDER: &str = "EDIT_TOGGLE_BORDER";
 
 /// Loads [Kurinji] input config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
