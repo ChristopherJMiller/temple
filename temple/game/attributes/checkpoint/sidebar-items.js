@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Checkpoint",""],["PlayerReachedCheckpoint",""]]});
+initSidebarItems({"struct":[["Checkpoint",""]]});

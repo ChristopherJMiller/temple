@@ -27,14 +27,11 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
-<span id="29">29</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Level config management and level loading.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">unload_level</span>};
-
-<span class="kw">use</span> <span class="ident"><span class="self">self</span>::load::prepare_level</span>;
-<span class="kw">use</span> <span class="ident"><span class="self">self</span>::verify::verify_level_files</span>;
+<span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">unload_level</span>, <span class="ident">prepare_level</span>, <span class="ident">transition_level</span>};
+<span class="kw">use</span> <span class="ident">verify::verify_level_files</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">config</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">load</span>;
@@ -54,7 +51,8 @@
       .<span class="ident">add_system</span>(<span class="ident">prepare_level</span>.<span class="ident">system</span>())
       .<span class="ident">add_system</span>(<span class="ident">load_level</span>.<span class="ident">system</span>())
       .<span class="ident">add_system</span>(<span class="ident">unload_level</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">apply_save_on_load</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">apply_save_on_load</span>.<span class="ident">system</span>())
+      .<span class="ident">add_system</span>(<span class="ident">transition_level</span>.<span class="ident">system</span>());
   }
 }
 </code></pre></div>

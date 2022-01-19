@@ -137,6 +137,7 @@
 <span id="136">136</span>
 <span id="137">137</span>
 <span id="138">138</span>
+<span id="139">139</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles the CLI options</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -144,7 +145,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state::TempleState</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">TempleState</span>, <span class="ident">GameMode</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ui::LoadTitleScreen</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings::GameFile</span>;
 
@@ -264,12 +265,13 @@
 }
 
 <span class="doccomment">/// Consumes incoming CLI arguments within Bevy</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_cli_args</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>, <span class="ident">cli_args</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">CliArgs</span><span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_cli_args</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="kw-2">mut</span> <span class="ident">temple_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>, <span class="ident">cli_args</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">CliArgs</span><span class="op">&gt;</span>) {
   <span class="comment">// Command line cli is for play mode only</span>
   <span class="kw">if</span> <span class="op">!</span><span class="ident">temple_state</span>.<span class="ident">in_edit_mode</span>() {
     <span class="comment">// --load &lt;level&gt;</span>
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level</span>) <span class="op">=</span> <span class="ident">cli_args</span>.<span class="ident">load_level</span> {
       <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="ident">level</span>));
+      <span class="ident">temple_state</span>.<span class="ident">game_mode</span> <span class="op">=</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">level</span>);
     } <span class="kw">else</span> {
       <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadTitleScreen</span>);
     }

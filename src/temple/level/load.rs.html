@@ -208,6 +208,74 @@
 <span id="207">207</span>
 <span id="208">208</span>
 <span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -223,14 +291,14 @@
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude::RigidBodyPosition</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::config</span>::{<span class="ident">Level</span>, <span class="ident">LevelManifest</span>, <span class="ident">LevelMap</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::util</span>::{<span class="ident">get_manifest_by_id</span>, <span class="ident">get_map_by_id</span>, <span class="ident">prepare_level_from_manifests</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::util</span>::{<span class="ident">get_manifest_by_id</span>, <span class="ident">get_map_by_id</span>, <span class="ident">prepare_level_from_manifests</span>, <span class="ident">levels_have_same_music</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::LevelId</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::editor::camera::EditorCamera</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::camera::MainCamera</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx::AudioChannels</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">GameSaveState</span>, <span class="ident">LevelClearState</span>, <span class="ident">TempleState</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">LevelClearState</span>, <span class="ident">TempleState</span>, <span class="ident">GameMode</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::{<span class="ident">from_game_root</span>, <span class="ident">MUSIC_DIR_PATH</span>};
 
 <span class="doccomment">/// Instruction to load a new level</span>
@@ -250,17 +318,38 @@
 <span class="doccomment">/// instruction is given</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LevelLoadedSprite</span>;
 
+<span class="doccomment">/// Instruction to unload current level and transition to another.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TransitionLevel</span>(<span class="kw">pub</span> <span class="ident">LevelId</span>);
+
+<span class="doccomment">/// Instruction used by transition level to prevent the same music from being replayed.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">KeepMusic</span>;
+
+
 <span class="doccomment">/// System that prepares the level from files, to be loaded by [load_level]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">prepare_level</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>,
+  <span class="ident">active_save</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">materials</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">Assets</span><span class="op">&lt;</span><span class="ident">ColorMaterial</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
-  <span class="ident">query</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>), (<span class="ident">Without</span><span class="op">&lt;</span><span class="ident">PreparedLevel</span><span class="op">&gt;</span>, <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
+  <span class="ident">query</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;mut</span> <span class="ident">LoadLevel</span>), (<span class="ident">Without</span><span class="op">&lt;</span><span class="ident">PreparedLevel</span><span class="op">&gt;</span>, <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
 ) {
-  <span class="ident">query</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="ident">load_level</span>)<span class="op">|</span> {
-    <span class="kw">let</span> <span class="ident">in_edit_mode</span> <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">in_edit_mode</span>();
+  <span class="ident">query</span>.<span class="ident">for_each_mut</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="kw-2">mut</span> <span class="ident">load_level</span>)<span class="op">|</span> {
+    <span class="kw">let</span> <span class="ident">in_edit_mode</span> <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">in_edit_mode</span>();    
+    <span class="comment">// Load checkpoint in play mode if avaliable</span>
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">in_edit_mode</span> {
+      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level_state</span>) <span class="op">=</span> <span class="ident">active_save</span>.<span class="ident">get_level_state</span>(<span class="ident">load_level</span>.<span class="number">0</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">LevelClearState::AtCheckpoint</span>(<span class="ident">new_id</span>, <span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">level_state</span> {
+          <span class="kw">if</span> <span class="ident">load_level</span>.<span class="number">0</span> <span class="op">!</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">new_id</span> {
+            <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;prepare_level&quot;</span>, <span class="string">&quot;Checkpoint save detected, changing load_level to {}&quot;</span>, <span class="kw-2">*</span><span class="ident">new_id</span>);
+            <span class="ident">load_level</span>.<span class="number">0</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">new_id</span>;
+          }
+        }
+      }
+    }
+
     <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">load_level</span>.<span class="number">0</span>;
+    
     <span class="comment">// If in edit mode, a lack of manifest is forgiven.</span>
     <span class="kw">let</span> <span class="ident">manifest</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">manifest</span>) <span class="op">=</span> <span class="ident">get_manifest_by_id</span>(<span class="ident">id</span>) {
       <span class="ident">manifest</span>
@@ -289,10 +378,11 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load_level</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="ident">query</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>, <span class="kw-2">&amp;</span><span class="ident">PreparedLevel</span>), <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+  <span class="ident">keep_music</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">KeepMusic</span><span class="op">&gt;</span>,
   <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>,
   <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
   <span class="ident">audio</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Audio</span><span class="op">&gt;</span>,
-  <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
+  <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>
 ) {
   <span class="ident">query</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="ident">load_level</span>, <span class="ident">prepared_level</span>)<span class="op">|</span> {
     <span class="kw">let</span> <span class="ident">level_id</span> <span class="op">=</span> <span class="ident">load_level</span>.<span class="number">0</span>;
@@ -313,7 +403,12 @@
     <span class="comment">// Load music</span>
     <span class="kw">if</span> <span class="op">!</span><span class="ident">in_edit_mode</span> {
       <span class="kw">if</span> <span class="ident">asset_server</span>.<span class="ident">get_load_state</span>(<span class="kw-2">&amp;</span><span class="ident">music</span>) <span class="op">==</span> <span class="ident">LoadState::Loaded</span> {
-        <span class="ident">audio</span>.<span class="ident">play_looped_in_channel</span>(<span class="ident">music</span>, <span class="kw-2">&amp;</span><span class="ident">channels</span>.<span class="ident">music</span>.<span class="number">0</span>);
+        <span class="comment">// Play new music if load is lacking [KeepMusic] instruction</span>
+        <span class="kw">if</span> <span class="ident">keep_music</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">KeepMusic</span><span class="op">&gt;</span>(<span class="ident">e</span>).<span class="ident">is_err</span>() {
+          <span class="comment">// Workaround due to Bevy reloading previous asset issue,</span>
+          <span class="comment">// Gets a valid handle, and since was previously loaded does not need to load from disk.</span>
+          <span class="ident">audio</span>.<span class="ident">play_looped_in_channel</span>(<span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">music_path</span>.<span class="ident">into_os_string</span>().<span class="ident">to_str</span>().<span class="ident">unwrap</span>()), <span class="kw-2">&amp;</span><span class="ident">channels</span>.<span class="ident">music</span>.<span class="number">0</span>);
+        }
       } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">asset_server</span>.<span class="ident">get_load_state</span>(<span class="kw-2">&amp;</span><span class="ident">music</span>) <span class="op">!</span><span class="op">=</span> <span class="ident">LoadState::Loading</span> {
         <span class="kw">let</span> <span class="kw">_</span>: <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">AudioSource</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">music_path</span>.<span class="ident">into_os_string</span>().<span class="ident">to_str</span>().<span class="ident">unwrap</span>());
         <span class="kw">return</span>;
@@ -344,7 +439,7 @@
         <span class="kw">if</span> <span class="ident">attribute</span> <span class="op">==</span> <span class="ident">Player::KEY</span> {
           <span class="ident">player_trans</span> <span class="op">=</span> <span class="ident">unit_pos</span>;
         }
-        <span class="ident">build_attribute</span>(<span class="ident">attribute</span>.<span class="ident">clone</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="ident">entity</span>, <span class="ident">position</span>);
+        <span class="ident">build_attribute</span>(<span class="ident">attribute</span>.<span class="ident">clone</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="ident">entity</span>, <span class="ident">level_id</span>, <span class="ident">position</span>);
       }
     }
 
@@ -383,16 +478,21 @@
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">RigidBodyPosition</span>, <span class="kw-2">&amp;mut</span> <span class="ident">Player</span>)<span class="op">&gt;</span>,
   <span class="ident">level</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>), (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>, <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">LevelSaveApplied</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
+  <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
   <span class="ident">active_save</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ent</span>, <span class="ident">load</span>)) <span class="op">=</span> <span class="ident">level</span>.<span class="ident">single</span>() {
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">save</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">active_save</span>.<span class="number">0</span> {
-      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level_state</span>) <span class="op">=</span> <span class="ident">save</span>.<span class="ident">level_clears</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">GameSaveState::key</span>(<span class="ident">load</span>.<span class="number">0</span>)) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">LevelClearState::AtCheckpoint</span>(<span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">level_state</span> {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ent</span>, <span class="ident">load_level</span>)) <span class="op">=</span> <span class="ident">level</span>.<span class="ident">single</span>() {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">id</span>) <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">game_mode</span> {
+      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level_state</span>) <span class="op">=</span> <span class="ident">active_save</span>.<span class="ident">get_level_state</span>(<span class="ident">id</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">LevelClearState::AtCheckpoint</span>(<span class="ident">id</span>, <span class="ident">x</span>, <span class="ident">y</span>) <span class="op">=</span> <span class="ident">level_state</span> {
           <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">trans</span>, <span class="kw-2">mut</span> <span class="ident">player</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
             <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">Vec2::new</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>);
             <span class="ident">player</span>.<span class="ident">respawn_pos</span> <span class="op">=</span> <span class="ident">pos</span>;
-            <span class="ident">trans</span>.<span class="ident">position</span>.<span class="ident">translation</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">into</span>();
+            <span class="ident">player</span>.<span class="ident">respawn_level</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">id</span>;
+            <span class="kw">if</span> <span class="ident">load_level</span>.<span class="number">0</span> <span class="op">==</span> <span class="kw-2">*</span><span class="ident">id</span> {
+              <span class="ident">trans</span>.<span class="ident">position</span>.<span class="ident">translation</span> <span class="op">=</span> <span class="ident">pos</span>.<span class="ident">into</span>();
+            }
+            <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;apply_save_on_load&quot;</span>, <span class="string">&quot;Applied save, respawn is now {} ({}, {})&quot;</span>, <span class="kw-2">*</span><span class="ident">id</span>, <span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>);
           }
         }
       }
@@ -416,6 +516,42 @@
 
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">e</span>).<span class="ident">despawn</span>();
   })
+}
+
+<span class="doccomment">/// System that consumes [TransitionLevel] instructions</span>
+<span class="doccomment">/// Produces </span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transition_level</span>(
+  <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
+  <span class="ident">audio</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Audio</span><span class="op">&gt;</span>,
+  <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
+  <span class="ident">transition_command</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">TransitionLevel</span>)<span class="op">&gt;</span>,
+  <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+  <span class="ident">loading_levels</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LoadLevel</span><span class="op">&gt;</span>, <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
+) {
+  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">transitioned</span> <span class="op">=</span> <span class="bool-val">false</span>;
+  <span class="kw">for</span> (<span class="ident">entity</span>, <span class="ident">trans</span>) <span class="kw">in</span> <span class="ident">transition_command</span>.<span class="ident">iter</span>() {
+    <span class="comment">// Run a single transition, prevents multiple transition entities on the same frame.</span>
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">transitioned</span> {
+      <span class="ident">transitioned</span> <span class="op">=</span> <span class="bool-val">true</span>;
+      <span class="comment">// Do nothing if already a load active, prevents double loads.</span>
+      <span class="kw">if</span> <span class="ident">loading_levels</span>.<span class="ident">single</span>().<span class="ident">is_err</span>()  {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ent</span>, <span class="ident">old_level</span>)) <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single</span>() {
+          <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">insert</span>(<span class="ident">UnloadLevel</span>);
+          <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">level_ent</span> <span class="op">=</span> <span class="ident">commands</span>.<span class="ident">spawn</span>();
+          <span class="ident">level_ent</span>.<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="ident">trans</span>.<span class="number">0</span>));
+          <span class="kw">if</span> <span class="ident">levels_have_same_music</span>(<span class="ident">old_level</span>.<span class="number">0</span>, <span class="ident">trans</span>.<span class="number">0</span>) {
+            <span class="ident">level_ent</span>.<span class="ident">insert</span>(<span class="ident">KeepMusic</span>);
+          } <span class="kw">else</span> {
+            <span class="ident">audio</span>.<span class="ident">stop_channel</span>(<span class="kw-2">&amp;</span><span class="ident">channels</span>.<span class="ident">music</span>.<span class="number">0</span>);
+          }
+        } <span class="kw">else</span> {
+          <span class="macro">warn!</span>(<span class="ident">target</span>: <span class="string">&quot;transition_level&quot;</span>, <span class="string">&quot;Unable to get currently loaded level! None or More than 1 Loaded?&quot;</span>);
+        }
+      }
+    }
+
+    <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">entity</span>).<span class="ident">despawn</span>();
+  }
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="temple" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>

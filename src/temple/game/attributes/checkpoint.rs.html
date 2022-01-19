@@ -67,15 +67,15 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Attribute</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerReachedCheckpoint</span>;
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Checkpoint</span>(<span class="kw">pub</span> <span class="ident">Vec2</span>);
 
 <span class="kw">impl</span> <span class="ident">Attribute</span> <span class="kw">for</span> <span class="ident">Checkpoint</span> {
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;checkpoint&quot;</span>;
 
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="kw">_</span>: <span class="ident">LevelId</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> <span class="ident">player_offset</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">params</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
       <span class="kw">let</span> <span class="ident">x_offset</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">get</span>(<span class="number">0</span>);
       <span class="kw">let</span> <span class="ident">y_offset</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">get</span>(<span class="number">1</span>);

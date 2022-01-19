@@ -268,11 +268,11 @@
         }
 
         <span class="comment">// Remove from bevy world</span>
-        <span class="ident">loaded_sprites</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">entity</span>, <span class="ident">trans</span>)<span class="op">|</span> {
+        <span class="kw">for</span> (<span class="ident">entity</span>, <span class="ident">trans</span>) <span class="kw">in</span> <span class="ident">loaded_sprites</span>.<span class="ident">iter</span>() {
           <span class="kw">if</span> <span class="ident">trans</span>.<span class="ident">translation</span> <span class="op">==</span> <span class="ident">Vec3::new</span>(<span class="ident">pos</span>.<span class="ident">x</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="ident">pos</span>.<span class="ident">y</span> <span class="kw">as</span> <span class="ident">f32</span>, <span class="number">0.0</span>) {
             <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">entity</span>).<span class="ident">despawn</span>();
           }
-        });
+        }
       }
     }
   }

@@ -66,6 +66,9 @@
 <span id="65">65</span>
 <span id="66">66</span>
 <span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Game mechanisms and sprite attribute definitions.</span>
 
 <span class="kw">use</span> <span class="ident">attributes::AttributePlugin</span>;
@@ -78,6 +81,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::sfx::SfxPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">TempleState</span>, <span class="ident">GameMode</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings</span>::{<span class="ident">GameFile</span>, <span class="ident">LevelTransistionType</span>};
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">attributes</span>;
@@ -93,13 +97,15 @@
 
 <span class="doccomment">/// Begins the game by command [BeginGame]. Uses the options in [GameFile] to</span>
 <span class="doccomment">/// determine what to load.</span>
-<span class="kw">fn</span> <span class="ident">bootstrap_game</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">BeginGame</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">game_file</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">GameFile</span><span class="op">&gt;</span>) {
+<span class="kw">fn</span> <span class="ident">bootstrap_game</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">BeginGame</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">game_file</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">GameFile</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">temple_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">query</span>.<span class="ident">single</span>() {
     <span class="kw">match</span> <span class="ident">game_file</span>.<span class="ident">level_transistion</span> {
       <span class="ident">LevelTransistionType::Overworld</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Temple does not support overworlds yet&quot;</span>),
       <span class="ident">LevelTransistionType::NoOverworld</span> =&gt; {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level_order</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">game_file</span>.<span class="ident">level_order</span> {
-          <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="kw-2">*</span><span class="ident">level_order</span>.<span class="ident">first</span>().<span class="ident">unwrap</span>()));
+          <span class="kw">let</span> <span class="ident">level</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">level_order</span>.<span class="ident">first</span>().<span class="ident">unwrap</span>();
+          <span class="ident">temple_state</span>.<span class="ident">game_mode</span> <span class="op">=</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">level</span>);
+          <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="ident">level</span>));
         } <span class="kw">else</span> {
           <span class="macro">panic!</span>(<span class="string">&quot;Failed to start game, no level order defined&quot;</span>);
         }

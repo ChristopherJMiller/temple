@@ -191,6 +191,8 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!</span>
@@ -205,6 +207,8 @@
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Player</span>};
@@ -315,7 +319,7 @@
 <span class="kw">impl</span> <span class="ident">Attribute</span> <span class="kw">for</span> <span class="ident">MovingSprite</span> {
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;moving&quot;</span>;
 
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="kw">_</span>: <span class="ident">LevelId</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> <span class="ident">direction_num</span> <span class="op">=</span> <span class="ident">params</span>
       .<span class="ident">get</span>(<span class="number">0</span>)
       .<span class="ident">expect</span>(<span class="string">&quot;Moving Sprite Attribute was not supplied parameter 0&quot;</span>);

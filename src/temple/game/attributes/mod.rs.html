@@ -67,6 +67,13 @@
 <span id="66">66</span>
 <span id="67">67</span>
 <span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Attribute definitions and systems.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # About Attributes</span>
@@ -81,19 +88,20 @@
 <span class="doccomment">/// Attribute, as used with a [crate::sprite::SpriteType]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Attribute</span> {
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>;
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>);
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">level</span>: <span class="ident">LevelId</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>);
 }
 
 <span class="doccomment">/// Constructs attribute onto a given [Entity]. Used during level load (see</span>
 <span class="doccomment">/// [crate::level::load::load_level]).</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_attribute</span>(<span class="ident">attribute</span>: <span class="ident">String</span>, <span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_attribute</span>(<span class="ident">attribute</span>: <span class="ident">String</span>, <span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="ident">level</span>: <span class="ident">LevelId</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>) {
   <span class="kw">let</span> <span class="ident">entry</span> <span class="op">=</span> <span class="ident">AttributeEntry::from</span>(<span class="ident">attribute</span>);
   <span class="kw">match</span> <span class="ident">entry</span>.<span class="number">0</span>.<span class="ident">as_str</span>() {
-    <span class="ident">Player::KEY</span> =&gt; <span class="ident">Player::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
-    <span class="ident">Solid::KEY</span> =&gt; <span class="ident">Solid::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
-    <span class="ident">MovingSprite::KEY</span> =&gt; <span class="ident">MovingSprite::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
-    <span class="ident">Deadly::KEY</span> =&gt; <span class="ident">Deadly::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
-    <span class="ident">Checkpoint::KEY</span> =&gt; <span class="ident">Checkpoint::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">Player::KEY</span> =&gt; <span class="ident">Player::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">Solid::KEY</span> =&gt; <span class="ident">Solid::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">MovingSprite::KEY</span> =&gt; <span class="ident">MovingSprite::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">Deadly::KEY</span> =&gt; <span class="ident">Deadly::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">Checkpoint::KEY</span> =&gt; <span class="ident">Checkpoint::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">Transition::KEY</span> =&gt; <span class="ident">Transition::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
     <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Attempted to load invalid attribute with name {}&quot;</span>, <span class="ident">entry</span>.<span class="number">0</span>),
   }
 }
@@ -104,12 +112,17 @@
 <span class="kw">mod</span> <span class="ident">moving</span>;
 <span class="kw">mod</span> <span class="ident">player</span>;
 <span class="kw">mod</span> <span class="ident">solid</span>;
+<span class="kw">mod</span> <span class="ident">transition</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">checkpoint</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">deadly</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">moving</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">player</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">solid</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">transition</span>::<span class="kw-2">*</span>;
+
+
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::lex</span>::{<span class="ident">AttributeEntry</span>, <span class="ident">ParseArgumentItem</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::physics::PlayerSimulationSteps</span>;
@@ -132,7 +145,8 @@
           .<span class="ident">after</span>(<span class="ident">PlayerSimulationSteps::ApplyMoving</span>),
       )
       .<span class="ident">add_system</span>(<span class="ident">on_death_system</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">on_checkpoint_system</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">on_checkpoint_system</span>.<span class="ident">system</span>())
+      .<span class="ident">add_system</span>(<span class="ident">on_transition_system</span>.<span class="ident">system</span>());
   }
 }
 </code></pre></div>

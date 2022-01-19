@@ -292,6 +292,7 @@
 <span id="291">291</span>
 <span id="292">292</span>
 <span id="293">293</span>
+<span id="294">294</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all config manifest loading for levels.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Level manifests are loaded on game boot and</span>
@@ -318,6 +319,7 @@
   <span class="doccomment">/// Background Music for Level</span>
   <span class="kw">pub</span> <span class="ident">music</span>: <span class="ident">String</span>,
   <span class="doccomment">/// Sprites used in Level</span>
+  <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">skip_serializing_if</span> <span class="op">=</span> <span class="string">&quot;Vec::is_empty&quot;</span>, <span class="ident">default</span>)]</span>
   <span class="kw">pub</span> <span class="ident">sprites</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LevelSpriteEntry</span><span class="op">&gt;</span>,
 }
 
