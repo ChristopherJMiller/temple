@@ -6,13 +6,14 @@ use bevy_rapier2d::prelude::*;
 use super::lex::ParseArgumentItem;
 use super::Attribute;
 use crate::game::collision_groups::*;
+use crate::level::LevelId;
 
 pub struct Solid;
 
 impl Attribute for Solid {
   const KEY: &'static str = "solid";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<ParseArgumentItem>) {
+  fn build(commands: &mut Commands, target: Entity, _: LevelId, position: Vec2, _: Vec<ParseArgumentItem>) {
     let collider = ColliderBundle {
       position: position.into(),
       shape: ColliderShape::cuboid(0.5, 0.5),

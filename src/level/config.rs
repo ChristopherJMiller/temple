@@ -24,6 +24,7 @@ pub struct LevelManifest {
   /// Background Music for Level
   pub music: String,
   /// Sprites used in Level
+  #[serde(skip_serializing_if = "Vec::is_empty", default)]
   pub sprites: Vec<LevelSpriteEntry>,
 }
 

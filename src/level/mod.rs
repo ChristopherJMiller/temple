@@ -1,10 +1,8 @@
 //! Level config management and level loading.
 
 use bevy::prelude::*;
-use load::{apply_save_on_load, load_level, unload_level};
-
-use self::load::prepare_level;
-use self::verify::verify_level_files;
+use load::{apply_save_on_load, load_level, unload_level, prepare_level, transition_level};
+use verify::verify_level_files;
 
 pub mod config;
 pub mod load;
@@ -24,6 +22,7 @@ impl Plugin for LevelPlugin {
       .add_system(prepare_level.system())
       .add_system(load_level.system())
       .add_system(unload_level.system())
-      .add_system(apply_save_on_load.system());
+      .add_system(apply_save_on_load.system())
+      .add_system(transition_level.system());
   }
 }

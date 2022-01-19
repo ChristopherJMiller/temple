@@ -1,0 +1,47 @@
+name = 'Boneyard-Exit'
+music = 'walkintherain.ogg'
+
+[[sprites]]
+name = 'center_ground_solid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_center.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'player'
+offset = [
+    0,
+    0,
+]
+texture = 'spirit.png'
+attributes = ['player']
+
+[[sprites]]
+name = 'middle_ground'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_middle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'center_ground_nonsolid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_center.png'
+attributes = []
+
+[[sprites]]
+name = 'skull_idle'
+offset = [
+    0,
+    0,
+]
+texture = 'skull.png'
+attributes = ['deadly']

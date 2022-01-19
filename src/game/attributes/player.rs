@@ -5,11 +5,13 @@ use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
-use super::{Attribute, Checkpoint, PlayerReachedCheckpoint};
+use super::{Attribute, Checkpoint, Transition};
+use crate::game::collision::PlayerContacted;
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
-use crate::level::load::{LevelLoadComplete, LoadLevel};
-use crate::state::game_state::{write_save, ActiveSave, GameSaveState, LevelClearState};
+use crate::level::LevelId;
+use crate::level::load::{LevelLoadComplete, LoadLevel, TransitionLevel};
+use crate::state::game_state::{write_save, ActiveSave, GameSaveState, LevelClearState, TempleState, GameMode};
 
 pub struct PlayerDied;
 
@@ -21,6 +23,7 @@ pub struct Player {
   pub jump_in_progress: bool,
   pub outside_ground_bounds: bool,
   pub on_moving_entity: Option<Entity>,
+  pub respawn_level: LevelId,
   pub respawn_pos: Vec2,
 }
 
@@ -29,7 +32,7 @@ impl Player {
   pub const NORMAL_FALL_SPEED: f32 = 2.25;
   pub const SLOW_FALL_SPEED: f32 = 1.25;
 
-  pub fn new(respawn_pos: Vec2) -> Self {
+  pub fn new(respawn_level: LevelId, respawn_pos: Vec2) -> Self {
     Self {
       height_adjust: 0.25,
       grounded: true,
@@ -37,6 +40,7 @@ impl Player {
       jump_in_progress: false,
       outside_ground_bounds: false,
       on_moving_entity: None,
+      respawn_level,
       respawn_pos,
     }
   }
@@ -45,7 +49,7 @@ impl Player {
 impl Attribute for Player {
   const KEY: &'static str = "player";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, _: Vec<ParseArgumentItem>) {
+  fn build(commands: &mut Commands, target: Entity, level: LevelId, position: Vec2, _: Vec<ParseArgumentItem>) {
     let rigid_body = RigidBodyBundle {
       position: position.into(),
       mass_properties: (RigidBodyMassPropsFlags::ROTATION_LOCKED).into(),
@@ -76,7 +80,7 @@ impl Attribute for Player {
 
     commands
       .entity(target)
-      .insert(Player::new(position.into()))
+      .insert(Player::new(level, position.into()))
       .insert_bundle(rigid_body)
       .insert_bundle(collider)
       .insert(RigidBodyPositionSync::Interpolated { prev_pos: None });
@@ -87,45 +91,65 @@ impl Attribute for Player {
 pub fn on_death_system(
   mut commands: Commands,
   death_tags: Query<(Entity, &PlayerDied)>,
+  loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
   mut player: Query<(&mut RigidBodyPosition, &Player)>,
 ) {
   if let Ok((mut pos, player)) = player.single_mut() {
     death_tags.for_each(|(ent, _)| {
       commands.entity(ent).despawn();
-      pos.position.translation = player.respawn_pos.into();
+      let level_id = loaded_level.single().unwrap().0;
+      if player.respawn_level != level_id {
+        commands.spawn().insert(TransitionLevel(player.respawn_level));
+      } else {
+        pos.position.translation = player.respawn_pos.into();
+      }
     });
   }
 }
 
-/// Consumes [PlayerReachedCheckpoint] tags and sets the new player respawn
+/// Consumes [PlayerContacted] tags and sets the new player respawn
 /// point.
 pub fn on_checkpoint_system(
   mut commands: Commands,
-  checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerReachedCheckpoint>>,
+  checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerContacted>>,
   mut player: Query<&mut Player>,
   audio: Res<Audio>,
   sfx_handles: Res<SfxHandles>,
   channels: Res<AudioChannels>,
   loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
+  temple_state: Res<TempleState>,
   mut active_save: ResMut<ActiveSave>,
 ) {
   if let Ok(mut player) = player.single_mut() {
     checkpoint_reached.for_each(|(ent, checkpoint)| {
       if player.respawn_pos != checkpoint.0 {
-        player.respawn_pos = checkpoint.0;
         audio.play_in_channel(sfx_handles.checkpoint.clone(), &channels.sfx.0);
         if let Some(save) = &mut active_save.0 {
           if let Ok(level) = loaded_level.single() {
-            save.level_clears.insert(
-              GameSaveState::key(level.0),
-              LevelClearState::AtCheckpoint(checkpoint.0.x, checkpoint.0.y),
-            );
-            write_save(save);
+            if let GameMode::InLevel(level_entry) = temple_state.game_mode {
+              player.respawn_level = level.0;
+              player.respawn_pos = checkpoint.0;
+              save.level_clears.insert(
+                GameSaveState::key(level_entry),
+                LevelClearState::AtCheckpoint(level.0, checkpoint.0.x, checkpoint.0.y),
+              );
+              write_save(save);
+            }
           }
         }
       }
 
-      commands.entity(ent).remove::<PlayerReachedCheckpoint>();
+      commands.entity(ent).remove::<PlayerContacted>();
     });
+  }
+}
+
+pub fn on_transition_system(
+  mut commands: Commands,
+  transition_activated: Query<(Entity, &Transition), With<PlayerContacted>>
+) {
+  for (entity, trans) in transition_activated.iter() {
+    commands.spawn().insert(TransitionLevel(trans.0));
+    commands.entity(entity).remove::<PlayerContacted>();
   }
 }

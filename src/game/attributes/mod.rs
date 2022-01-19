@@ -12,19 +12,20 @@ use bevy::prelude::*;
 /// Attribute, as used with a [crate::sprite::SpriteType]
 pub trait Attribute {
   const KEY: &'static str;
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<ParseArgumentItem>);
+  fn build(commands: &mut Commands, target: Entity, level: LevelId, position: Vec2, params: Vec<ParseArgumentItem>);
 }
 
 /// Constructs attribute onto a given [Entity]. Used during level load (see
 /// [crate::level::load::load_level]).
-pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entity, position: Vec2) {
+pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entity, level: LevelId, position: Vec2) {
   let entry = AttributeEntry::from(attribute);
   match entry.0.as_str() {
-    Player::KEY => Player::build(commands, target, position, entry.1),
-    Solid::KEY => Solid::build(commands, target, position, entry.1),
-    MovingSprite::KEY => MovingSprite::build(commands, target, position, entry.1),
-    Deadly::KEY => Deadly::build(commands, target, position, entry.1),
-    Checkpoint::KEY => Checkpoint::build(commands, target, position, entry.1),
+    Player::KEY => Player::build(commands, target, level, position, entry.1),
+    Solid::KEY => Solid::build(commands, target, level, position, entry.1),
+    MovingSprite::KEY => MovingSprite::build(commands, target, level, position, entry.1),
+    Deadly::KEY => Deadly::build(commands, target, level, position, entry.1),
+    Checkpoint::KEY => Checkpoint::build(commands, target, level, position, entry.1),
+    Transition::KEY => Transition::build(commands, target, level, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
@@ -35,12 +36,17 @@ mod lex;
 mod moving;
 mod player;
 mod solid;
+mod transition;
 
 pub use checkpoint::*;
 pub use deadly::*;
 pub use moving::*;
 pub use player::*;
 pub use solid::*;
+pub use transition::*;
+
+
+use crate::level::LevelId;
 
 use self::lex::{AttributeEntry, ParseArgumentItem};
 use super::physics::PlayerSimulationSteps;
@@ -63,6 +69,7 @@ impl Plugin for AttributePlugin {
           .after(PlayerSimulationSteps::ApplyMoving),
       )
       .add_system(on_death_system.system())
-      .add_system(on_checkpoint_system.system());
+      .add_system(on_checkpoint_system.system())
+      .add_system(on_transition_system.system());
   }
 }

@@ -13,6 +13,8 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+use crate::level::LevelId;
+
 use super::lex::ParseArgumentItem;
 use super::{Attribute, Player};
 
@@ -122,7 +124,7 @@ impl Default for MovingSprite {
 impl Attribute for MovingSprite {
   const KEY: &'static str = "moving";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<ParseArgumentItem>) {
+  fn build(commands: &mut Commands, target: Entity, _: LevelId, position: Vec2, params: Vec<ParseArgumentItem>) {
     let direction_num = params
       .get(0)
       .expect("Moving Sprite Attribute was not supplied parameter 0");

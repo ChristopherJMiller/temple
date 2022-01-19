@@ -7,15 +7,15 @@ use bevy_rapier2d::prelude::*;
 use super::lex::ParseArgumentItem;
 use super::Attribute;
 use crate::game::collision_groups::*;
+use crate::level::LevelId;
 use crate::level::config::SPRITE_SIZE;
 
-pub struct PlayerReachedCheckpoint;
 pub struct Checkpoint(pub Vec2);
 
 impl Attribute for Checkpoint {
   const KEY: &'static str = "checkpoint";
 
-  fn build(commands: &mut Commands, target: Entity, position: Vec2, params: Vec<ParseArgumentItem>) {
+  fn build(commands: &mut Commands, target: Entity, _: LevelId, position: Vec2, params: Vec<ParseArgumentItem>) {
     let player_offset = if params.len() > 0 {
       let x_offset = params.get(0);
       let y_offset = params.get(1);

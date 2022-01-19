@@ -86,7 +86,7 @@ fn build_title_screen(commands: &mut Commands, asset_server: &Res<AssetServer>) 
       },
       text: Text {
         sections: vec![TextSection {
-          value: format!("{}", VERSION),
+          value: format!("Version {}", VERSION),
           style: TextStyle {
             font: asset_server.load(from_game_root("assets/fonts/Vollkorn-Bold.ttf")),
             font_size: 32.0,

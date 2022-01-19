@@ -117,11 +117,11 @@ pub fn handle_placing_sprite(
         }
 
         // Remove from bevy world
-        loaded_sprites.for_each(|(entity, trans)| {
+        for (entity, trans) in loaded_sprites.iter() {
           if trans.translation == Vec3::new(pos.x as f32, pos.y as f32, 0.0) {
             commands.entity(entity).despawn();
           }
-        });
+        }
       }
     }
   }

@@ -2,13 +2,34 @@ name = 'Boneyard'
 music = 'walkintherain.ogg'
 
 [[sprites]]
-name = 'player'
+name = 'center_ground_solid'
 offset = [
     0,
     0,
 ]
-texture = 'spirit.png'
-attributes = ['player']
+texture = 'boneyard_center.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'death'
+offset = [
+    0,
+    0,
+]
+texture = 'blank.png'
+attributes = ['deadly']
+
+[[sprites]]
+name = 'moving_left_slow'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_middle.png'
+attributes = [
+    'solid',
+    'moving(left,5,5)',
+]
 
 [[sprites]]
 name = 'skulls_idle'
@@ -18,6 +39,52 @@ offset = [
 ]
 texture = 'skull.png'
 attributes = ['deadly']
+
+[[sprites]]
+name = 'skull_down'
+offset = [
+    0,
+    0,
+]
+texture = 'skull.png'
+attributes = [
+    'moving(down,4,4)',
+    'solid',
+    'deadly',
+]
+
+[[sprites]]
+name = 'moving_right_slow'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_middle.png'
+attributes = [
+    'moving(right,5,5)',
+    'solid',
+]
+
+[[sprites]]
+name = 'elevator'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard_middle.png'
+attributes = [
+    'moving(up,12,15)',
+    'solid',
+]
+
+[[sprites]]
+name = 'checkpoint'
+offset = [
+    0,
+    0,
+]
+texture = 'checkpoint.png'
+attributes = ['checkpoint(0,0)']
 
 [[sprites]]
 name = 'elevator_secondary'
@@ -30,6 +97,15 @@ attributes = [
     'moving(up,12,15)',
     'solid',
 ]
+
+[[sprites]]
+name = 'player'
+offset = [
+    0,
+    0,
+]
+texture = 'spirit.png'
+attributes = ['player']
 
 [[sprites]]
 name = 'middle_ground'
@@ -50,77 +126,10 @@ texture = 'boneyard_center.png'
 attributes = []
 
 [[sprites]]
-name = 'death'
+name = 'trans_to_exit'
 offset = [
     0,
     0,
 ]
 texture = 'blank.png'
-attributes = ['deadly']
-
-[[sprites]]
-name = 'skull_down'
-offset = [
-    0,
-    0,
-]
-texture = 'skull.png'
-attributes = [
-    'moving(down,4,4)',
-    'solid',
-    'deadly',
-]
-
-[[sprites]]
-name = 'moving_left_slow'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard_middle.png'
-attributes = [
-    'solid',
-    'moving(left,5,5)',
-]
-
-[[sprites]]
-name = 'center_ground_solid'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard_center.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'checkpoint'
-offset = [
-    0,
-    0,
-]
-texture = 'checkpoint.png'
-attributes = ['checkpoint(0,0)']
-
-[[sprites]]
-name = 'elevator'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard_middle.png'
-attributes = [
-    'moving(up,12,15)',
-    'solid',
-]
-
-[[sprites]]
-name = 'moving_right_slow'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard_middle.png'
-attributes = [
-    'moving(right,5,5)',
-    'solid',
-]
+attributes = ['trans(1)']

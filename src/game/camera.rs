@@ -43,8 +43,16 @@ fn target_camera(
       camera_trans.translation.truncate()
     };
 
-    let dir = (target - camera_trans.translation.truncate()).normalize_or_zero();
-    let speed = ((target - camera_trans.translation.truncate()).length() * SPRITE_SIZE as f32).min(cam_speed.0);
+    // Snap to target if very far away
+    if target.distance_squared(camera_trans.translation.truncate()) > 1000.0 {
+      camera_trans.translation = Vec3::new(target.x, target.y, camera_trans.translation.z);
+      return;
+    }
+
+    let diff_vec = target - camera_trans.translation.truncate();
+
+    let dir = diff_vec.normalize_or_zero();
+    let speed = (diff_vec.length() * SPRITE_SIZE as f32).min(cam_speed.0);
 
     camera_trans.translation += dir.extend(0.0) * speed * time.delta_seconds();
   }

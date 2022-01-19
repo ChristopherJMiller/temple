@@ -98,3 +98,13 @@ pub fn load_sprite_texture(
       .into(),
   )
 }
+
+pub fn levels_have_same_music(a: LevelId, b: LevelId) -> bool {
+  if let Some(a) = get_manifest_by_id(a) {
+    if let Some(b) = get_manifest_by_id(b) {
+      return a.music.eq(&b.music);
+    }
+  }
+
+  return false;
+}

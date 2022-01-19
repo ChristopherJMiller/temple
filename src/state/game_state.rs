@@ -7,18 +7,38 @@ use serde::{Deserialize, Serialize};
 use crate::level::LevelId;
 use crate::util::files::from_game_root;
 
+/// Defines the current state of the game, used to provide context to other systems (level saving, interfaces, etc)
+#[derive(Clone, Debug, PartialEq)]
+pub enum GameMode {
+  /// Game is at MainMenu
+  MainMenu,
+  /// Editor is Active, [GameMode] will not change
+  EditMode,
+  /// Game is in Overworld
+  #[allow(dead_code)]
+  Overworld,
+  /// Game has entered a level. [LevelId] defines the entrylevel
+  InLevel(LevelId)
+}
+
+impl Default for GameMode {
+  fn default() -> Self {
+    Self::MainMenu
+  }
+}
+
 #[derive(Clone, Debug, Default)]
 pub struct TempleState {
-  edit_mode: bool,
+  pub game_mode: GameMode,
 }
 
 impl TempleState {
   pub fn edit_mode() -> Self {
-    TempleState { edit_mode: true }
+    TempleState { game_mode: GameMode::EditMode }
   }
 
   pub fn in_edit_mode(&self) -> bool {
-    self.edit_mode
+    self.game_mode == GameMode::EditMode
   }
 }
 
@@ -27,7 +47,7 @@ impl TempleState {
 #[serde(untagged)]
 pub enum LevelClearState {
   NotCleared,
-  AtCheckpoint(f32, f32),
+  AtCheckpoint(LevelId, f32, f32),
   Cleared,
 }
 
@@ -60,6 +80,16 @@ pub struct AvaliableSaves(pub HashMap<String, GameSaveState>);
 /// [Res] of the selected save file.
 #[derive(Clone, Default)]
 pub struct ActiveSave(pub Option<GameSaveState>);
+
+impl ActiveSave {
+  pub fn get_level_state(&self, key: LevelId) -> Option<&LevelClearState> {
+    if let Some(game_saves) = &self.0 {
+      game_saves.level_clears.get(&GameSaveState::key(key))
+    } else {
+      None
+    }
+  }
+}
 
 /// Loads the `saves/` directory and any valid present save files
 pub fn bootstrap_and_get_saves() -> HashMap<String, GameSaveState> {
