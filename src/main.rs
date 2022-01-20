@@ -59,7 +59,7 @@ fn build_base_app(app: &mut AppBuilder, game_file: GameFile, cli_args: CliArgs) 
       vsync: true,
       ..Default::default()
     })
-    .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
+    .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
     .insert_resource(game_file)
     .insert_resource(cli_args)
 
