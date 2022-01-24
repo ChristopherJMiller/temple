@@ -6,7 +6,7 @@ use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::{Attribute, Checkpoint, Transition, Deadly};
-use crate::game::collision::PlayerContacted;
+use crate::game::collision::{PlayerContacted, ContactQuery, ContactTagQuery};
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
 use crate::level::LevelId;
@@ -88,7 +88,7 @@ impl Attribute for Player {
 /// Consumes [PlayerDied] tags and respawns the player.
 pub fn on_death_system(
   mut commands: Commands,
-  deadly_contacted: Query<Entity, (With<Deadly>, With<PlayerContacted>)>,
+  deadly_contacted: ContactTagQuery<Deadly>,
   loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
   mut player: Query<(&mut RigidBodyPosition, &Player)>,
 ) {
@@ -110,7 +110,7 @@ pub fn on_death_system(
 /// point.
 pub fn on_checkpoint_system(
   mut commands: Commands,
-  checkpoint_reached: Query<(Entity, &Checkpoint), With<PlayerContacted>>,
+  checkpoint_reached: ContactQuery<Checkpoint>,
   mut player: Query<&mut Player>,
   audio: Res<Audio>,
   sfx_handles: Res<SfxHandles>,
@@ -151,7 +151,7 @@ pub fn on_checkpoint_system(
 
 pub fn on_transition_system(
   mut commands: Commands,
-  transition_activated: Query<(Entity, &Transition), With<PlayerContacted>>
+  transition_activated: ContactQuery<Transition>
 ) {
   for (entity, trans) in transition_activated.iter() {
     commands.spawn().insert(TransitionLevel(trans.0));

@@ -12,6 +12,12 @@ pub struct ContactSubscription;
 /// Tags entity that a player contacted it.
 pub struct PlayerContacted;
 
+/// Player contact query, for attributes that are stateless.
+pub type ContactTagQuery<'r, 's, K> = Query<'r, Entity, (With<K>, With<PlayerContacted>)>;
+
+// Player contact query, for attributes that need access to state within the system.
+pub type ContactQuery<'r, 's, K> = Query<'r, (Entity, &'s K), With<PlayerContacted>>;
+
 
 /// Check if an entity is subscribed to collision events, and hasn't received one yet.
 fn should_receive_event(

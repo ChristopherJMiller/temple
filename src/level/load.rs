@@ -46,7 +46,6 @@ pub struct TransitionLevel(pub LevelId);
 /// Instruction used by transition level to prevent the same music from being replayed.
 pub struct KeepMusic;
 
-
 /// System that prepares the level from files, to be loaded by [load_level]
 pub fn prepare_level(
   mut commands: Commands,
