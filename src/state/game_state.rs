@@ -42,20 +42,67 @@ impl TempleState {
   }
 }
 
-/// Describes the clear state of a given visted level.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+/// Describes the checkpoint state of a given level.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 #[serde(untagged)]
-pub enum LevelClearState {
-  NotCleared,
-  AtCheckpoint(LevelId, f32, f32),
-  Cleared,
+pub enum CheckpointState {
+  NoCheckpoint,
+  AtCheckpoint(LevelId, f32, f32)
+}
+
+/// Describes the state of a level save, including exits completed and current checkpoint.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct LevelSaveState {
+  checkpoint_state: CheckpointState,
+  exits_cleared: Vec<bool>,
+}
+
+impl LevelSaveState {
+  pub fn new_with_checkpoint(state: CheckpointState) -> Self {
+    Self {
+      exits_cleared: Vec::new(),
+      checkpoint_state: state,
+    }
+  }
+
+  pub fn clear_exit(&mut self, exit_num: usize) {
+    if exit_num > self.exits_cleared.len() {
+      self.exits_cleared.resize(exit_num, false);
+    }
+    self.exits_cleared.insert(exit_num, true);
+  }
+
+  pub fn exit_cleared(&self, exit_num: usize) -> bool {
+    if let Some(exit_state) = self.exits_cleared.get(exit_num) {
+      *exit_state
+    } else {
+      false
+    }
+  }
+
+  pub fn set_checkpoint(&mut self, state: CheckpointState) {
+    self.checkpoint_state = state;
+  }
+
+  pub fn checkpoint(&self) -> &CheckpointState {
+    &self.checkpoint_state
+  }
+}
+
+impl Default for LevelSaveState {
+  fn default() -> Self {
+    Self { 
+      exits_cleared: Vec::new(),
+      checkpoint_state: CheckpointState::NoCheckpoint,
+    }
+  }
 }
 
 /// Game save file to manage game flags and level clears
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GameSaveState {
   pub name: String,
-  pub level_clears: HashMap<String, LevelClearState>,
+  pub level_clears: HashMap<String, LevelSaveState>,
 }
 
 impl GameSaveState {
@@ -82,7 +129,7 @@ pub struct AvaliableSaves(pub HashMap<String, GameSaveState>);
 pub struct ActiveSave(pub Option<GameSaveState>);
 
 impl ActiveSave {
-  pub fn get_level_state(&self, key: LevelId) -> Option<&LevelClearState> {
+  pub fn get_level_state(&self, key: LevelId) -> Option<&LevelSaveState> {
     if let Some(game_saves) = &self.0 {
       game_saves.level_clears.get(&GameSaveState::key(key))
     } else {
@@ -125,7 +172,7 @@ pub fn bootstrap_and_get_saves() -> HashMap<String, GameSaveState> {
 pub fn write_save(save: &GameSaveState) {
   let saves_dir = from_game_root(SAVES_PATH);
   let mut save_path = saves_dir.join(save.name.clone());
-  let contents = toml::to_string_pretty(&save.clone()).unwrap();
+  let contents = toml::to_string_pretty(&save.clone()).unwrap_or_else(|err| panic!("Error occured when writing save: {}", err.to_string()));
   save_path.set_extension("toml");
   if write(save_path, contents).is_err() {
     info!(target: "write_saves", "Was unable to save the game!");
@@ -136,5 +183,23 @@ pub fn write_save(save: &GameSaveState) {
 pub fn write_saves(saves: &HashMap<String, GameSaveState>) {
   for (_, save) in saves {
     write_save(save);
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::state::game_state::*;
+
+  #[test]
+  fn test_game_save() {
+    let mut save = LevelSaveState::default();
+    assert_eq!(false, save.exit_cleared(0));
+    save.clear_exit(1);
+    assert_eq!(false, save.exit_cleared(0));
+    assert_eq!(true, save.exit_cleared(1));
+    assert_eq!(false, save.exit_cleared(2));
+    save.clear_exit(5);
+    assert_eq!(true, save.exit_cleared(1));
+    assert_eq!(true, save.exit_cleared(5));
   }
 }

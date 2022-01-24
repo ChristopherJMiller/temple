@@ -20,7 +20,7 @@ use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
 use crate::level::config::SPRITE_SIZE;
-use crate::state::game_state::{ActiveSave, LevelClearState, TempleState, GameMode};
+use crate::state::game_state::{ActiveSave, TempleState, GameMode, CheckpointState};
 use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
 
 /// Instruction to load a new level
@@ -61,7 +61,7 @@ pub fn prepare_level(
     // Load checkpoint in play mode if avaliable
     if !in_edit_mode {
       if let Some(level_state) = active_save.get_level_state(load_level.0) {
-        if let LevelClearState::AtCheckpoint(new_id, _, _) = level_state {
+        if let CheckpointState::AtCheckpoint(new_id, _, _) = level_state.checkpoint() {
           if load_level.0 != *new_id {
             info!(target: "prepare_level", "Checkpoint save detected, changing load_level to {}", *new_id);
             load_level.0 = *new_id;
@@ -206,7 +206,7 @@ pub fn apply_save_on_load(
   if let Ok((ent, load_level)) = level.single() {
     if let GameMode::InLevel(id) = temple_state.game_mode {
       if let Some(level_state) = active_save.get_level_state(id) {
-        if let LevelClearState::AtCheckpoint(id, x, y) = level_state {
+        if let CheckpointState::AtCheckpoint(id, x, y) = level_state.checkpoint() {
           if let Ok((mut trans, mut player)) = player.single_mut() {
             let pos = Vec2::new(*x, *y);
             player.respawn_pos = pos;

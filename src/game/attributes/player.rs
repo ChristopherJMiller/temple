@@ -5,15 +5,13 @@ use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
-use super::{Attribute, Checkpoint, Transition};
+use super::{Attribute, Checkpoint, Transition, Deadly};
 use crate::game::collision::PlayerContacted;
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
 use crate::level::LevelId;
 use crate::level::load::{LevelLoadComplete, LoadLevel, TransitionLevel};
-use crate::state::game_state::{write_save, ActiveSave, GameSaveState, LevelClearState, TempleState, GameMode};
-
-pub struct PlayerDied;
+use crate::state::game_state::{write_save, ActiveSave, GameSaveState, LevelSaveState, TempleState, GameMode, CheckpointState};
 
 /// Active Player State
 pub struct Player {
@@ -90,19 +88,20 @@ impl Attribute for Player {
 /// Consumes [PlayerDied] tags and respawns the player.
 pub fn on_death_system(
   mut commands: Commands,
-  death_tags: Query<(Entity, &PlayerDied)>,
+  deadly_contacted: Query<Entity, (With<Deadly>, With<PlayerContacted>)>,
   loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
   mut player: Query<(&mut RigidBodyPosition, &Player)>,
 ) {
   if let Ok((mut pos, player)) = player.single_mut() {
-    death_tags.for_each(|(ent, _)| {
-      commands.entity(ent).despawn();
+    deadly_contacted.for_each(|ent| {
       let level_id = loaded_level.single().unwrap().0;
       if player.respawn_level != level_id {
         commands.spawn().insert(TransitionLevel(player.respawn_level));
       } else {
         pos.position.translation = player.respawn_pos.into();
       }
+
+      commands.entity(ent).remove::<PlayerContacted>();
     });
   }
 }
@@ -129,10 +128,16 @@ pub fn on_checkpoint_system(
             if let GameMode::InLevel(level_entry) = temple_state.game_mode {
               player.respawn_level = level.0;
               player.respawn_pos = checkpoint.0;
-              save.level_clears.insert(
-                GameSaveState::key(level_entry),
-                LevelClearState::AtCheckpoint(level.0, checkpoint.0.x, checkpoint.0.y),
-              );
+              let key = GameSaveState::key(level_entry);
+              if let Some(save) = save.level_clears.get_mut(&key) {
+                save.set_checkpoint(CheckpointState::AtCheckpoint(level.0, checkpoint.0.x, checkpoint.0.y))
+              } else {
+                save.level_clears.insert(
+                  GameSaveState::key(level_entry),
+                  LevelSaveState::new_with_checkpoint(CheckpointState::AtCheckpoint(level.0, checkpoint.0.x, checkpoint.0.y)),
+                );
+              }
+              
               write_save(save);
             }
           }

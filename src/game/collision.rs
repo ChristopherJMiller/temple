@@ -4,45 +4,22 @@ use bevy::prelude::*;
 use bevy_rapier2d::physics::IntoEntity;
 use bevy_rapier2d::prelude::ContactEvent::{self, Started};
 
-use super::attributes::{Attribute, Checkpoint, Deadly, Player, PlayerDied, Transition};
+use super::attributes::Player;
 
-/// Given an [Entity], determines what attribute it contains if any.
-fn determine_possible_tag_collision(
-  entity: Entity,
-  has_deadly: &Query<&Deadly>,
-  has_checkpoint: &Query<&Checkpoint>,
-  has_transition: &Query<&Transition>,
-) -> Option<String> {
-  if has_deadly.get_component::<Deadly>(entity).is_ok() {
-    return Some(Deadly::KEY.to_string());
-  } else if has_checkpoint.get_component::<Checkpoint>(entity).is_ok() {
-    return Some(Checkpoint::KEY.to_string());
-  } else if has_transition.get_component::<Transition>(entity).is_ok() {
-    return Some(Transition::KEY.to_string());
-  }
-
-  return None;
-}
+/// Subscribes an Entity to collision events. Can be paired with attributes to be consumed with other systems.
+pub struct ContactSubscription;
 
 /// Tags entity that a player contacted it.
 pub struct PlayerContacted;
 
-/// Consumes the determined attribute that should be accounted for as a
-/// collision event.
-// TODO: All entities should receive the [PlayerContacted] and digest it as they wish. Possibly there should be a way to subscribe to the contact tag?
-fn on_contact_with_player(commands: &mut Commands, tag: String, collision_entity: Entity) {
-  match tag.as_str() {
-    Deadly::KEY => {
-      commands.spawn().insert(PlayerDied);
-    },
-    Checkpoint::KEY => {
-      commands.entity(collision_entity).insert(PlayerContacted);
-    },
-    Transition::KEY => {
-      commands.entity(collision_entity).insert(PlayerContacted);
-    },
-    _ => {},
-  };
+
+/// Check if an entity is subscribed to collision events, and hasn't received one yet.
+fn should_receive_event(
+  entity: Entity,
+  subscribed: &Query<&ContactSubscription>,
+  already_collided: &Query<&PlayerContacted>,
+) -> bool {
+  return subscribed.get_component::<ContactSubscription>(entity).is_ok() && already_collided.get_component::<PlayerContacted>(entity).is_err()
 }
 
 /// Handles incoming contact events.
@@ -50,19 +27,18 @@ pub fn handle_collision_events(
   mut commands: Commands,
   mut contact_events: EventReader<ContactEvent>,
   player_query: Query<&Player>,
-  has_deadly: Query<&Deadly>,
-  has_checkpoint: Query<&Checkpoint>,
-  has_trans: Query<&Transition>,
+  subscribed: Query<&ContactSubscription>,
+  already_collided: Query<&PlayerContacted>,
 ) {
   for contact_event in contact_events.iter() {
     if let Started(a, b) = contact_event {
       if player_query.get_component::<Player>(a.entity()).is_ok() {
-        if let Some(tag) = determine_possible_tag_collision(b.entity(), &has_deadly, &has_checkpoint, &has_trans) {
-          on_contact_with_player(&mut commands, tag, b.entity());
+        if should_receive_event(b.entity(), &subscribed, &already_collided) {
+          commands.entity(b.entity()).insert(PlayerContacted);
         }
       } else if player_query.get_component::<Player>(b.entity()).is_ok() {
-        if let Some(tag) = determine_possible_tag_collision(a.entity(), &has_deadly, &has_checkpoint, &has_trans) {
-          on_contact_with_player(&mut commands, tag, a.entity());
+        if should_receive_event(a.entity(), &subscribed, &already_collided) {
+          commands.entity(a.entity()).insert(PlayerContacted);
         }
       }
     }

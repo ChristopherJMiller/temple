@@ -5,6 +5,7 @@ use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::Attribute;
+use crate::game::collision::ContactSubscription;
 use crate::game::collision_groups::*;
 use crate::level::LevelId;
 
@@ -51,7 +52,7 @@ impl Attribute for Transition {
 
     commands
       .entity(target)
-      .insert(Transition)
+      .insert(ContactSubscription)
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete)
       .insert(Transition(id.unwrap()));

@@ -6,6 +6,7 @@ use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::Attribute;
+use crate::game::collision::ContactSubscription;
 use crate::game::collision_groups::*;
 use crate::level::LevelId;
 use crate::level::config::SPRITE_SIZE;
@@ -53,6 +54,7 @@ impl Attribute for Checkpoint {
     commands
       .entity(target)
       .insert(Checkpoint(position + (player_offset * SPRITE_SIZE as f32)))
+      .insert(ContactSubscription)
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete);
   }
