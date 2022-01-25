@@ -58,6 +58,7 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
+<span id="60">60</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Transitions the player to a new level. `trans(new level id)`</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -65,6 +66,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Attribute</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision::ContactSubscription</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
@@ -111,7 +113,7 @@
 
     <span class="ident">commands</span>
       .<span class="ident">entity</span>(<span class="ident">target</span>)
-      .<span class="ident">insert</span>(<span class="ident">Transition</span>)
+      .<span class="ident">insert</span>(<span class="ident">ContactSubscription</span>)
       .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>)
       .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync::Discrete</span>)
       .<span class="ident">insert</span>(<span class="ident">Transition</span>(<span class="ident">id</span>.<span class="ident">unwrap</span>()));

@@ -58,6 +58,8 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Sets the players checkpoint. `checkpoint(optional x offset, optional y</span>
 <span class="doccomment">//! offset)`</span>
 
@@ -66,9 +68,10 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Attribute</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision::ContactSubscription</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Checkpoint</span>(<span class="kw">pub</span> <span class="ident">Vec2</span>);
 
@@ -113,6 +116,7 @@
     <span class="ident">commands</span>
       .<span class="ident">entity</span>(<span class="ident">target</span>)
       .<span class="ident">insert</span>(<span class="ident">Checkpoint</span>(<span class="ident">position</span> <span class="op">+</span> (<span class="ident">player_offset</span> <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>)))
+      .<span class="ident">insert</span>(<span class="ident">ContactSubscription</span>)
       .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>)
       .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync::Discrete</span>);
   }

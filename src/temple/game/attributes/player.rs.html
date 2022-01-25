@@ -154,6 +154,40 @@
 <span id="153">153</span>
 <span id="154">154</span>
 <span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Represents the player. `player()`</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -161,15 +195,15 @@
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Checkpoint</span>, <span class="ident">Transition</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision::PlayerContacted</span>;
+<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Checkpoint</span>, <span class="ident">Deadly</span>, <span class="ident">Goal</span>, <span class="ident">Transition</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision</span>::{<span class="ident">ContactQuery</span>, <span class="ident">ContactTagQuery</span>, <span class="ident">PlayerContacted</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx</span>::{<span class="ident">AudioChannels</span>, <span class="ident">SfxHandles</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load</span>::{<span class="ident">LevelLoadComplete</span>, <span class="ident">LoadLevel</span>, <span class="ident">TransitionLevel</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">write_save</span>, <span class="ident">ActiveSave</span>, <span class="ident">GameSaveState</span>, <span class="ident">LevelClearState</span>, <span class="ident">TempleState</span>, <span class="ident">GameMode</span>};
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerDied</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::next::NextLevel</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">write_save</span>, <span class="ident">ActiveSave</span>, <span class="ident">GameMode</span>, <span class="ident">GameSaveState</span>, <span class="ident">LevelSaveState</span>, <span class="ident">TempleState</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings</span>::{<span class="ident">GameFile</span>, <span class="ident">LevelTransistionType</span>};
 
 <span class="doccomment">/// Active Player State</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Player</span> {
@@ -246,19 +280,20 @@
 <span class="doccomment">/// Consumes [PlayerDied] tags and respawns the player.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">on_death_system</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
-  <span class="ident">death_tags</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">PlayerDied</span>)<span class="op">&gt;</span>,
+  <span class="ident">deadly_contacted</span>: <span class="ident">ContactTagQuery</span><span class="op">&lt;</span><span class="ident">Deadly</span><span class="op">&gt;</span>,
   <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">RigidBodyPosition</span>, <span class="kw-2">&amp;</span><span class="ident">Player</span>)<span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">pos</span>, <span class="ident">player</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
-    <span class="ident">death_tags</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">ent</span>, <span class="kw">_</span>)<span class="op">|</span> {
-      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>();
+    <span class="ident">deadly_contacted</span>.<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">ent</span><span class="op">|</span> {
       <span class="kw">let</span> <span class="ident">level_id</span> <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single</span>().<span class="ident">unwrap</span>().<span class="number">0</span>;
       <span class="kw">if</span> <span class="ident">player</span>.<span class="ident">respawn_level</span> <span class="op">!</span><span class="op">=</span> <span class="ident">level_id</span> {
         <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">TransitionLevel</span>(<span class="ident">player</span>.<span class="ident">respawn_level</span>));
       } <span class="kw">else</span> {
         <span class="ident">pos</span>.<span class="ident">position</span>.<span class="ident">translation</span> <span class="op">=</span> <span class="ident">player</span>.<span class="ident">respawn_pos</span>.<span class="ident">into</span>();
       }
+
+      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">remove</span>::<span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>();
     });
   }
 }
@@ -267,7 +302,7 @@
 <span class="doccomment">/// point.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">on_checkpoint_system</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
-  <span class="ident">checkpoint_reached</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">Checkpoint</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+  <span class="ident">checkpoint_reached</span>: <span class="ident">ContactQuery</span><span class="op">&lt;</span><span class="ident">Checkpoint</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">Player</span><span class="op">&gt;</span>,
   <span class="ident">audio</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Audio</span><span class="op">&gt;</span>,
   <span class="ident">sfx_handles</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">SfxHandles</span><span class="op">&gt;</span>,
@@ -285,10 +320,16 @@
             <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">level_entry</span>) <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">game_mode</span> {
               <span class="ident">player</span>.<span class="ident">respawn_level</span> <span class="op">=</span> <span class="ident">level</span>.<span class="number">0</span>;
               <span class="ident">player</span>.<span class="ident">respawn_pos</span> <span class="op">=</span> <span class="ident">checkpoint</span>.<span class="number">0</span>;
-              <span class="ident">save</span>.<span class="ident">level_clears</span>.<span class="ident">insert</span>(
-                <span class="ident">GameSaveState::key</span>(<span class="ident">level_entry</span>),
-                <span class="ident">LevelClearState::AtCheckpoint</span>(<span class="ident">level</span>.<span class="number">0</span>, <span class="ident">checkpoint</span>.<span class="number">0</span>.<span class="ident">x</span>, <span class="ident">checkpoint</span>.<span class="number">0</span>.<span class="ident">y</span>),
-              );
+              <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">GameSaveState::key</span>(<span class="ident">level_entry</span>);
+              <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">save</span>) <span class="op">=</span> <span class="ident">save</span>.<span class="ident">level_clears</span>.<span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="ident">key</span>) {
+                <span class="ident">save</span>.<span class="ident">set_checkpoint</span>((<span class="ident">level</span>.<span class="number">0</span>, <span class="ident">checkpoint</span>.<span class="number">0</span>.<span class="ident">x</span>, <span class="ident">checkpoint</span>.<span class="number">0</span>.<span class="ident">y</span>))
+              } <span class="kw">else</span> {
+                <span class="ident">save</span>.<span class="ident">level_clears</span>.<span class="ident">insert</span>(
+                  <span class="ident">GameSaveState::key</span>(<span class="ident">level_entry</span>),
+                  <span class="ident">LevelSaveState::new_with_checkpoint</span>((<span class="ident">level</span>.<span class="number">0</span>, <span class="ident">checkpoint</span>.<span class="number">0</span>.<span class="ident">x</span>, <span class="ident">checkpoint</span>.<span class="number">0</span>.<span class="ident">y</span>)),
+                );
+              }
+
               <span class="ident">write_save</span>(<span class="ident">save</span>);
             }
           }
@@ -300,10 +341,37 @@
   }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">on_transition_system</span>(
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">on_goal_system</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
-  <span class="ident">transition_activated</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">Transition</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span><span class="op">&gt;</span>
+  <span class="ident">goal_reached</span>: <span class="ident">ContactQuery</span><span class="op">&lt;</span><span class="ident">Goal</span><span class="op">&gt;</span>,
+  <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
+  <span class="ident">game_file</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">GameFile</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">active_save</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
 ) {
+  <span class="ident">goal_reached</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">ent</span>, <span class="ident">goal</span>)<span class="op">|</span> {
+    <span class="comment">// Get active save file</span>
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">save</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">active_save</span>.<span class="number">0</span> {
+      <span class="comment">// Get what level player is currently in</span>
+      <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">level</span>) <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">game_mode</span> {
+        <span class="comment">// Save exit clear</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level</span>) <span class="op">=</span> <span class="ident">save</span>.<span class="ident">level_clears</span>.<span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="ident">GameSaveState::key</span>(<span class="ident">level</span>)) {
+          <span class="ident">level</span>.<span class="ident">clear_exit</span>(<span class="ident">goal</span>.<span class="number">0</span>);
+          <span class="ident">write_save</span>(<span class="ident">save</span>);
+        }
+      }
+    } <span class="kw">else</span> {
+      <span class="macro">warn!</span>(<span class="ident">target</span>: <span class="string">&quot;on_goal_system&quot;</span>, <span class="string">&quot;No active save to clear level on. Ignoring...&quot;</span>);
+    }
+
+    <span class="kw">if</span> <span class="ident">game_file</span>.<span class="ident">level_transistion</span> <span class="op">==</span> <span class="ident">LevelTransistionType::NoOverworld</span> {
+      <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">NextLevel</span>);
+    }
+
+    <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">remove</span>::<span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>();
+  });
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">on_transition_system</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="ident">transition_activated</span>: <span class="ident">ContactQuery</span><span class="op">&lt;</span><span class="ident">Transition</span><span class="op">&gt;</span>) {
   <span class="kw">for</span> (<span class="ident">entity</span>, <span class="ident">trans</span>) <span class="kw">in</span> <span class="ident">transition_activated</span>.<span class="ident">iter</span>() {
     <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">TransitionLevel</span>(<span class="ident">trans</span>.<span class="number">0</span>));
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">entity</span>).<span class="ident">remove</span>::<span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>();

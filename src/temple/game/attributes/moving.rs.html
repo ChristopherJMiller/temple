@@ -192,7 +192,6 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
-<span id="194">194</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!</span>
@@ -208,10 +207,9 @@
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
-
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Player</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
 <span class="doccomment">/// Direction of sprite movement.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>

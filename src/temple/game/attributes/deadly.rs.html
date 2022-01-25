@@ -35,6 +35,8 @@
 <span id="34">34</span>
 <span id="35">35</span>
 <span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Makes sprite deadly to the player. `deadly()`</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -42,6 +44,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Attribute</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision::ContactSubscription</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
@@ -67,6 +70,7 @@
     <span class="ident">commands</span>
       .<span class="ident">entity</span>(<span class="ident">target</span>)
       .<span class="ident">insert</span>(<span class="ident">Deadly</span>)
+      .<span class="ident">insert</span>(<span class="ident">ContactSubscription</span>)
       .<span class="ident">insert_bundle</span>(<span class="ident">collider</span>)
       .<span class="ident">insert</span>(<span class="ident">ColliderPositionSync::Discrete</span>);
   }

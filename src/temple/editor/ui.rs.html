@@ -355,6 +355,7 @@
 <span id="354">354</span>
 <span id="355">355</span>
 <span id="356">356</span>
+<span id="357">357</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -411,7 +412,8 @@
 }
 
 <span class="kw">impl</span> <span class="ident">EditorState</span> {
-  <span class="doccomment">/// Returns true if any &quot;popover&quot; style ui is open. Used to prevent camera inputs while typing.</span>
+  <span class="doccomment">/// Returns true if any &quot;popover&quot; style ui is open. Used to prevent camera</span>
+  <span class="doccomment">/// inputs while typing.</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ui_open</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
     <span class="self">self</span>.<span class="ident">show_file_menu</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">show_open_levels_menu</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">show_music_menu</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">show_add_sprite_menu</span>
   }

@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["auto_next_level",""]],"struct":[["NextLevel","Command to determine next level to play, and transition to that level. Used after reaching a [Goal] when in `NoOverworld` mode."]]});

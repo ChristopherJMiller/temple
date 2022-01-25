@@ -63,66 +63,37 @@
 <span id="62">62</span>
 <span id="63">63</span>
 <span id="64">64</span>
-<span id="65">65</span>
-<span id="66">66</span>
-<span id="67">67</span>
-<span id="68">68</span>
-<span id="69">69</span>
-<span id="70">70</span>
-<span id="71">71</span>
-<span id="72">72</span>
-<span id="73">73</span>
-<span id="74">74</span>
-<span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles contant and interaction events from rapier</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::physics::IntoEntity</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude::ContactEvent</span>::{<span class="self">self</span>, <span class="ident">Started</span>};
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::attributes</span>::{<span class="ident">Attribute</span>, <span class="ident">Checkpoint</span>, <span class="ident">Deadly</span>, <span class="ident">Player</span>, <span class="ident">PlayerDied</span>, <span class="ident">Transition</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::attributes::Player</span>;
 
-<span class="doccomment">/// Given an [Entity], determines what attribute it contains if any.</span>
-<span class="kw">fn</span> <span class="ident">determine_possible_tag_collision</span>(
-  <span class="ident">entity</span>: <span class="ident">Entity</span>,
-  <span class="ident">has_deadly</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Deadly</span><span class="op">&gt;</span>,
-  <span class="ident">has_checkpoint</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Checkpoint</span><span class="op">&gt;</span>,
-  <span class="ident">has_transition</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Transition</span><span class="op">&gt;</span>,
-) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-  <span class="kw">if</span> <span class="ident">has_deadly</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Deadly</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_ok</span>() {
-    <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">Deadly::KEY</span>.<span class="ident">to_string</span>());
-  } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">has_checkpoint</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Checkpoint</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_ok</span>() {
-    <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">Checkpoint::KEY</span>.<span class="ident">to_string</span>());
-  } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">has_transition</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Transition</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_ok</span>() {
-    <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">Transition::KEY</span>.<span class="ident">to_string</span>());
-  }
-
-  <span class="kw">return</span> <span class="prelude-val">None</span>;
-}
+<span class="doccomment">/// Subscribes an Entity to collision events. Can be paired with attributes to</span>
+<span class="doccomment">/// be consumed with other systems.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ContactSubscription</span>;
 
 <span class="doccomment">/// Tags entity that a player contacted it.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerContacted</span>;
 
-<span class="doccomment">/// Consumes the determined attribute that should be accounted for as a</span>
-<span class="doccomment">/// collision event.</span>
-<span class="comment">// TODO: All entities should receive the [PlayerContacted] and digest it as they wish. Possibly there should be a way to subscribe to the contact tag?</span>
-<span class="kw">fn</span> <span class="ident">on_contact_with_player</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">tag</span>: <span class="ident">String</span>, <span class="ident">collision_entity</span>: <span class="ident">Entity</span>) {
-  <span class="kw">match</span> <span class="ident">tag</span>.<span class="ident">as_str</span>() {
-    <span class="ident">Deadly::KEY</span> =&gt; {
-      <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">PlayerDied</span>);
-    },
-    <span class="ident">Checkpoint::KEY</span> =&gt; {
-      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">collision_entity</span>).<span class="ident">insert</span>(<span class="ident">PlayerContacted</span>);
-    },
-    <span class="ident">Transition::KEY</span> =&gt; {
-      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">collision_entity</span>).<span class="ident">insert</span>(<span class="ident">PlayerContacted</span>);
-    },
-    <span class="kw">_</span> =&gt; {},
-  };
+<span class="doccomment">/// Player contact query, for attributes that are stateless.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ContactTagQuery</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;s</span>, <span class="ident">K</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Query</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">K</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>)<span class="op">&gt;</span>;
+
+<span class="comment">// Player contact query, for attributes that need access to state within the</span>
+<span class="comment">// system.</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ContactQuery</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;s</span>, <span class="ident">K</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Query</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, (<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="ident">K</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Check if an entity is subscribed to collision events, and hasn&#39;t received</span>
+<span class="doccomment">/// one yet.</span>
+<span class="kw">fn</span> <span class="ident">should_receive_event</span>(
+  <span class="ident">entity</span>: <span class="ident">Entity</span>,
+  <span class="ident">subscribed</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">ContactSubscription</span><span class="op">&gt;</span>,
+  <span class="ident">already_collided</span>: <span class="kw-2">&amp;</span><span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>,
+) -&gt; <span class="ident">bool</span> {
+  <span class="kw">return</span> <span class="ident">subscribed</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">ContactSubscription</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_ok</span>()
+    <span class="op">&amp;&amp;</span> <span class="ident">already_collided</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>(<span class="ident">entity</span>).<span class="ident">is_err</span>();
 }
 
 <span class="doccomment">/// Handles incoming contact events.</span>
@@ -130,19 +101,18 @@
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="kw-2">mut</span> <span class="ident">contact_events</span>: <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">ContactEvent</span><span class="op">&gt;</span>,
   <span class="ident">player_query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Player</span><span class="op">&gt;</span>,
-  <span class="ident">has_deadly</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Deadly</span><span class="op">&gt;</span>,
-  <span class="ident">has_checkpoint</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Checkpoint</span><span class="op">&gt;</span>,
-  <span class="ident">has_trans</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Transition</span><span class="op">&gt;</span>,
+  <span class="ident">subscribed</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">ContactSubscription</span><span class="op">&gt;</span>,
+  <span class="ident">already_collided</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">for</span> <span class="ident">contact_event</span> <span class="kw">in</span> <span class="ident">contact_events</span>.<span class="ident">iter</span>() {
     <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Started</span>(<span class="ident">a</span>, <span class="ident">b</span>) <span class="op">=</span> <span class="ident">contact_event</span> {
       <span class="kw">if</span> <span class="ident">player_query</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span>(<span class="ident">a</span>.<span class="ident">entity</span>()).<span class="ident">is_ok</span>() {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="ident">determine_possible_tag_collision</span>(<span class="ident">b</span>.<span class="ident">entity</span>(), <span class="kw-2">&amp;</span><span class="ident">has_deadly</span>, <span class="kw-2">&amp;</span><span class="ident">has_checkpoint</span>, <span class="kw-2">&amp;</span><span class="ident">has_trans</span>) {
-          <span class="ident">on_contact_with_player</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="ident">tag</span>, <span class="ident">b</span>.<span class="ident">entity</span>());
+        <span class="kw">if</span> <span class="ident">should_receive_event</span>(<span class="ident">b</span>.<span class="ident">entity</span>(), <span class="kw-2">&amp;</span><span class="ident">subscribed</span>, <span class="kw-2">&amp;</span><span class="ident">already_collided</span>) {
+          <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">b</span>.<span class="ident">entity</span>()).<span class="ident">insert</span>(<span class="ident">PlayerContacted</span>);
         }
       } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">player_query</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span>(<span class="ident">b</span>.<span class="ident">entity</span>()).<span class="ident">is_ok</span>() {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="ident">determine_possible_tag_collision</span>(<span class="ident">a</span>.<span class="ident">entity</span>(), <span class="kw-2">&amp;</span><span class="ident">has_deadly</span>, <span class="kw-2">&amp;</span><span class="ident">has_checkpoint</span>, <span class="kw-2">&amp;</span><span class="ident">has_trans</span>) {
-          <span class="ident">on_contact_with_player</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="ident">tag</span>, <span class="ident">a</span>.<span class="ident">entity</span>());
+        <span class="kw">if</span> <span class="ident">should_receive_event</span>(<span class="ident">a</span>.<span class="ident">entity</span>(), <span class="kw-2">&amp;</span><span class="ident">subscribed</span>, <span class="kw-2">&amp;</span><span class="ident">already_collided</span>) {
+          <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">a</span>.<span class="ident">entity</span>()).<span class="ident">insert</span>(<span class="ident">PlayerContacted</span>);
         }
       }
     }
