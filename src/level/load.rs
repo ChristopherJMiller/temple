@@ -13,14 +13,14 @@ use bevy_kira_audio::{Audio, AudioSource};
 use bevy_rapier2d::prelude::RigidBodyPosition;
 
 use super::config::{Level, LevelManifest, LevelMap};
-use super::util::{get_manifest_by_id, get_map_by_id, prepare_level_from_manifests, levels_have_same_music};
+use super::util::{get_manifest_by_id, get_map_by_id, levels_have_same_music, prepare_level_from_manifests};
 use super::LevelId;
 use crate::editor::camera::EditorCamera;
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
 use crate::level::config::SPRITE_SIZE;
-use crate::state::game_state::{ActiveSave, TempleState, GameMode, CheckpointState};
+use crate::state::game_state::{ActiveSave, GameMode, TempleState};
 use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
 
 /// Instruction to load a new level
@@ -43,7 +43,8 @@ pub struct LevelLoadedSprite;
 /// Instruction to unload current level and transition to another.
 pub struct TransitionLevel(pub LevelId);
 
-/// Instruction used by transition level to prevent the same music from being replayed.
+/// Instruction used by transition level to prevent the same music from being
+/// replayed.
 pub struct KeepMusic;
 
 /// System that prepares the level from files, to be loaded by [load_level]
@@ -56,11 +57,11 @@ pub fn prepare_level(
   query: Query<(Entity, &mut LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
 ) {
   query.for_each_mut(|(e, mut load_level)| {
-    let in_edit_mode = temple_state.in_edit_mode();    
+    let in_edit_mode = temple_state.in_edit_mode();
     // Load checkpoint in play mode if avaliable
     if !in_edit_mode {
       if let Some(level_state) = active_save.get_level_state(load_level.0) {
-        if let CheckpointState::AtCheckpoint(new_id, _, _) = level_state.checkpoint() {
+        if let Some((new_id, _, _)) = level_state.checkpoint() {
           if load_level.0 != *new_id {
             info!(target: "prepare_level", "Checkpoint save detected, changing load_level to {}", *new_id);
             load_level.0 = *new_id;
@@ -70,7 +71,7 @@ pub fn prepare_level(
     }
 
     let id = load_level.0;
-    
+
     // If in edit mode, a lack of manifest is forgiven.
     let manifest = if let Some(manifest) = get_manifest_by_id(id) {
       manifest
@@ -103,7 +104,7 @@ pub fn load_level(
   asset_server: Res<AssetServer>,
   temple_state: Res<TempleState>,
   audio: Res<Audio>,
-  channels: Res<AudioChannels>
+  channels: Res<AudioChannels>,
 ) {
   query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
@@ -127,8 +128,12 @@ pub fn load_level(
         // Play new music if load is lacking [KeepMusic] instruction
         if keep_music.get_component::<KeepMusic>(e).is_err() {
           // Workaround due to Bevy reloading previous asset issue,
-          // Gets a valid handle, and since was previously loaded does not need to load from disk.
-          audio.play_looped_in_channel(asset_server.load(music_path.into_os_string().to_str().unwrap()), &channels.music.0);
+          // Gets a valid handle, and since was previously loaded does not need to load
+          // from disk.
+          audio.play_looped_in_channel(
+            asset_server.load(music_path.into_os_string().to_str().unwrap()),
+            &channels.music.0,
+          );
         }
       } else if asset_server.get_load_state(&music) != LoadState::Loading {
         let _: Handle<AudioSource> = asset_server.load(music_path.into_os_string().to_str().unwrap());
@@ -205,7 +210,7 @@ pub fn apply_save_on_load(
   if let Ok((ent, load_level)) = level.single() {
     if let GameMode::InLevel(id) = temple_state.game_mode {
       if let Some(level_state) = active_save.get_level_state(id) {
-        if let CheckpointState::AtCheckpoint(id, x, y) = level_state.checkpoint() {
+        if let Some((id, x, y)) = level_state.checkpoint() {
           if let Ok((mut trans, mut player)) = player.single_mut() {
             let pos = Vec2::new(*x, *y);
             player.respawn_pos = pos;
@@ -240,7 +245,7 @@ pub fn unload_level(
 }
 
 /// System that consumes [TransitionLevel] instructions
-/// Produces 
+/// Produces
 pub fn transition_level(
   mut commands: Commands,
   audio: Res<Audio>,
@@ -251,11 +256,12 @@ pub fn transition_level(
 ) {
   let mut transitioned = false;
   for (entity, trans) in transition_command.iter() {
-    // Run a single transition, prevents multiple transition entities on the same frame.
+    // Run a single transition, prevents multiple transition entities on the same
+    // frame.
     if !transitioned {
       transitioned = true;
       // Do nothing if already a load active, prevents double loads.
-      if loading_levels.single().is_err()  {
+      if loading_levels.single().is_err() {
         if let Ok((ent, old_level)) = loaded_level.single() {
           commands.entity(ent).insert(UnloadLevel);
           let mut level_ent = commands.spawn();

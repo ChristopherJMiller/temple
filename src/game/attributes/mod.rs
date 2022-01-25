@@ -26,12 +26,14 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
     Deadly::KEY => Deadly::build(commands, target, level, position, entry.1),
     Checkpoint::KEY => Checkpoint::build(commands, target, level, position, entry.1),
     Transition::KEY => Transition::build(commands, target, level, position, entry.1),
+    Goal::KEY => Goal::build(commands, target, level, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
 
 mod checkpoint;
 mod deadly;
+mod goal;
 mod lex;
 mod moving;
 mod player;
@@ -40,16 +42,15 @@ mod transition;
 
 pub use checkpoint::*;
 pub use deadly::*;
+pub use goal::*;
 pub use moving::*;
 pub use player::*;
 pub use solid::*;
 pub use transition::*;
 
-
-use crate::level::LevelId;
-
 use self::lex::{AttributeEntry, ParseArgumentItem};
 use super::physics::PlayerSimulationSteps;
+use crate::level::LevelId;
 
 /// [Plugin] for attributes
 pub struct AttributePlugin;
@@ -70,6 +71,7 @@ impl Plugin for AttributePlugin {
       )
       .add_system(on_death_system.system())
       .add_system(on_checkpoint_system.system())
-      .add_system(on_transition_system.system());
+      .add_system(on_transition_system.system())
+      .add_system(on_goal_system.system());
   }
 }

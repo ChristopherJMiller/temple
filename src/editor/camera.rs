@@ -2,9 +2,8 @@ use bevy::prelude::*;
 use bevy::render::camera::{Camera, OrthographicProjection};
 use kurinji::Kurinji;
 
-use crate::input::{DOWN, EDIT_ZOOM_IN, EDIT_ZOOM_OUT, LEFT, RIGHT, UP};
-
 use super::ui::EditorState;
+use crate::input::{DOWN, EDIT_ZOOM_IN, EDIT_ZOOM_OUT, LEFT, RIGHT, UP};
 
 pub struct EditorCamera;
 

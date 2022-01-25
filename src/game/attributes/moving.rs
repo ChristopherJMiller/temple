@@ -13,10 +13,9 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::level::LevelId;
-
 use super::lex::ParseArgumentItem;
 use super::{Attribute, Player};
+use crate::level::LevelId;
 
 /// Direction of sprite movement.
 #[derive(Clone, Copy)]

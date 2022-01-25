@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 use crate::level::LevelId;
 use crate::util::files::from_game_root;
 
-/// Defines the current state of the game, used to provide context to other systems (level saving, interfaces, etc)
+/// Defines the current state of the game, used to provide context to other
+/// systems (level saving, interfaces, etc)
 #[derive(Clone, Debug, PartialEq)]
 pub enum GameMode {
   /// Game is at MainMenu
@@ -18,7 +19,7 @@ pub enum GameMode {
   #[allow(dead_code)]
   Overworld,
   /// Game has entered a level. [LevelId] defines the entrylevel
-  InLevel(LevelId)
+  InLevel(LevelId),
 }
 
 impl Default for GameMode {
@@ -34,7 +35,9 @@ pub struct TempleState {
 
 impl TempleState {
   pub fn edit_mode() -> Self {
-    TempleState { game_mode: GameMode::EditMode }
+    TempleState {
+      game_mode: GameMode::EditMode,
+    }
   }
 
   pub fn in_edit_mode(&self) -> bool {
@@ -42,36 +45,34 @@ impl TempleState {
   }
 }
 
-/// Describes the checkpoint state of a given level.
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum CheckpointState {
-  NoCheckpoint,
-  AtCheckpoint(LevelId, f32, f32)
-}
+pub type CheckpointState = (LevelId, f32, f32);
 
-/// Describes the state of a level save, including exits completed and current checkpoint.
+/// Describes the state of a level save, including exits completed and current
+/// checkpoint.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct LevelSaveState {
-  checkpoint_state: CheckpointState,
   exits_cleared: Vec<bool>,
+  checkpoint_state: Option<CheckpointState>,
 }
 
 impl LevelSaveState {
   pub fn new_with_checkpoint(state: CheckpointState) -> Self {
     Self {
       exits_cleared: Vec::new(),
-      checkpoint_state: state,
+      checkpoint_state: Some(state),
     }
   }
 
+  /// Clears an exit on the level
   pub fn clear_exit(&mut self, exit_num: usize) {
     if exit_num > self.exits_cleared.len() {
       self.exits_cleared.resize(exit_num, false);
     }
     self.exits_cleared.insert(exit_num, true);
+    self.checkpoint_state = None;
   }
 
+  #[allow(dead_code)]
   pub fn exit_cleared(&self, exit_num: usize) -> bool {
     if let Some(exit_state) = self.exits_cleared.get(exit_num) {
       *exit_state
@@ -80,20 +81,27 @@ impl LevelSaveState {
     }
   }
 
+  /// Sets the checkpoint
   pub fn set_checkpoint(&mut self, state: CheckpointState) {
-    self.checkpoint_state = state;
+    self.checkpoint_state = Some(state);
   }
 
-  pub fn checkpoint(&self) -> &CheckpointState {
+  /// Returns the checkpoint data, if any
+  pub fn checkpoint(&self) -> &Option<CheckpointState> {
     &self.checkpoint_state
+  }
+
+  /// Returns true if any exit is cleared on this level. Used for `NoOverworld` level order calculations
+  pub fn an_exit_cleared(&self) -> bool {
+    self.exits_cleared.iter().find(|&&x| x).is_some()
   }
 }
 
 impl Default for LevelSaveState {
   fn default() -> Self {
-    Self { 
+    Self {
       exits_cleared: Vec::new(),
-      checkpoint_state: CheckpointState::NoCheckpoint,
+      checkpoint_state: None,
     }
   }
 }
@@ -172,7 +180,8 @@ pub fn bootstrap_and_get_saves() -> HashMap<String, GameSaveState> {
 pub fn write_save(save: &GameSaveState) {
   let saves_dir = from_game_root(SAVES_PATH);
   let mut save_path = saves_dir.join(save.name.clone());
-  let contents = toml::to_string_pretty(&save.clone()).unwrap_or_else(|err| panic!("Error occured when writing save: {}", err.to_string()));
+  let contents = toml::to_string_pretty(&save.clone())
+    .unwrap_or_else(|err| panic!("Error occured when writing save: {}", err.to_string()));
   save_path.set_extension("toml");
   if write(save_path, contents).is_err() {
     info!(target: "write_saves", "Was unable to save the game!");

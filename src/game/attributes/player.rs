@@ -5,13 +5,15 @@ use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
-use super::{Attribute, Checkpoint, Transition, Deadly};
-use crate::game::collision::{PlayerContacted, ContactQuery, ContactTagQuery};
+use super::{Attribute, Checkpoint, Deadly, Goal, Transition};
+use crate::game::collision::{ContactQuery, ContactTagQuery, PlayerContacted};
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
-use crate::level::LevelId;
 use crate::level::load::{LevelLoadComplete, LoadLevel, TransitionLevel};
-use crate::state::game_state::{write_save, ActiveSave, GameSaveState, LevelSaveState, TempleState, GameMode, CheckpointState};
+use crate::level::next::NextLevel;
+use crate::level::LevelId;
+use crate::state::game_state::{write_save, ActiveSave, GameMode, GameSaveState, LevelSaveState, TempleState};
+use crate::util::settings::{GameFile, LevelTransistionType};
 
 /// Active Player State
 pub struct Player {
@@ -130,14 +132,14 @@ pub fn on_checkpoint_system(
               player.respawn_pos = checkpoint.0;
               let key = GameSaveState::key(level_entry);
               if let Some(save) = save.level_clears.get_mut(&key) {
-                save.set_checkpoint(CheckpointState::AtCheckpoint(level.0, checkpoint.0.x, checkpoint.0.y))
+                save.set_checkpoint((level.0, checkpoint.0.x, checkpoint.0.y))
               } else {
                 save.level_clears.insert(
                   GameSaveState::key(level_entry),
-                  LevelSaveState::new_with_checkpoint(CheckpointState::AtCheckpoint(level.0, checkpoint.0.x, checkpoint.0.y)),
+                  LevelSaveState::new_with_checkpoint((level.0, checkpoint.0.x, checkpoint.0.y)),
                 );
               }
-              
+
               write_save(save);
             }
           }
@@ -149,10 +151,37 @@ pub fn on_checkpoint_system(
   }
 }
 
-pub fn on_transition_system(
+pub fn on_goal_system(
   mut commands: Commands,
-  transition_activated: ContactQuery<Transition>
+  goal_reached: ContactQuery<Goal>,
+  temple_state: Res<TempleState>,
+  game_file: Res<GameFile>,
+  mut active_save: ResMut<ActiveSave>,
 ) {
+  goal_reached.for_each(|(ent, goal)| {
+    // Get active save file
+    if let Some(save) = &mut active_save.0 {
+      // Get what level player is currently in
+      if let GameMode::InLevel(level) = temple_state.game_mode {
+        // Save exit clear
+        if let Some(level) = save.level_clears.get_mut(&GameSaveState::key(level)) {
+          level.clear_exit(goal.0);
+          write_save(save);
+        }
+      }
+    } else {
+      warn!(target: "on_goal_system", "No active save to clear level on. Ignoring...");
+    }
+
+    if game_file.level_transistion == LevelTransistionType::NoOverworld {
+      commands.spawn().insert(NextLevel);
+    }
+
+    commands.entity(ent).remove::<PlayerContacted>();
+  });
+}
+
+pub fn on_transition_system(mut commands: Commands, transition_activated: ContactQuery<Transition>) {
   for (entity, trans) in transition_activated.iter() {
     commands.spawn().insert(TransitionLevel(trans.0));
     commands.entity(entity).remove::<PlayerContacted>();

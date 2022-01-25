@@ -6,7 +6,8 @@ use bevy_rapier2d::prelude::ContactEvent::{self, Started};
 
 use super::attributes::Player;
 
-/// Subscribes an Entity to collision events. Can be paired with attributes to be consumed with other systems.
+/// Subscribes an Entity to collision events. Can be paired with attributes to
+/// be consumed with other systems.
 pub struct ContactSubscription;
 
 /// Tags entity that a player contacted it.
@@ -15,17 +16,19 @@ pub struct PlayerContacted;
 /// Player contact query, for attributes that are stateless.
 pub type ContactTagQuery<'r, 's, K> = Query<'r, Entity, (With<K>, With<PlayerContacted>)>;
 
-// Player contact query, for attributes that need access to state within the system.
+// Player contact query, for attributes that need access to state within the
+// system.
 pub type ContactQuery<'r, 's, K> = Query<'r, (Entity, &'s K), With<PlayerContacted>>;
 
-
-/// Check if an entity is subscribed to collision events, and hasn't received one yet.
+/// Check if an entity is subscribed to collision events, and hasn't received
+/// one yet.
 fn should_receive_event(
   entity: Entity,
   subscribed: &Query<&ContactSubscription>,
   already_collided: &Query<&PlayerContacted>,
 ) -> bool {
-  return subscribed.get_component::<ContactSubscription>(entity).is_ok() && already_collided.get_component::<PlayerContacted>(entity).is_err()
+  return subscribed.get_component::<ContactSubscription>(entity).is_ok()
+    && already_collided.get_component::<PlayerContacted>(entity).is_err();
 }
 
 /// Handles incoming contact events.

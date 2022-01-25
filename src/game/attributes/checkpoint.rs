@@ -8,8 +8,8 @@ use super::lex::ParseArgumentItem;
 use super::Attribute;
 use crate::game::collision::ContactSubscription;
 use crate::game::collision_groups::*;
-use crate::level::LevelId;
 use crate::level::config::SPRITE_SIZE;
+use crate::level::LevelId;
 
 pub struct Checkpoint(pub Vec2);
 

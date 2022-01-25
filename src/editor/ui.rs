@@ -54,7 +54,8 @@ pub struct EditorState {
 }
 
 impl EditorState {
-  /// Returns true if any "popover" style ui is open. Used to prevent camera inputs while typing.
+  /// Returns true if any "popover" style ui is open. Used to prevent camera
+  /// inputs while typing.
   pub fn ui_open(&self) -> bool {
     self.show_file_menu || self.show_open_levels_menu || self.show_music_menu || self.show_add_sprite_menu
   }

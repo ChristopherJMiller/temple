@@ -5,7 +5,7 @@ use clap::{App, Arg};
 
 use crate::level::load::LoadLevel;
 use crate::level::LevelId;
-use crate::state::game_state::{TempleState, GameMode};
+use crate::state::game_state::{GameMode, TempleState};
 use crate::ui::LoadTitleScreen;
 use crate::util::settings::GameFile;
 
