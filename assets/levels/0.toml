@@ -2,13 +2,49 @@ name = 'Boneyard'
 music = 'walkintherain.ogg'
 
 [[sprites]]
-name = 'ground_bottombottom'
+name = 'ground_topleft'
 offset = [
     0,
     0,
 ]
-texture = 'boneyard/bottommiddle.png'
+texture = 'boneyard/topleft.png'
 attributes = ['solid']
+
+[[sprites]]
+name = 'ground_bottomleft'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/bottomleft.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'ground_columnmiddle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/columnmiddle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'spikeup'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikeup.png'
+attributes = ['deadly']
+
+[[sprites]]
+name = 'checkpoint'
+offset = [
+    0,
+    0,
+]
+texture = 'checkpoint.png'
+attributes = ['checkpoint(0,0)']
 
 [[sprites]]
 name = 'ground_middleleft'
@@ -38,88 +74,12 @@ texture = 'checkpoint.png'
 attributes = ['goal(0)']
 
 [[sprites]]
-name = 'center_ground_solid'
+name = 'ground_columntop'
 offset = [
     0,
     0,
 ]
-texture = 'boneyard/middlemiddle.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'corner_bottomleft'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/cornerbottomleft.png'
-attributes = []
-
-[[sprites]]
-name = 'middle_ground'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/topmiddle.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'skull_down'
-offset = [
-    0,
-    0,
-]
-texture = 'skull.png'
-attributes = [
-    'moving(down,4,4)',
-    'solid',
-    'deadly',
-]
-
-[[sprites]]
-name = 'ground_bottomleft'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/bottomleft.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'center_ground_nonsolid'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/middlemiddle.png'
-attributes = []
-
-[[sprites]]
-name = 'ground_middleright'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/middleright.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'skulls_idle'
-offset = [
-    0,
-    0,
-]
-texture = 'skull.png'
-attributes = ['deadly']
-
-[[sprites]]
-name = 'ground_topleft'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/topleft.png'
+texture = 'boneyard/columntop.png'
 attributes = ['solid']
 
 [[sprites]]
@@ -132,43 +92,67 @@ texture = 'blank.png'
 attributes = ['deadly']
 
 [[sprites]]
-name = 'moving_left_slow'
+name = 'moving_right_slow_leftc'
 offset = [
     0,
     0,
 ]
-texture = 'boneyard/topmiddle.png'
+texture = 'boneyard/rowleft.png'
+attributes = [
+    'moving(right,5,5)',
+    'solid',
+]
+
+[[sprites]]
+name = 'moving_left_slow_leftc'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/rowleft.png'
 attributes = [
     'solid',
     'moving(left,5,5)',
 ]
 
 [[sprites]]
-name = 'corner_bottomright'
+name = 'center_ground_solid'
 offset = [
     0,
     0,
 ]
-texture = 'boneyard/cornerbottomright.png'
-attributes = []
-
-[[sprites]]
-name = 'ground_topright'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/topright.png'
+texture = 'boneyard/middlemiddle.png'
 attributes = ['solid']
 
 [[sprites]]
-name = 'checkpoint'
+name = 'middle_ground'
 offset = [
     0,
     0,
 ]
-texture = 'checkpoint.png'
-attributes = ['checkpoint(0,0)']
+texture = 'boneyard/topmiddle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'corner_bottomleft'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/cornerbottomleft.png'
+attributes = []
+
+[[sprites]]
+name = 'moving_right_slow'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/rowmiddle.png'
+attributes = [
+    'moving(right,5,5)',
+    'solid',
+]
 
 [[sprites]]
 name = 'ground_bottomright'
@@ -180,16 +164,34 @@ texture = 'boneyard/bottomright.png'
 attributes = ['solid']
 
 [[sprites]]
-name = 'moving_right_slow'
+name = 'ground_middleright'
 offset = [
     0,
     0,
 ]
-texture = 'boneyard/topmiddle.png'
-attributes = [
-    'moving(right,5,5)',
-    'solid',
+texture = 'boneyard/middleright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'moving_left_slow'
+offset = [
+    0,
+    0,
 ]
+texture = 'boneyard/rowmiddle.png'
+attributes = [
+    'solid',
+    'moving(left,5,5)',
+]
+
+[[sprites]]
+name = 'skulls_idle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikefloat.png'
+attributes = ['deadly']
 
 [[sprites]]
 name = 'elevator'
@@ -204,6 +206,36 @@ attributes = [
 ]
 
 [[sprites]]
+name = 'spikedown'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikedown.png'
+attributes = ['deadly']
+
+[[sprites]]
+name = 'moving_right_slow_rightc'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/rowright.png'
+attributes = [
+    'moving(right,5,5)',
+    'solid',
+]
+
+[[sprites]]
+name = 'ground_topright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/topright.png'
+attributes = ['solid']
+
+[[sprites]]
 name = 'elevator_secondary'
 offset = [
     0,
@@ -213,4 +245,56 @@ texture = 'boneyard/middlemiddle.png'
 attributes = [
     'moving(up,12,15)',
     'solid',
+]
+
+[[sprites]]
+name = 'moving_left_slow_rightc'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/rowright.png'
+attributes = [
+    'solid',
+    'moving(left,5,5)',
+]
+
+[[sprites]]
+name = 'ground_bottombottom'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/bottommiddle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'center_ground_nonsolid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/middlemiddle.png'
+attributes = []
+
+[[sprites]]
+name = 'corner_bottomright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/cornerbottomright.png'
+attributes = []
+
+[[sprites]]
+name = 'skull_down'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikefloat.png'
+attributes = [
+    'moving(down,4,4)',
+    'solid',
+    'deadly',
 ]

@@ -11,7 +11,7 @@ pub struct NextLevel;
 pub fn auto_next_level(
   mut commands: Commands,
   next_level: Query<Entity, With<NextLevel>>,
-  temple_state: ResMut<TempleState>,
+  mut temple_state: ResMut<TempleState>,
   game_file: Res<GameFile>,
 ) {
   next_level.for_each(|ent| {
@@ -22,6 +22,7 @@ pub fn auto_next_level(
         let mut iter = order.iter();
         if iter.find(|&&x| x == level).is_some() {
           if let Some(next_level) = iter.next() {
+            temple_state.game_mode = GameMode::InLevel(*next_level);
             commands.spawn().insert(TransitionLevel(*next_level));
           } else {
             info!(target: "auto_next_level", "End of Game!");

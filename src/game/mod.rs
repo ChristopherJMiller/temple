@@ -8,6 +8,7 @@ use collision::CollisionPlugin;
 use physics::ModifyPhysicsPlugin;
 use player::PlayerPlugin;
 
+use self::credits::CreditsPlugin;
 use self::sfx::SfxPlugin;
 use crate::level::load::LoadLevel;
 use crate::state::game_state::{ActiveSave, GameMode, GameSaveState, TempleState};
@@ -20,6 +21,7 @@ pub mod collision_groups;
 pub mod physics;
 pub mod player;
 pub mod sfx;
+pub mod credits;
 
 /// Command to begin the game
 pub struct BeginGame;
@@ -91,6 +93,7 @@ impl PluginGroup for GamePlugins {
       .add(CollisionPlugin)
       .add(ModifyPhysicsPlugin)
       .add(BootstrapPlugin)
-      .add(SfxPlugin);
+      .add(SfxPlugin)
+      .add(CreditsPlugin);
   }
 }

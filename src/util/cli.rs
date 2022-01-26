@@ -3,6 +3,7 @@
 use bevy::prelude::*;
 use clap::{App, Arg};
 
+use crate::game::credits::PlayCredits;
 use crate::level::load::LoadLevel;
 use crate::level::LevelId;
 use crate::state::game_state::{GameMode, TempleState};
@@ -18,6 +19,9 @@ pub const FPS_ARG: &str = "fps";
 /// `editor` argument.
 pub const EDITOR_ARG: &str = "editor";
 
+/// `credits` argument.
+pub const CREDITS_ARG: &str = "credits";
+
 /// Website about the Temple project
 const TEMPLE_URL: &str = "https://github.com/ChristopherJMiller/temple";
 
@@ -29,6 +33,7 @@ pub struct CliArgs {
   pub load_level: Option<LevelId>,
   pub show_fps_counter: bool,
   pub edit_mode: bool,
+  pub display_credits: bool,
 }
 
 impl CliArgs {
@@ -42,6 +47,7 @@ pub struct CliArgsBuilder {
   pub load_level: Option<LevelId>,
   pub show_fps_counter: bool,
   pub edit_mode: bool,
+  pub display_credits: bool,
 }
 
 impl CliArgsBuilder {
@@ -60,11 +66,17 @@ impl CliArgsBuilder {
     self
   }
 
+  pub fn display_credits(mut self) -> Self {
+    self.display_credits = true;
+    self
+  }
+
   pub fn build(self) -> CliArgs {
     CliArgs {
       load_level: self.load_level,
       show_fps_counter: self.show_fps_counter,
       edit_mode: self.edit_mode,
+      display_credits: self.display_credits,
     }
   }
 }
@@ -96,7 +108,8 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
         .takes_value(false)
         .help("Enables the in-game fps counter"),
     )
-    .arg(Arg::with_name(EDITOR_ARG).long("editor").help("Enters the editor"));
+    .arg(Arg::with_name(EDITOR_ARG).long("editor").help("Enters the editor"))
+    .arg(Arg::with_name(CREDITS_ARG).long("credits").help("Displays the game credits"));
 
   let matches = cli.get_matches();
 
@@ -121,6 +134,10 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
     builder = builder.enable_editor();
   }
 
+  if matches.is_present(CREDITS_ARG) {
+    builder = builder.display_credits();
+  }
+
   builder.build()
 }
 
@@ -128,6 +145,11 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
 pub fn handle_cli_args(mut commands: Commands, mut temple_state: ResMut<TempleState>, cli_args: Res<CliArgs>) {
   // Command line cli is for play mode only
   if !temple_state.in_edit_mode() {
+    if cli_args.display_credits {
+      commands.spawn().insert(PlayCredits);
+      return;
+    }
+
     // --load <level>
     if let Some(level) = cli_args.load_level {
       commands.spawn().insert(LoadLevel(level));

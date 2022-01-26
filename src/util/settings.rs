@@ -37,6 +37,12 @@ pub struct GameFile {
   /// If [LevelTransistionType::NoOverworld] is used, this defines the level
   /// order of the game.
   pub level_order: Option<Vec<u32>>,
+
+  /// Game Credits, parsed as markdown.
+  pub credits: String,
+
+  /// Path to music for credits
+  pub credit_music: String,
 }
 
 impl Default for GameFile {
@@ -46,6 +52,8 @@ impl Default for GameFile {
       authors: vec![String::from("ALUMUX (Chris M.)")],
       level_transistion: LevelTransistionType::NoOverworld,
       level_order: Some(vec![0]),
+      credits: Default::default(),
+      credit_music: Default::default(),
     }
   }
 }
