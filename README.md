@@ -14,7 +14,7 @@ The project is now focused on completing work items for a basic game experience.
 ## Getting Started
 
 ```
-# Build the project like any other rust project
+# Build and run the project (loads into main menu)
 cargo run
 
 # Use the Temple CLI to make level development easier
