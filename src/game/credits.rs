@@ -103,8 +103,6 @@ pub fn load_credits(
       }
     }
 
-    println!("{:?}", credits.clone());
-
     credits_data.credits_data = credits;
     credits_data.run_credits = true;
 
