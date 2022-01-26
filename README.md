@@ -23,6 +23,9 @@ cargo run -- --help
 # Load into a level
 cargo run -- -l 0
 
+# Launch the level editor
+cargo run -- --editor
+
 # Open documentation
 cargo doc --open
 ```
@@ -31,18 +34,12 @@ cargo doc --open
 
 ### `assets/game.toml`
 
-The game config provides information on the game name and authors.
+The game config provides information on the game name, authors, and credits.
 
-### `assets/levels.toml`
+### `assets/levels/`
 
-The level config provides a list of loadable levels, and contains information on used sprites, map bitmaps, music, etc.
+Level config files are loadable levels, and contain information on used sprites, music, etc.
 
-### `assets/sprites/types.toml`
+### `assets/levelsmaps/`
 
-The sprite type config defines all usable types by sprites. Sprite Types are "archetypes" that sprites can reference to define their functionality when loaded, and are designed with the idea that sprites of various visuals may act the same (e.g. a moving platform may have different visuals depending on the level theme, but still should act the same).
-
-Sprite types are defined by their list of attributes, which are ids to specific entity systems. For the complete list, see [build_attribute](https://github.com/ChristopherJMiller/temple/blob/5e3a0e47d0adefa57debc072d9a9219b3cb4ac65/src/game/attributes/mod.rs#L44).
-
-### `assets/sprites/sprites.toml`
-
-The sprite config defines all loadable sprites in the game, with their associated visual texture and sprite type.
+Level maps are a binary file containing level information. These are loaded with a matching level config file.
