@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CreditObject",""],["TextStyle",""]],"fn":[["load_credits",""],["run_credits",""],["set_scroll_speed",""]],"struct":[["CreditsData",""],["CreditsPlugin","[Plugin] for handling credits."],["PlayCredits","Command to play credits. Does not unload current level."]]});

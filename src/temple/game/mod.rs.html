@@ -95,6 +95,9 @@
 <span id="94">94</span>
 <span id="95">95</span>
 <span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Game mechanisms and sprite attribute definitions.</span>
 
 <span class="kw">use</span> <span class="ident">attributes::AttributePlugin</span>;
@@ -105,6 +108,7 @@
 <span class="kw">use</span> <span class="ident">physics::ModifyPhysicsPlugin</span>;
 <span class="kw">use</span> <span class="ident">player::PlayerPlugin</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::credits::CreditsPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::sfx::SfxPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">GameMode</span>, <span class="ident">GameSaveState</span>, <span class="ident">TempleState</span>};
@@ -117,6 +121,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">physics</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">player</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">sfx</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">credits</span>;
 
 <span class="doccomment">/// Command to begin the game</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BeginGame</span>;
@@ -188,7 +193,8 @@
       .<span class="ident">add</span>(<span class="ident">CollisionPlugin</span>)
       .<span class="ident">add</span>(<span class="ident">ModifyPhysicsPlugin</span>)
       .<span class="ident">add</span>(<span class="ident">BootstrapPlugin</span>)
-      .<span class="ident">add</span>(<span class="ident">SfxPlugin</span>);
+      .<span class="ident">add</span>(<span class="ident">SfxPlugin</span>)
+      .<span class="ident">add</span>(<span class="ident">CreditsPlugin</span>);
   }
 }
 </code></pre></div>

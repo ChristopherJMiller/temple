@@ -138,11 +138,34 @@
 <span id="137">137</span>
 <span id="138">138</span>
 <span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles the CLI options</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">clap</span>::{<span class="ident">App</span>, <span class="ident">Arg</span>};
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::credits::PlayCredits</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">GameMode</span>, <span class="ident">TempleState</span>};
@@ -158,6 +181,9 @@
 <span class="doccomment">/// `editor` argument.</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EDITOR_ARG</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;editor&quot;</span>;
 
+<span class="doccomment">/// `credits` argument.</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CREDITS_ARG</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;credits&quot;</span>;
+
 <span class="doccomment">/// Website about the Temple project</span>
 <span class="kw">const</span> <span class="ident">TEMPLE_URL</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;https://github.com/ChristopherJMiller/temple&quot;</span>;
 
@@ -169,6 +195,7 @@
   <span class="kw">pub</span> <span class="ident">load_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">LevelId</span><span class="op">&gt;</span>,
   <span class="kw">pub</span> <span class="ident">show_fps_counter</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">edit_mode</span>: <span class="ident">bool</span>,
+  <span class="kw">pub</span> <span class="ident">display_credits</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">CliArgs</span> {
@@ -182,6 +209,7 @@
   <span class="kw">pub</span> <span class="ident">load_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">LevelId</span><span class="op">&gt;</span>,
   <span class="kw">pub</span> <span class="ident">show_fps_counter</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">edit_mode</span>: <span class="ident">bool</span>,
+  <span class="kw">pub</span> <span class="ident">display_credits</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">CliArgsBuilder</span> {
@@ -200,11 +228,17 @@
     <span class="self">self</span>
   }
 
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">display_credits</span>(<span class="kw-2">mut</span> <span class="self">self</span>) -&gt; <span class="self">Self</span> {
+    <span class="self">self</span>.<span class="ident">display_credits</span> <span class="op">=</span> <span class="bool-val">true</span>;
+    <span class="self">self</span>
+  }
+
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(<span class="self">self</span>) -&gt; <span class="ident">CliArgs</span> {
     <span class="ident">CliArgs</span> {
       <span class="ident">load_level</span>: <span class="self">self</span>.<span class="ident">load_level</span>,
       <span class="ident">show_fps_counter</span>: <span class="self">self</span>.<span class="ident">show_fps_counter</span>,
       <span class="ident">edit_mode</span>: <span class="self">self</span>.<span class="ident">edit_mode</span>,
+      <span class="ident">display_credits</span>: <span class="self">self</span>.<span class="ident">display_credits</span>,
     }
   }
 }
@@ -236,7 +270,8 @@
         .<span class="ident">takes_value</span>(<span class="bool-val">false</span>)
         .<span class="ident">help</span>(<span class="string">&quot;Enables the in-game fps counter&quot;</span>),
     )
-    .<span class="ident">arg</span>(<span class="ident">Arg::with_name</span>(<span class="ident">EDITOR_ARG</span>).<span class="ident">long</span>(<span class="string">&quot;editor&quot;</span>).<span class="ident">help</span>(<span class="string">&quot;Enters the editor&quot;</span>));
+    .<span class="ident">arg</span>(<span class="ident">Arg::with_name</span>(<span class="ident">EDITOR_ARG</span>).<span class="ident">long</span>(<span class="string">&quot;editor&quot;</span>).<span class="ident">help</span>(<span class="string">&quot;Enters the editor&quot;</span>))
+    .<span class="ident">arg</span>(<span class="ident">Arg::with_name</span>(<span class="ident">CREDITS_ARG</span>).<span class="ident">long</span>(<span class="string">&quot;credits&quot;</span>).<span class="ident">help</span>(<span class="string">&quot;Displays the game credits&quot;</span>));
 
   <span class="kw">let</span> <span class="ident">matches</span> <span class="op">=</span> <span class="ident">cli</span>.<span class="ident">get_matches</span>();
 
@@ -261,6 +296,10 @@
     <span class="ident">builder</span> <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">enable_editor</span>();
   }
 
+  <span class="kw">if</span> <span class="ident">matches</span>.<span class="ident">is_present</span>(<span class="ident">CREDITS_ARG</span>) {
+    <span class="ident">builder</span> <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">display_credits</span>();
+  }
+
   <span class="ident">builder</span>.<span class="ident">build</span>()
 }
 
@@ -268,6 +307,11 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_cli_args</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, <span class="kw-2">mut</span> <span class="ident">temple_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>, <span class="ident">cli_args</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">CliArgs</span><span class="op">&gt;</span>) {
   <span class="comment">// Command line cli is for play mode only</span>
   <span class="kw">if</span> <span class="op">!</span><span class="ident">temple_state</span>.<span class="ident">in_edit_mode</span>() {
+    <span class="kw">if</span> <span class="ident">cli_args</span>.<span class="ident">display_credits</span> {
+      <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">PlayCredits</span>);
+      <span class="kw">return</span>;
+    }
+
     <span class="comment">// --load &lt;level&gt;</span>
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level</span>) <span class="op">=</span> <span class="ident">cli_args</span>.<span class="ident">load_level</span> {
       <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">LoadLevel</span>(<span class="ident">level</span>));
