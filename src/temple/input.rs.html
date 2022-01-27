@@ -71,6 +71,15 @@
 <span id="70">70</span>
 <span id="71">71</span>
 <span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Input config management and associated systems.</span>
 
 <span class="kw">use</span> <span class="ident">std::fs</span>;
@@ -102,6 +111,15 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RETURN</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;RETURN&quot;</span>;
 <span class="doccomment">/// Input key for toggling sprite borders in edit mode</span>
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EDIT_TOGGLE_BORDER</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;EDIT_TOGGLE_BORDER&quot;</span>;
+<span class="doccomment">/// Input key for moving dash controls left (usually used on mouse)</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DASH_LEFT</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;DASH_LEFT&quot;</span>;
+<span class="doccomment">/// Input key for moving dash controls right (usually used on mouse)</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DASH_RIGHT</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;DASH_RIGHT&quot;</span>;
+<span class="doccomment">/// Input key for moving dash controls up (usually used on mouse)</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DASH_UP</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;DASH_UP&quot;</span>;
+<span class="doccomment">/// Input key for moving dash controls down (usually used on mouse)</span>
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DASH_DOWN</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;DASH_DOWN&quot;</span>;
+
 
 <span class="doccomment">/// Loads [Kurinji] input config files</span>
 <span class="kw">fn</span> <span class="ident">setup_inputs</span>(<span class="kw-2">mut</span> <span class="ident">kurinji</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>) {

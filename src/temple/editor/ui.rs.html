@@ -356,6 +356,8 @@
 <span id="355">355</span>
 <span id="356">356</span>
 <span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -550,11 +552,13 @@
             <span class="ident">toolbar_state</span>.<span class="ident">show_add_sprite_menu</span> <span class="op">=</span> <span class="bool-val">true</span>;
           }
 
-          <span class="kw">for</span> <span class="ident">sprite_entry</span> <span class="kw">in</span> <span class="ident">toolbar_state</span>.<span class="ident">loaded_sprites</span>.<span class="ident">iter</span>() {
-            <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="ident">sprite_entry</span>.<span class="ident">name</span>.<span class="ident">as_str</span>()).<span class="ident">clicked</span>() {
-              <span class="ident">selected_sprite</span>.<span class="number">0</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">sprite_entry</span>.<span class="ident">clone</span>());
+          <span class="ident">egui::ScrollArea::from_max_height</span>(<span class="number">500.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+            <span class="kw">for</span> <span class="ident">sprite_entry</span> <span class="kw">in</span> <span class="ident">toolbar_state</span>.<span class="ident">loaded_sprites</span>.<span class="ident">iter</span>() {
+              <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="ident">sprite_entry</span>.<span class="ident">name</span>.<span class="ident">as_str</span>()).<span class="ident">clicked</span>() {
+                <span class="ident">selected_sprite</span>.<span class="number">0</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">sprite_entry</span>.<span class="ident">clone</span>());
+              }
             }
-          }
+          });
         })
       });
   }

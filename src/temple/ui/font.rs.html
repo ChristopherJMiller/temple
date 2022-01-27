@@ -55,13 +55,13 @@
   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fonts</span> <span class="op">=</span> <span class="ident">FontDefinitions::default</span>();
 
   <span class="ident">fonts</span>.<span class="ident">font_data</span>.<span class="ident">insert</span>(
-    <span class="string">&quot;Vollkorn-Medium&quot;</span>.<span class="ident">to_owned</span>(),
-    <span class="ident">Cow::from</span>(<span class="ident">read</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/fonts/Vollkorn-Medium.ttf&quot;</span>)).<span class="ident">unwrap</span>()),
+    <span class="string">&quot;unifont&quot;</span>.<span class="ident">to_owned</span>(),
+    <span class="ident">Cow::from</span>(<span class="ident">read</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/fonts/unifont.ttf&quot;</span>)).<span class="ident">unwrap</span>()),
   );
 
   <span class="ident">fonts</span>
     .<span class="ident">fonts_for_family</span>
-    .<span class="ident">insert</span>(<span class="ident">egui::FontFamily::Proportional</span>, <span class="macro">vec!</span>[<span class="string">&quot;Vollkorn-Medium&quot;</span>.<span class="ident">to_owned</span>()]);
+    .<span class="ident">insert</span>(<span class="ident">egui::FontFamily::Proportional</span>, <span class="macro">vec!</span>[<span class="string">&quot;unifont&quot;</span>.<span class="ident">to_owned</span>()]);
 
   <span class="ident">fonts</span>
     .<span class="ident">family_and_size</span>
