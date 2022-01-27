@@ -192,11 +192,13 @@ pub fn sidebar(
             toolbar_state.show_add_sprite_menu = true;
           }
 
-          for sprite_entry in toolbar_state.loaded_sprites.iter() {
-            if ui.button(sprite_entry.name.as_str()).clicked() {
-              selected_sprite.0 = Some(sprite_entry.clone());
+          egui::ScrollArea::from_max_height(500.0).show(ui, |ui| {
+            for sprite_entry in toolbar_state.loaded_sprites.iter() {
+              if ui.button(sprite_entry.name.as_str()).clicked() {
+                selected_sprite.0 = Some(sprite_entry.clone());
+              }
             }
-          }
+          });
         })
       });
   }

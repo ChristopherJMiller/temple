@@ -13,13 +13,13 @@ pub fn setup_egui_font(egui_ctx: ResMut<EguiContext>) {
   let mut fonts = FontDefinitions::default();
 
   fonts.font_data.insert(
-    "Vollkorn-Medium".to_owned(),
-    Cow::from(read(from_game_root("assets/fonts/Vollkorn-Medium.ttf")).unwrap()),
+    "unifont".to_owned(),
+    Cow::from(read(from_game_root("assets/fonts/unifont.ttf")).unwrap()),
   );
 
   fonts
     .fonts_for_family
-    .insert(egui::FontFamily::Proportional, vec!["Vollkorn-Medium".to_owned()]);
+    .insert(egui::FontFamily::Proportional, vec!["unifont".to_owned()]);
 
   fonts
     .family_and_size
