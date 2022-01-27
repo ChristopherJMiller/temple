@@ -34,7 +34,7 @@ impl Player {
 
   pub fn new(respawn_level: LevelId, respawn_pos: Vec2) -> Self {
     Self {
-      height_adjust: 0.25,
+      height_adjust: 2.0,
       grounded: true,
       jump_boost_time: Self::JUMP_BOOST_TIME,
       jump_in_progress: false,

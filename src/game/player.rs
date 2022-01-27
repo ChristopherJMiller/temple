@@ -9,12 +9,13 @@ use bevy_rapier2d::na::Vector2;
 use bevy_rapier2d::prelude::*;
 use kurinji::Kurinji;
 
-use super::attributes::{MovingSprite, Player};
+use super::attributes::{MovingSprite, Player, Dash, DashCrosshair, DashCounter};
 use super::collision_groups::*;
 use super::physics::PlayerSimulationSteps;
 use super::sfx::{AudioChannels, SfxHandles};
-use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP};
+use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP, SELECT, DASH_RIGHT, DASH_LEFT};
 use crate::level::config::SPRITE_SIZE;
+use crate::level::util::load_sprite_texture;
 
 const PLAYER_MOVE_SPEED: i32 = 15;
 const PLAYER_JUMP_FORCE: u32 = 10;
@@ -36,14 +37,20 @@ fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut Rigi
 }
 
 /// Consumes [Kurinji] inputs for player hover height adjustments.
-fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>) {
-  if let Some(mut player_c) = player.iter_mut().next() {
+fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>, dashing: Query<&Dash>, time: Res<Time>) {
+  if let Ok(dashing) = dashing.single() {
+    if dashing.holding() {
+      return;
+    }
+  }
+
+  if let Ok(mut player_c) = player.single_mut() {
     let height = if input.is_action_active(UP) {
-      4.0
+      (player_c.height_adjust + time.delta_seconds() * 5.0).min(3.0)
     } else if input.is_action_active(DOWN) {
-      1.0
+      (player_c.height_adjust - time.delta_seconds() * 5.0).max(1.0)
     } else {
-      2.0
+      player_c.height_adjust
     };
 
     player_c.height_adjust = height;
@@ -144,7 +151,7 @@ fn handle_player_jump(
   sfx_handles: Res<SfxHandles>,
   channels: Res<AudioChannels>,
 ) {
-  if let Some((mut player_c, mut vel)) = player.iter_mut().next() {
+  if let Ok((mut player_c, mut vel)) = player.single_mut() {
     // Start Jump
     if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
       player_c.jump_in_progress = true;
@@ -167,6 +174,108 @@ fn handle_player_jump(
   }
 }
 
+fn handle_dash (
+  mut commands: Commands,
+  input: Res<Kurinji>,
+  time: Res<Time>,
+  mut player: Query<(&Player, &mut RigidBodyVelocity, &mut Dash)>,
+  crosshair_spawned: Query<Entity, With<DashCrosshair>>,
+  asset_server: Res<AssetServer>,
+  mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+  if let Ok((player, mut vel, mut dash)) = player.single_mut() {
+    if player.grounded {
+      dash.reset_charges();
+    }
+
+    if input.is_action_active(SELECT) && dash.can_dash() {
+      if crosshair_spawned.single().is_err() {
+        commands
+          .spawn_bundle(SpriteBundle {
+            material: load_sprite_texture(&asset_server, &mut materials, &"dashcross.png".to_string()),
+            transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
+            ..Default::default()
+          })
+          .insert(DashCrosshair);
+      }
+
+      let y = if input.is_action_active(UP) {
+        1.0
+      } else if input.is_action_active(DOWN) {
+        -1.0
+      } else {
+        0.0
+      };
+
+      let x = if input.is_action_active(DASH_RIGHT) {
+        1.0
+      } else if input.is_action_active(DASH_LEFT) {
+        -1.0
+      } else {
+        0.0
+      };
+
+      let vec = Vec2::new(x, y) * time.delta_seconds() * SPRITE_SIZE.pow(2) as f32;
+      dash.hold(vec);
+    } else {
+      if dash.holding() {
+        crosshair_spawned.for_each(|ent| commands.entity(ent).despawn());
+        let vel_vec = dash.release() / 1.5;
+        vel.linvel = vel_vec.into();
+      }
+    }
+  }
+}
+
+fn handle_dash_crosshair (
+  mut query_set: QuerySet<(
+    Query<(&Transform, &Dash), With<Player>>,
+    Query<&mut Transform, With<DashCrosshair>>
+  )>,
+) {
+  if let Ok((trans, dash)) = query_set.q0().single() {
+    let translation = trans.translation.clone();
+    let dash_vec = dash.holding_vec().extend(0.0);
+    if let Ok(mut cross_trans) = query_set.q1_mut().single_mut() {
+      cross_trans.translation = translation + dash_vec;
+    }
+  }
+}
+
+fn handle_dash_indictors (
+  mut commands: Commands,
+  mut query_set: QuerySet<(
+    Query<(&Transform, &Dash), With<Player>>,
+    Query<(Entity, &mut Transform, &DashCounter)>,
+  )>,
+  asset_server: Res<AssetServer>,
+  mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+  if let Ok((trans, dash)) = query_set.q0().single() {
+    let origin = trans.translation.clone();
+    let dash_count = dash.charges();
+    let mut count = 0;
+    for (ent, mut trans, counter) in query_set.q1_mut().iter_mut() {
+      if counter.0 > dash_count {
+        commands.entity(ent).despawn();
+      } else {
+        count += 1;
+        trans.translation = origin + Vec3::new(0.0, (SPRITE_SIZE as f32 / 1.5) + 3.0 * counter.0 as f32, 0.0);
+      }
+    }
+
+    for i in count + 1..=dash_count {
+      commands
+      .spawn_bundle(SpriteBundle {
+        material: load_sprite_texture(&asset_server, &mut materials, &"aspectorb.png".to_string()),
+        transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
+        ..Default::default()
+      })
+      .insert(DashCounter(i));
+    }
+  }
+}
+
 /// [Plugin] for player systems.
 pub struct PlayerPlugin;
 
@@ -181,6 +290,9 @@ impl Plugin for PlayerPlugin {
       .add_system(handle_player_hover.system().before(PlayerSimulationSteps::ApplyJumping))
       .add_system(handle_height_adjust.system())
       .add_system(handle_player_slow_fall.system())
-      .add_system(handle_player_jump.system().label(PlayerSimulationSteps::ApplyJumping));
+      .add_system(handle_player_jump.system().label(PlayerSimulationSteps::ApplyJumping))
+      .add_system(handle_dash.system())
+      .add_system(handle_dash_crosshair.system())
+      .add_system(handle_dash_indictors.system());
   }
 }

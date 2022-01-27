@@ -13,5 +13,24 @@
   MouseButtons: {
     Left: "SELECT",
     Right: "RETURN",
+  },
+  MouseMove: {
+    XNegative: "DASH_LEFT",
+    XPositive: "DASH_RIGHT",
+    YPositive: "DOWN",
+    YNegative: "UP",
+  },
+  GamepadAxis: {
+    1: {
+      LeftStickXPositive: "RIGHT",
+      LeftStickXNegative: "LEFT",
+      RightStickYNegative: "DOWN",
+      RightStickYPositive: "UP",
+    }
+  },
+  GamepadButtons: {
+    1: {
+      South: "JUMP"
+    }
   }
 )

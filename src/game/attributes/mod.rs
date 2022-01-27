@@ -27,6 +27,7 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
     Checkpoint::KEY => Checkpoint::build(commands, target, level, position, entry.1),
     Transition::KEY => Transition::build(commands, target, level, position, entry.1),
     Goal::KEY => Goal::build(commands, target, level, position, entry.1),
+    Dash::KEY => Dash::build(commands,target, level, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
@@ -39,6 +40,7 @@ mod moving;
 mod player;
 mod solid;
 mod transition;
+mod dash;
 
 pub use checkpoint::*;
 pub use deadly::*;
@@ -47,6 +49,7 @@ pub use moving::*;
 pub use player::*;
 pub use solid::*;
 pub use transition::*;
+pub use dash::*;
 
 use self::lex::{AttributeEntry, ParseArgumentItem};
 use super::physics::PlayerSimulationSteps;

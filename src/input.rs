@@ -29,6 +29,11 @@ pub const SELECT: &str = "SELECT";
 pub const RETURN: &str = "RETURN";
 /// Input key for toggling sprite borders in edit mode
 pub const EDIT_TOGGLE_BORDER: &str = "EDIT_TOGGLE_BORDER";
+/// Input key for moving dash controls left (usually used on mouse)
+pub const DASH_LEFT: &str = "DASH_LEFT";
+/// Input key for moving dash controls right (usually used on mouse)
+pub const DASH_RIGHT: &str = "DASH_RIGHT";
+
 
 /// Loads [Kurinji] input config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
