@@ -354,5 +354,16 @@ mod tests {
       AttributeEntry::from("d()".to_string()),
       AttributeEntry("d".to_string(), vec![])
     );
+    assert_eq!(
+      AttributeEntry::from("d(a(1,b))".to_string()),
+      AttributeEntry(
+        "d".to_string(),
+        vec![
+          ParseArgumentItem::Str("a".to_string()),
+          ParseArgumentItem::Number(1),
+          ParseArgumentItem::Str("b".to_string()),
+        ]
+      )
+    );
   }
 }

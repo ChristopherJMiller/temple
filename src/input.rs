@@ -33,6 +33,10 @@ pub const EDIT_TOGGLE_BORDER: &str = "EDIT_TOGGLE_BORDER";
 pub const DASH_LEFT: &str = "DASH_LEFT";
 /// Input key for moving dash controls right (usually used on mouse)
 pub const DASH_RIGHT: &str = "DASH_RIGHT";
+/// Input key for moving dash controls up (usually used on mouse)
+pub const DASH_UP: &str = "DASH_UP";
+/// Input key for moving dash controls down (usually used on mouse)
+pub const DASH_DOWN: &str = "DASH_DOWN";
 
 
 /// Loads [Kurinji] input config files

@@ -17,8 +17,8 @@
   MouseMove: {
     XNegative: "DASH_LEFT",
     XPositive: "DASH_RIGHT",
-    YPositive: "DOWN",
-    YNegative: "UP",
+    YPositive: "DASH_DOWN",
+    YNegative: "DASH_UP",
   },
   GamepadAxis: {
     1: {

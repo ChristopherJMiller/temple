@@ -18,7 +18,7 @@ pub struct Dash {
 
 impl Default for Dash {
   fn default() -> Self {
-    const STARTING_CAP: u32 = 2;
+    const STARTING_CAP: u32 = 1;
     Self { 
       charges: STARTING_CAP, 
       capacity: STARTING_CAP, 
@@ -47,7 +47,6 @@ impl Dash {
     self.holding = true;
 
     let mut new_vec = self.hold_vector + vec;
-    println!("new holding vec {}", new_vec);
     if new_vec.distance_squared(Vec2::ZERO).abs() >= MAX_DIST_SQUARED.powf(2.0) {
       new_vec = new_vec.normalize() * MAX_DIST_SQUARED;
     }
@@ -70,6 +69,7 @@ impl Dash {
     self.charges = self.capacity;
   }
 
+  #[allow(dead_code)]
   pub fn set_cap(&mut self, cap: u32) {
     self.capacity = cap;
   }

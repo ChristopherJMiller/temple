@@ -13,7 +13,7 @@ use super::attributes::{MovingSprite, Player, Dash, DashCrosshair, DashCounter};
 use super::collision_groups::*;
 use super::physics::PlayerSimulationSteps;
 use super::sfx::{AudioChannels, SfxHandles};
-use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP, SELECT, DASH_RIGHT, DASH_LEFT};
+use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP, SELECT, DASH_RIGHT, DASH_LEFT, DASH_DOWN, DASH_UP};
 use crate::level::config::SPRITE_SIZE;
 use crate::level::util::load_sprite_texture;
 
@@ -37,7 +37,7 @@ fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut Rigi
 }
 
 /// Consumes [Kurinji] inputs for player hover height adjustments.
-fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>, dashing: Query<&Dash>, time: Res<Time>) {
+fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>, dashing: Query<&Dash>) {
   if let Ok(dashing) = dashing.single() {
     if dashing.holding() {
       return;
@@ -46,11 +46,11 @@ fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>, das
 
   if let Ok(mut player_c) = player.single_mut() {
     let height = if input.is_action_active(UP) {
-      (player_c.height_adjust + time.delta_seconds() * 5.0).min(3.0)
+      3.0
     } else if input.is_action_active(DOWN) {
-      (player_c.height_adjust - time.delta_seconds() * 5.0).max(1.0)
+      1.0
     } else {
-      player_c.height_adjust
+      2.0
     };
 
     player_c.height_adjust = height;
@@ -199,9 +199,9 @@ fn handle_dash (
           .insert(DashCrosshair);
       }
 
-      let y = if input.is_action_active(UP) {
+      let y = if input.is_action_active(DASH_UP) {
         1.0
-      } else if input.is_action_active(DOWN) {
+      } else if input.is_action_active(DASH_DOWN) {
         -1.0
       } else {
         0.0

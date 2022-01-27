@@ -5,7 +5,7 @@ use bevy_kira_audio::Audio;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
-use super::{Attribute, Checkpoint, Deadly, Goal, Transition};
+use super::{Attribute, Checkpoint, Deadly, Goal, Transition, Give};
 use crate::game::collision::{ContactQuery, ContactTagQuery, PlayerContacted};
 use crate::game::collision_groups::*;
 use crate::game::sfx::{AudioChannels, SfxHandles};
@@ -185,5 +185,14 @@ pub fn on_transition_system(mut commands: Commands, transition_activated: Contac
   for (entity, trans) in transition_activated.iter() {
     commands.spawn().insert(TransitionLevel(trans.0));
     commands.entity(entity).remove::<PlayerContacted>();
+  }
+}
+
+pub fn on_give_system(mut commands: Commands, player: Query<Entity, With<Player>>, goal: ContactQuery<Give>) {
+  if let Ok(player) = player.single() {
+    goal.for_each(|(ent, give)| {
+      commands.entity(player).insert(give.build_component());
+      commands.entity(ent).despawn();
+    });
   }
 }

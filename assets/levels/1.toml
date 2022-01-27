@@ -2,15 +2,6 @@ name = 'Picking up Speed'
 music = 'walkintherain.ogg'
 
 [[sprites]]
-name = 'skull_idle'
-offset = [
-    0,
-    0,
-]
-texture = 'skull.png'
-attributes = ['deadly']
-
-[[sprites]]
 name = 'goal'
 offset = [
     0,
@@ -29,21 +20,30 @@ texture = 'boneyard/middleright.png'
 attributes = ['solid']
 
 [[sprites]]
+name = 'center_ground_nonsolid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/middlemiddle.png'
+attributes = []
+
+[[sprites]]
+name = 'middle_ground'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/topmiddle.png'
+attributes = ['solid']
+
+[[sprites]]
 name = 'ground_middleleft'
 offset = [
     0,
     0,
 ]
 texture = 'boneyard/middleleft.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'ground_bottombottom'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/bottommiddle.png'
 attributes = ['solid']
 
 [[sprites]]
@@ -56,24 +56,6 @@ texture = 'boneyard/bottomleft.png'
 attributes = ['solid']
 
 [[sprites]]
-name = 'middle_ground'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/topmiddle.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'center_ground_nonsolid'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/middlemiddle.png'
-attributes = []
-
-[[sprites]]
 name = 'ground_bottomright'
 offset = [
     0,
@@ -83,13 +65,13 @@ texture = 'boneyard/bottomright.png'
 attributes = ['solid']
 
 [[sprites]]
-name = 'player'
+name = 'ground_bottombottom'
 offset = [
     0,
     0,
 ]
-texture = 'spirit.png'
-attributes = ['player']
+texture = 'boneyard/bottommiddle.png'
+attributes = ['solid']
 
 [[sprites]]
 name = 'checkpoint'
@@ -99,3 +81,30 @@ offset = [
 ]
 texture = 'checkpoint.png'
 attributes = ['checkpoint(0,0)']
+
+[[sprites]]
+name = 'give_dash'
+offset = [
+    0,
+    0,
+]
+texture = 'checkpoint.png'
+attributes = ['give(dash)']
+
+[[sprites]]
+name = 'skull_idle'
+offset = [
+    0,
+    0,
+]
+texture = 'skull.png'
+attributes = ['deadly']
+
+[[sprites]]
+name = 'player'
+offset = [
+    0,
+    0,
+]
+texture = 'spirit.png'
+attributes = ['player']

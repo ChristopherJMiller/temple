@@ -28,6 +28,7 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
     Transition::KEY => Transition::build(commands, target, level, position, entry.1),
     Goal::KEY => Goal::build(commands, target, level, position, entry.1),
     Dash::KEY => Dash::build(commands,target, level, position, entry.1),
+    GivableAttribute::KEY => GivableAttribute::build(commands,target, level, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
@@ -41,6 +42,7 @@ mod player;
 mod solid;
 mod transition;
 mod dash;
+mod give;
 
 pub use checkpoint::*;
 pub use deadly::*;
@@ -50,6 +52,7 @@ pub use player::*;
 pub use solid::*;
 pub use transition::*;
 pub use dash::*;
+pub use give::*;
 
 use self::lex::{AttributeEntry, ParseArgumentItem};
 use super::physics::PlayerSimulationSteps;
@@ -75,6 +78,7 @@ impl Plugin for AttributePlugin {
       .add_system(on_death_system.system())
       .add_system(on_checkpoint_system.system())
       .add_system(on_transition_system.system())
-      .add_system(on_goal_system.system());
+      .add_system(on_goal_system.system())
+      .add_system(on_give_system.system());
   }
 }
