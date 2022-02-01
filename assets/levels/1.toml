@@ -2,31 +2,49 @@ name = 'Picking up Speed'
 music = 'walkintherain.ogg'
 
 [[sprites]]
-name = 'goal'
+name = 'temple_columntop'
 offset = [
     0,
     0,
 ]
-texture = 'checkpoint.png'
-attributes = ['goal(0)']
-
-[[sprites]]
-name = 'ground_middleright'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/middleright.png'
+texture = 'boneyardtemple/columntop.png'
 attributes = ['solid']
 
 [[sprites]]
-name = 'center_ground_nonsolid'
+name = 'temple_bottomleft'
 offset = [
     0,
     0,
 ]
-texture = 'boneyard/middlemiddle.png'
-attributes = []
+texture = 'boneyardtemple/bottomleft.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_rowright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/rowright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'spikedown'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikedown.png'
+attributes = ['deadly']
+
+[[sprites]]
+name = 'temple_bottommiddle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/bottommiddle.png'
+attributes = ['solid']
 
 [[sprites]]
 name = 'middle_ground'
@@ -35,42 +53,6 @@ offset = [
     0,
 ]
 texture = 'boneyard/topmiddle.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'ground_middleleft'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/middleleft.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'ground_bottomleft'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/bottomleft.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'ground_bottomright'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/bottomright.png'
-attributes = ['solid']
-
-[[sprites]]
-name = 'ground_bottombottom'
-offset = [
-    0,
-    0,
-]
-texture = 'boneyard/bottommiddle.png'
 attributes = ['solid']
 
 [[sprites]]
@@ -83,6 +65,109 @@ texture = 'checkpoint.png'
 attributes = ['checkpoint(0,0)']
 
 [[sprites]]
+name = 'temple_topmiddle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/topmiddle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_middlemiddle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/middlemiddle.png'
+attributes = []
+
+[[sprites]]
+name = 'goal'
+offset = [
+    0,
+    0,
+]
+texture = 'checkpoint.png'
+attributes = ['goal(0)']
+
+[[sprites]]
+name = 'temple_topleft'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/topleft.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'ground_topright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/topright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_columnmiddle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/columnmiddle.png'
+attributes = []
+
+[[sprites]]
+name = 'ground_middleright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/middleright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_topright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/topright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_rowmiddle'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/rowmiddle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_middleleft'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/middleleft.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'skull_down'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikefloat.png'
+attributes = [
+    'moving(down,4,4)',
+    'solid',
+    'deadly',
+]
+
+[[sprites]]
 name = 'give_dash'
 offset = [
     0,
@@ -92,13 +177,31 @@ texture = 'checkpoint.png'
 attributes = ['give(dash)']
 
 [[sprites]]
-name = 'skull_idle'
+name = 'center_ground_nonsolid'
 offset = [
     0,
     0,
 ]
-texture = 'skull.png'
-attributes = ['deadly']
+texture = 'boneyard/middlemiddle.png'
+attributes = []
+
+[[sprites]]
+name = 'temple_middleright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/middleright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_rowleft'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/rowleft.png'
+attributes = ['solid']
 
 [[sprites]]
 name = 'player'
@@ -108,3 +211,30 @@ offset = [
 ]
 texture = 'spirit.png'
 attributes = ['player']
+
+[[sprites]]
+name = 'temple_middlemiddle_solid'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/middlemiddle.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'temple_bottomright'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyardtemple/bottomright.png'
+attributes = ['solid']
+
+[[sprites]]
+name = 'spikeup'
+offset = [
+    0,
+    0,
+]
+texture = 'boneyard/spikeup.png'
+attributes = ['deadly']
