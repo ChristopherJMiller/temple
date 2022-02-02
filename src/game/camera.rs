@@ -12,13 +12,15 @@ use crate::game::attributes::Player;
 use crate::level::config::SPRITE_SIZE;
 
 /// Tag for a non-player camera focus.
+#[derive(Component)]
 pub struct CameraTarget;
 
 /// Tag for declaring the main camera (as opposed to UI cameras, etc.)
+#[derive(Component)]
 pub struct MainCamera;
 
 /// Component filtering for the camera.
-type CameraOnly = (With<Camera>, With<MainCamera>, Without<CameraPlugin>, Without<Player>);
+type CameraOnly = (With<Camera>, With<MainCamera>, Without<Player>);
 
 /// Component filtering for any [CameraTarget]'s.
 type CameraTargetOnly = (Without<Camera>, With<CameraTarget>, Without<Player>);
@@ -34,10 +36,10 @@ fn target_camera(
   targets: Query<&Transform, CameraTargetOnly>,
   player: Query<&Transform, PlayerOnly>,
 ) {
-  if let Ok(mut camera_trans) = camera.single_mut() {
-    let target = if let Ok(target) = targets.single() {
+  if let Ok(mut camera_trans) = camera.get_single_mut() {
+    let target = if let Ok(target) = targets.get_single() {
       target.translation.truncate()
-    } else if let Ok(player_trans) = player.single() {
+    } else if let Ok(player_trans) = player.get_single() {
       player_trans.translation.truncate()
     } else {
       camera_trans.translation.truncate()
@@ -65,9 +67,9 @@ pub struct CameraPlugin;
 pub struct CameraTrackingSpeed(pub f32);
 
 impl Plugin for CameraPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .insert_resource::<CameraTrackingSpeed>(CameraTrackingSpeed(SPRITE_SIZE as f32 * 64.0))
-      .add_system(target_camera.system());
+      .add_system(target_camera);
   }
 }

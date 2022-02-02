@@ -93,7 +93,7 @@ pub fn editor_file_menu(
 
         if toolbar_state.level_loaded {
           if ui.button("Save").clicked() {
-            if let Ok(ent) = loaded_level_query.single() {
+            if let Ok(ent) = loaded_level_query.get_single() {
               commands.entity(ent).insert(SaveLevel);
               toolbar_state.show_file_menu = false;
             }
@@ -114,7 +114,7 @@ pub fn editor_open_menu(
       .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
       .show(egui_context.ctx(), |ui| {
         ui.label("Load Level");
-        egui::ScrollArea::from_max_height(100.0).show(ui, |ui| {
+        egui::ScrollArea::new([false, false]).max_height(100.0).show(ui, |ui| {
           let items: Vec<_> = toolbar_state
             .level_items
             .iter()
@@ -157,7 +157,7 @@ pub fn sidebar(
     return;
   }
 
-  if let Ok(mut prepared_level) = loaded_level.single_mut() {
+  if let Ok(mut prepared_level) = loaded_level.get_single_mut() {
     egui::SidePanel::right("Sidebar")
       .resizable(false)
       .show(egui_context.ctx(), |ui| {
@@ -192,7 +192,7 @@ pub fn sidebar(
             toolbar_state.show_add_sprite_menu = true;
           }
 
-          egui::ScrollArea::from_max_height(500.0).show(ui, |ui| {
+          egui::ScrollArea::new([false; 2]).max_height(500.0).show(ui, |ui| {
             for sprite_entry in toolbar_state.loaded_sprites.iter() {
               if ui.button(sprite_entry.name.as_str()).clicked() {
                 selected_sprite.0 = Some(sprite_entry.clone());
@@ -219,7 +219,7 @@ pub fn show_music_menu(
       .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
       .show(egui_context.ctx(), |ui| {
         ui.label("Select Background Music");
-        egui::ScrollArea::from_max_height(100.0).show(ui, |ui| {
+        egui::ScrollArea::new([false; 2]).max_height(100.0).show(ui, |ui| {
           let items: Vec<_> = toolbar_state
             .music_items
             .iter()
@@ -228,7 +228,7 @@ pub fn show_music_menu(
           for (music, clicked) in items {
             if clicked {
               toolbar_state.show_music_menu = false;
-              if let Ok(mut prepared_level) = loaded_level.single_mut() {
+              if let Ok(mut prepared_level) = loaded_level.get_single_mut() {
                 prepared_level.0.music = music;
               }
             }
@@ -276,7 +276,10 @@ pub fn show_add_sprite_menu(egui_context: Res<EguiContext>, mut toolbar_state: R
 
             ui.horizontal(|ui| {
               if ui
-                .add(egui::Button::new("Add Sprite").enabled(validate_add_sprite_form(&toolbar_state.add_sprite_form)))
+                .add_enabled(
+                  validate_add_sprite_form(&toolbar_state.add_sprite_form),
+                  egui::Button::new("Add Sprite"),
+                )
                 .clicked()
               {
                 toolbar_state.show_add_sprite_menu = false;
@@ -295,7 +298,7 @@ pub fn show_add_sprite_menu(egui_context: Res<EguiContext>, mut toolbar_state: R
             AddSpriteSidebarState::SelectTexture => {
               ui.vertical(|ui| {
                 ui.label("Select Sprite Texture");
-                egui::ScrollArea::from_max_height(100.0).show(ui, |ui| {
+                egui::ScrollArea::new([false, false]).max_height(100.0).show(ui, |ui| {
                   let items: Vec<_> = toolbar_state
                     .sprite_texture_items
                     .iter()
@@ -346,14 +349,14 @@ pub fn show_add_sprite_menu(egui_context: Res<EguiContext>, mut toolbar_state: R
 pub struct EditorUiPlugin;
 
 impl Plugin for EditorUiPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .init_resource::<EditorState>()
-      .add_system(toolbar.system())
-      .add_system(editor_file_menu.system())
-      .add_system(editor_open_menu.system())
-      .add_system(sidebar.system())
-      .add_system(show_music_menu.system())
-      .add_system(show_add_sprite_menu.system());
+      .add_system(toolbar)
+      .add_system(editor_file_menu)
+      .add_system(editor_open_menu)
+      .add_system(sidebar)
+      .add_system(show_music_menu)
+      .add_system(show_add_sprite_menu);
   }
 }

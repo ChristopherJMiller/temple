@@ -18,12 +18,13 @@ pub mod attributes;
 pub mod camera;
 pub mod collision;
 pub mod collision_groups;
+pub mod credits;
 pub mod physics;
 pub mod player;
 pub mod sfx;
-pub mod credits;
 
 /// Command to begin the game
+#[derive(Component)]
 pub struct BeginGame;
 
 /// Begins the game by command [BeginGame]. Uses the options in [GameFile] to
@@ -35,7 +36,7 @@ fn bootstrap_game(
   game_file: Res<GameFile>,
   mut temple_state: ResMut<TempleState>,
 ) {
-  if let Ok(ent) = query.single() {
+  if let Ok(ent) = query.get_single() {
     match game_file.level_transistion {
       LevelTransistionType::Overworld => panic!("Temple does not support overworlds yet"),
       LevelTransistionType::NoOverworld => {
@@ -76,8 +77,8 @@ fn bootstrap_game(
 struct BootstrapPlugin;
 
 impl Plugin for BootstrapPlugin {
-  fn build(&self, app: &mut AppBuilder) {
-    app.add_system(bootstrap_game.system());
+  fn build(&self, app: &mut App) {
+    app.add_system(bootstrap_game);
   }
 }
 

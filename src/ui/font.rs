@@ -1,8 +1,7 @@
-use std::borrow::Cow;
 use std::fs::read;
 
 use bevy::prelude::*;
-use bevy_egui::egui::{self, FontDefinitions};
+use bevy_egui::egui::{self, FontData, FontDefinitions};
 use bevy_egui::EguiContext;
 
 use crate::util::files::from_game_root;
@@ -14,7 +13,7 @@ pub fn setup_egui_font(egui_ctx: ResMut<EguiContext>) {
 
   fonts.font_data.insert(
     "unifont".to_owned(),
-    Cow::from(read(from_game_root("assets/fonts/unifont.ttf")).unwrap()),
+    FontData::from_owned(read(from_game_root("assets/fonts/unifont.ttf")).unwrap()),
   );
 
   fonts

@@ -4,7 +4,7 @@ use kurinji::Kurinji;
 use crate::input::EDIT_TOGGLE_BORDER;
 use crate::level::config::SPRITE_SIZE;
 use crate::level::load::{LevelLoadComplete, PreparedLevel};
-use crate::level::util::load_sprite_texture;
+use crate::level::util::get_texture_path;
 
 #[derive(Default)]
 pub struct EnableBorder {
@@ -24,22 +24,22 @@ pub fn handle_input(mut enable_border: ResMut<EnableBorder>, input: Res<Kurinji>
   }
 }
 
+#[derive(Component)]
 pub struct SpriteBorder;
 
 pub fn build_border(
   mut commands: Commands,
   mut enable_border: ResMut<EnableBorder>,
   asset_server: Res<AssetServer>,
-  mut materials: ResMut<Assets<ColorMaterial>>,
+
   loaded_level: Query<&PreparedLevel, With<LevelLoadComplete>>,
 ) {
   if enable_border.enabled && !enable_border.border_built {
-    if let Ok(p_level) = loaded_level.single() {
-      let border = load_sprite_texture(&asset_server, &mut materials, &"tileborder.png".to_string());
+    if let Ok(p_level) = loaded_level.get_single() {
       for sprite in p_level.0.sprites.iter() {
         commands
           .spawn_bundle(SpriteBundle {
-            material: border.clone(),
+            texture: asset_server.load(get_texture_path(&"tileborder.png".to_string())),
             transform: Transform::from_translation(Vec3::new(
               sprite.pos.x as f32 * SPRITE_SIZE as f32,
               sprite.pos.y as f32 * SPRITE_SIZE as f32,
@@ -72,11 +72,11 @@ pub fn delete_border(
 pub struct EditorBorderPlugin;
 
 impl Plugin for EditorBorderPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .init_resource::<EnableBorder>()
-      .add_system(handle_input.system())
-      .add_system(build_border.system())
-      .add_system(delete_border.system());
+      .add_system(handle_input)
+      .add_system(build_border)
+      .add_system(delete_border);
   }
 }

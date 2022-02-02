@@ -50,7 +50,7 @@ fn main() {
   }
 }
 
-fn build_base_app(app: &mut AppBuilder, game_file: GameFile, cli_args: CliArgs) {
+fn build_base_app(app: &mut App, game_file: GameFile, cli_args: CliArgs) {
   app
     .insert_resource(WindowDescriptor {
       title: game_file.title.clone(),
@@ -74,12 +74,12 @@ fn build_base_app(app: &mut AppBuilder, game_file: GameFile, cli_args: CliArgs) 
     .add_plugin(InputPlugin)
     .add_plugin(LevelPlugin)
     .add_plugin(UiPlugin)
-    .add_startup_system(handle_cli_args.system());
+    .add_startup_system(handle_cli_args);
 }
 
 /// Start Game
 fn start_game(game_file: GameFile, cli_args: CliArgs) {
-  let mut app = App::build();
+  let mut app = App::new();
   build_base_app(&mut app, game_file, cli_args);
 
   app
@@ -95,7 +95,7 @@ fn start_game(game_file: GameFile, cli_args: CliArgs) {
 }
 
 fn start_editor(game_file: GameFile, cli_args: CliArgs) {
-  let mut app = App::build();
+  let mut app = App::new();
   build_base_app(&mut app, game_file, cli_args);
 
   app

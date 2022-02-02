@@ -27,32 +27,32 @@ pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entit
     Checkpoint::KEY => Checkpoint::build(commands, target, level, position, entry.1),
     Transition::KEY => Transition::build(commands, target, level, position, entry.1),
     Goal::KEY => Goal::build(commands, target, level, position, entry.1),
-    Dash::KEY => Dash::build(commands,target, level, position, entry.1),
-    GivableAttribute::KEY => GivableAttribute::build(commands,target, level, position, entry.1),
+    Dash::KEY => Dash::build(commands, target, level, position, entry.1),
+    GivableAttribute::KEY => GivableAttribute::build(commands, target, level, position, entry.1),
     _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
   }
 }
 
 mod checkpoint;
+mod dash;
 mod deadly;
+mod give;
 mod goal;
 mod lex;
 mod moving;
 mod player;
 mod solid;
 mod transition;
-mod dash;
-mod give;
 
 pub use checkpoint::*;
+pub use dash::*;
 pub use deadly::*;
+pub use give::*;
 pub use goal::*;
 pub use moving::*;
 pub use player::*;
 pub use solid::*;
 pub use transition::*;
-pub use dash::*;
-pub use give::*;
 
 use self::lex::{AttributeEntry, ParseArgumentItem};
 use super::physics::PlayerSimulationSteps;
@@ -62,23 +62,18 @@ use crate::level::LevelId;
 pub struct AttributePlugin;
 
 impl Plugin for AttributePlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
-      .add_system(
-        moving_system
-          .system()
-          .label(MovingAttributeSystemSteps::ApplyDeltaTranslation),
-      )
+      .add_system(moving_system.label(MovingAttributeSystemSteps::ApplyDeltaTranslation))
       .add_system(
         move_player
-          .system()
           .after(MovingAttributeSystemSteps::ApplyDeltaTranslation)
           .after(PlayerSimulationSteps::ApplyMoving),
       )
-      .add_system(on_death_system.system())
-      .add_system(on_checkpoint_system.system())
-      .add_system(on_transition_system.system())
-      .add_system(on_goal_system.system())
-      .add_system(on_give_system.system());
+      .add_system(on_death_system)
+      .add_system(on_checkpoint_system)
+      .add_system(on_transition_system)
+      .add_system(on_goal_system)
+      .add_system(on_give_system);
   }
 }

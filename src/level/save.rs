@@ -7,6 +7,7 @@ use super::util::{get_level_manifest_path_from_id, get_level_map_path_from_id};
 use crate::level::config::LevelMapFile;
 
 /// Command to save loaded level
+#[derive(Component)]
 pub struct SaveLevel;
 
 pub fn save_loaded_level(
@@ -41,7 +42,7 @@ pub fn save_loaded_level(
 pub struct LevelSavePlugin;
 
 impl Plugin for LevelSavePlugin {
-  fn build(&self, app: &mut AppBuilder) {
-    app.add_system(save_loaded_level.system());
+  fn build(&self, app: &mut App) {
+    app.add_system(save_loaded_level);
   }
 }

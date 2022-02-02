@@ -10,7 +10,7 @@
 use bevy::asset::LoadState;
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioSource};
-use bevy_rapier2d::prelude::RigidBodyPosition;
+use bevy_rapier2d::prelude::RigidBodyPositionComponent;
 
 use super::config::{Level, LevelManifest, LevelMap};
 use super::util::{get_manifest_by_id, get_map_by_id, levels_have_same_music, prepare_level_from_manifests};
@@ -20,41 +20,48 @@ use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
 use crate::level::config::SPRITE_SIZE;
+use crate::level::util::get_texture_path;
 use crate::state::game_state::{ActiveSave, GameMode, TempleState};
 use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
 
 /// Instruction to load a new level
+#[derive(Component)]
 pub struct LoadLevel(pub LevelId);
 
 /// Loaded level manifests, as part of the load level process
+#[derive(Component)]
 pub struct PreparedLevel(pub Level);
 
 /// Tag that LoadLevel has completed. Added to same entity as [LoadLevel]
+#[derive(Component)]
 pub struct LevelLoadComplete;
 
 /// Instruction to unload a level. Must be added to the same entity as
 /// [LoadLevel]
+#[derive(Component)]
 pub struct UnloadLevel;
 
 /// Tag that entity was loaded by level, and will be removed when [UnloadLevel]
 /// instruction is given
+#[derive(Component)]
 pub struct LevelLoadedSprite;
 
 /// Instruction to unload current level and transition to another.
+#[derive(Component)]
 pub struct TransitionLevel(pub LevelId);
 
 /// Instruction used by transition level to prevent the same music from being
 /// replayed.
+#[derive(Component)]
 pub struct KeepMusic;
 
 /// System that prepares the level from files, to be loaded by [load_level]
 pub fn prepare_level(
   mut commands: Commands,
-  asset_server: Res<AssetServer>,
   active_save: Res<ActiveSave>,
-  mut materials: ResMut<Assets<ColorMaterial>>,
+
   temple_state: Res<TempleState>,
-  query: Query<(Entity, &mut LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
+  mut query: Query<(Entity, &mut LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
 ) {
   query.for_each_mut(|(e, mut load_level)| {
     let in_edit_mode = temple_state.in_edit_mode();
@@ -90,7 +97,7 @@ pub fn prepare_level(
       panic!("Attempted to load invalid level map {}", id)
     };
 
-    let level = prepare_level_from_manifests(&asset_server, &mut materials, manifest, map);
+    let level = prepare_level_from_manifests(manifest, map);
     commands.entity(e).insert(PreparedLevel(level));
   });
 }
@@ -153,7 +160,7 @@ pub fn load_level(
 
       let entity = commands
         .spawn_bundle(SpriteBundle {
-          material: sprite.texture.clone(),
+          texture: asset_server.load(get_texture_path(&sprite.texture)),
           transform: Transform::from_translation(sprite_pos),
           ..Default::default()
         })
@@ -197,21 +204,22 @@ pub fn load_level(
 }
 
 /// Tag to track a level having save files applied to it.
+#[derive(Component)]
 pub struct LevelSaveApplied;
 
 /// Applies the checkpoint location if an active save warrants it.
 pub fn apply_save_on_load(
   mut commands: Commands,
-  mut player: Query<(&mut RigidBodyPosition, &mut Player)>,
+  mut player: Query<(&mut RigidBodyPositionComponent, &mut Player)>,
   level: Query<(Entity, &LoadLevel), (With<LevelLoadComplete>, Without<LevelSaveApplied>)>,
   temple_state: Res<TempleState>,
   active_save: Res<ActiveSave>,
 ) {
-  if let Ok((ent, load_level)) = level.single() {
+  if let Ok((ent, load_level)) = level.get_single() {
     if let GameMode::InLevel(id) = temple_state.game_mode {
       if let Some(level_state) = active_save.get_level_state(id) {
         if let Some((id, x, y)) = level_state.checkpoint() {
-          if let Ok((mut trans, mut player)) = player.single_mut() {
+          if let Ok((mut trans, mut player)) = player.get_single_mut() {
             let pos = Vec2::new(*x, *y);
             player.respawn_pos = pos;
             player.respawn_level = *id;
@@ -261,8 +269,8 @@ pub fn transition_level(
     if !transitioned {
       transitioned = true;
       // Do nothing if already a load active, prevents double loads.
-      if loading_levels.single().is_err() {
-        if let Ok((ent, old_level)) = loaded_level.single() {
+      if loading_levels.get_single().is_err() {
+        if let Ok((ent, old_level)) = loaded_level.get_single() {
           commands.entity(ent).insert(UnloadLevel);
           let mut level_ent = commands.spawn();
           level_ent.insert(LoadLevel(trans.0));

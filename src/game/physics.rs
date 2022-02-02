@@ -25,7 +25,7 @@ pub fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
 pub struct ModifyPhysicsPlugin;
 
 impl Plugin for ModifyPhysicsPlugin {
-  fn build(&self, app: &mut AppBuilder) {
-    app.add_startup_system(configure_rapier.system());
+  fn build(&self, app: &mut App) {
+    app.add_startup_system(configure_rapier);
   }
 }

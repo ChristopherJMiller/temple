@@ -19,14 +19,14 @@ pub type LevelId = u32;
 pub struct LevelPlugin;
 
 impl Plugin for LevelPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
-      .add_startup_system(verify_level_files.system())
-      .add_system(prepare_level.system())
-      .add_system(load_level.system())
-      .add_system(unload_level.system())
-      .add_system(apply_save_on_load.system())
-      .add_system(transition_level.system())
-      .add_system(auto_next_level.system());
+      .add_startup_system(verify_level_files)
+      .add_system(prepare_level)
+      .add_system(load_level)
+      .add_system(unload_level)
+      .add_system(apply_save_on_load)
+      .add_system(transition_level)
+      .add_system(auto_next_level);
   }
 }

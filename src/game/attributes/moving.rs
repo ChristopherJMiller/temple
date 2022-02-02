@@ -54,6 +54,7 @@ impl Into<Vec2> for MovingDirection {
 }
 
 /// `moving` attribute state.
+#[derive(Component)]
 pub struct MovingSprite {
   pub dir: MovingDirection,
   pub duration: f32,
@@ -168,7 +169,7 @@ pub enum MovingAttributeSystemSteps {
 }
 
 /// System to move all moving sprites per change in [Time].
-pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>) {
+pub fn moving_system(time: Res<Time>, mut moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>) {
   moving_sprite.for_each_mut(|(mut moving, mut collider_position)| {
     moving.increment_time(time.delta().as_secs_f32());
     collider_position.0 = moving.get_position().into();
@@ -179,10 +180,10 @@ pub fn moving_system(time: Res<Time>, moving_sprite: Query<(&mut MovingSprite, &
 /// TODO: Make it move all entities with a Movable Attribute instead of just the
 /// player.
 pub fn move_player(
-  mut player: Query<(&mut RigidBodyForces, &mut Player)>,
-  moving_sprite: Query<(&mut MovingSprite, &mut ColliderPosition)>,
+  mut player: Query<(&mut RigidBodyForcesComponent, &mut Player)>,
+  moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>,
 ) {
-  if let Ok((mut forces, player_c)) = player.single_mut() {
+  if let Ok((mut forces, player_c)) = player.get_single_mut() {
     if let Some(entity) = player_c.on_moving_entity {
       if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {
         let force: Vector<Real> = (7.0 * moving.get_passenger_force()).into();

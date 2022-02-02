@@ -9,19 +9,19 @@ use bevy_rapier2d::na::Vector2;
 use bevy_rapier2d::prelude::*;
 use kurinji::Kurinji;
 
-use super::attributes::{MovingSprite, Player, Dash, DashCrosshair, DashCounter};
+use super::attributes::{Dash, DashCounter, DashCrosshair, MovingSprite, Player};
 use super::collision_groups::*;
 use super::physics::PlayerSimulationSteps;
 use super::sfx::{AudioChannels, SfxHandles};
-use crate::input::{DOWN, JUMP, LEFT, RIGHT, UP, SELECT, DASH_RIGHT, DASH_LEFT, DASH_DOWN, DASH_UP};
+use crate::input::{DASH_DOWN, DASH_LEFT, DASH_RIGHT, DASH_UP, DOWN, JUMP, LEFT, RIGHT, SELECT, UP};
 use crate::level::config::SPRITE_SIZE;
-use crate::level::util::load_sprite_texture;
+use crate::level::util::get_texture_path;
 
 const PLAYER_MOVE_SPEED: i32 = 15;
 const PLAYER_JUMP_FORCE: u32 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
-fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForces, With<Player>>) {
+fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForcesComponent, With<Player>>) {
   if let Some(mut forces) = player_force.iter_mut().next() {
     let x = if input.is_action_active(RIGHT) {
       PLAYER_MOVE_SPEED as f32
@@ -38,13 +38,13 @@ fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut Rigi
 
 /// Consumes [Kurinji] inputs for player hover height adjustments.
 fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>, dashing: Query<&Dash>) {
-  if let Ok(dashing) = dashing.single() {
+  if let Ok(dashing) = dashing.get_single() {
     if dashing.holding() {
       return;
     }
   }
 
-  if let Ok(mut player_c) = player.single_mut() {
+  if let Ok(mut player_c) = player.get_single_mut() {
     let height = if input.is_action_active(UP) {
       3.0
     } else if input.is_action_active(DOWN) {
@@ -62,7 +62,7 @@ fn handle_player_hover(
   query_pipeline: Res<QueryPipeline>,
   collider_query: QueryPipelineColliderComponentsQuery,
   moving_sprite_query: Query<&MovingSprite>,
-  mut player: Query<(&Transform, &mut Player, &mut RigidBodyVelocity)>,
+  mut player: Query<(&Transform, &mut Player, &mut RigidBodyVelocityComponent)>,
 ) {
   if let Some((trans, mut player_c, mut vel)) = player.iter_mut().next() {
     let collider_set = QueryPipelineColliderComponentsSet(&collider_query);
@@ -77,10 +77,23 @@ fn handle_player_hover(
 
     let impulse_coeff = 5.0;
 
+    let below_ray = Ray::new((origin - Vec2::Y).into(), dir.into());
+
+    let ground_cast = query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_HOVER_GROUP, None);
+    let deadly_cast = query_pipeline.cast_ray(&collider_set, &below_ray, 4.0, true, DEADLY_GROUP, None);
+
+    if deadly_cast.is_some() && ground_cast.is_none() {
+      return;
+    } else if ground_cast.is_some() && deadly_cast.is_some() {
+      let (_, g_toi) = ground_cast.unwrap();
+      let (_, d_toi) = deadly_cast.unwrap();
+      if d_toi <= g_toi {
+        return;
+      }
+    }
+
     // Downwards raycast with specific collider group.
-    if let Some((collided_handle, toi)) =
-      query_pipeline.cast_ray(&collider_set, &ray, Real::MAX, true, PLAYER_HOVER_GROUP, None)
-    {
+    if let Some((collided_handle, toi)) = ground_cast {
       let hit_point = ray.point_at(toi);
       let distance_vec = Vec2::new(
         origin.x - hit_point.coords.get(0).unwrap(),
@@ -132,8 +145,8 @@ fn handle_player_hover(
 
 /// Handles Player Slow Falling. When `JUMP` is actively being held, the player
 /// falls slower.
-fn handle_player_slow_fall(input: Res<Kurinji>, mut player: Query<&mut RigidBodyForces, With<Player>>) {
-  if let Ok(mut forces) = player.single_mut() {
+fn handle_player_slow_fall(input: Res<Kurinji>, mut player: Query<&mut RigidBodyForcesComponent, With<Player>>) {
+  if let Ok(mut forces) = player.get_single_mut() {
     if input.is_action_active(JUMP) {
       forces.gravity_scale = Player::SLOW_FALL_SPEED;
     } else {
@@ -146,12 +159,12 @@ fn handle_player_slow_fall(input: Res<Kurinji>, mut player: Query<&mut RigidBody
 fn handle_player_jump(
   input: Res<Kurinji>,
   time: Res<Time>,
-  mut player: Query<(&mut Player, &mut RigidBodyVelocity)>,
+  mut player: Query<(&mut Player, &mut RigidBodyVelocityComponent)>,
   audio: Res<Audio>,
   sfx_handles: Res<SfxHandles>,
   channels: Res<AudioChannels>,
 ) {
-  if let Ok((mut player_c, mut vel)) = player.single_mut() {
+  if let Ok((mut player_c, mut vel)) = player.get_single_mut() {
     // Start Jump
     if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
       player_c.jump_in_progress = true;
@@ -174,25 +187,24 @@ fn handle_player_jump(
   }
 }
 
-fn handle_dash (
+fn handle_dash(
   mut commands: Commands,
   input: Res<Kurinji>,
   time: Res<Time>,
-  mut player: Query<(&Player, &mut RigidBodyVelocity, &mut Dash)>,
+  mut player: Query<(&Player, &mut RigidBodyVelocityComponent, &mut Dash)>,
   crosshair_spawned: Query<Entity, With<DashCrosshair>>,
   asset_server: Res<AssetServer>,
-  mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-  if let Ok((player, mut vel, mut dash)) = player.single_mut() {
+  if let Ok((player, mut vel, mut dash)) = player.get_single_mut() {
     if player.grounded {
       dash.reset_charges();
     }
 
     if input.is_action_active(SELECT) && dash.can_dash() {
-      if crosshair_spawned.single().is_err() {
+      if crosshair_spawned.get_single().is_err() {
         commands
           .spawn_bundle(SpriteBundle {
-            material: load_sprite_texture(&asset_server, &mut materials, &"dashcross.png".to_string()),
+            texture: asset_server.load(get_texture_path(&"dashcross.png".to_string())),
             transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
             ..Default::default()
           })
@@ -227,35 +239,30 @@ fn handle_dash (
   }
 }
 
-fn handle_dash_crosshair (
-  mut query_set: QuerySet<(
-    Query<(&Transform, &Dash), With<Player>>,
-    Query<&mut Transform, With<DashCrosshair>>
-  )>,
+fn handle_dash_crosshair(
+  dash: Query<(&Transform, &Dash), With<Player>>,
+  mut crosshair: Query<&mut Transform, (With<DashCrosshair>, Without<Player>)>,
 ) {
-  if let Ok((trans, dash)) = query_set.q0().single() {
+  if let Ok((trans, dash)) = dash.get_single() {
     let translation = trans.translation.clone();
     let dash_vec = dash.holding_vec().extend(0.0);
-    if let Ok(mut cross_trans) = query_set.q1_mut().single_mut() {
+    if let Ok(mut cross_trans) = crosshair.get_single_mut() {
       cross_trans.translation = translation + dash_vec;
     }
   }
 }
 
-fn handle_dash_indictors (
+fn handle_dash_indictors(
   mut commands: Commands,
-  mut query_set: QuerySet<(
-    Query<(&Transform, &Dash), With<Player>>,
-    Query<(Entity, &mut Transform, &DashCounter)>,
-  )>,
+  dash: Query<(&Transform, &Dash), With<Player>>,
+  mut dash_counter: Query<(Entity, &mut Transform, &DashCounter), Without<Player>>,
   asset_server: Res<AssetServer>,
-  mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-  if let Ok((trans, dash)) = query_set.q0().single() {
+  if let Ok((trans, dash)) = dash.get_single() {
     let origin = trans.translation.clone();
     let dash_count = dash.charges();
     let mut count = 0;
-    for (ent, mut trans, counter) in query_set.q1_mut().iter_mut() {
+    for (ent, mut trans, counter) in dash_counter.iter_mut() {
       if counter.0 > dash_count {
         commands.entity(ent).despawn();
       } else {
@@ -266,12 +273,12 @@ fn handle_dash_indictors (
 
     for i in count + 1..=dash_count {
       commands
-      .spawn_bundle(SpriteBundle {
-        material: load_sprite_texture(&asset_server, &mut materials, &"aspectorb.png".to_string()),
-        transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-        ..Default::default()
-      })
-      .insert(DashCounter(i));
+        .spawn_bundle(SpriteBundle {
+          texture: asset_server.load(get_texture_path(&"aspectorb.png".to_string())),
+          transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
+          ..Default::default()
+        })
+        .insert(DashCounter(i));
     }
   }
 }
@@ -280,19 +287,15 @@ fn handle_dash_indictors (
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
-      .add_system(
-        handle_player_movement
-          .system()
-          .label(PlayerSimulationSteps::ApplyMoving),
-      )
-      .add_system(handle_player_hover.system().before(PlayerSimulationSteps::ApplyJumping))
-      .add_system(handle_height_adjust.system())
-      .add_system(handle_player_slow_fall.system())
-      .add_system(handle_player_jump.system().label(PlayerSimulationSteps::ApplyJumping))
-      .add_system(handle_dash.system())
-      .add_system(handle_dash_crosshair.system())
-      .add_system(handle_dash_indictors.system());
+      .add_system(handle_player_movement.label(PlayerSimulationSteps::ApplyMoving))
+      .add_system(handle_player_hover.before(PlayerSimulationSteps::ApplyJumping))
+      .add_system(handle_height_adjust)
+      .add_system(handle_player_slow_fall)
+      .add_system(handle_player_jump.label(PlayerSimulationSteps::ApplyJumping))
+      .add_system(handle_dash)
+      .add_system(handle_dash_crosshair)
+      .add_system(handle_dash_indictors);
   }
 }

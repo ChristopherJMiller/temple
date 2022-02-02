@@ -2,9 +2,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-use bevy::prelude::*;
+use bevy::asset::AssetPath;
 
-use super::config::{HandledSprite, JoinedLevelSpriteEntry, Level, LevelManifest, LevelMap, LevelMapFile};
+use super::config::{HandledSprite, Level, LevelManifest, LevelMap, LevelMapFile};
 use super::LevelId;
 use crate::util::files::{from_game_root, LEVEL_DIR_PATH, LEVEL_MAP_DIR_PATH, SPRITE_TEXTURE_DIR_PATH};
 
@@ -71,32 +71,13 @@ pub fn get_map_by_id(id: LevelId) -> Option<LevelMap> {
   }
 }
 
-pub fn prepare_level_from_manifests(
-  asset_server: &Res<AssetServer>,
-  materials: &mut ResMut<Assets<ColorMaterial>>,
-  manifest: LevelManifest,
-  map: LevelMap,
-) -> Level {
-  let joined_entries = JoinedLevelSpriteEntry::join_level_definitions(map.sprites, manifest.sprites.clone());
-  let handled_sprites: Vec<_> = joined_entries
-    .iter()
-    .map(|entry| HandledSprite::from_joined_entry(entry, asset_server, materials))
-    .collect();
+pub fn prepare_level_from_manifests(manifest: LevelManifest, map: LevelMap) -> Level {
+  let handled_sprites = HandledSprite::join_level_definitions(map.sprites, manifest.sprites.clone());
   Level::from((manifest, handled_sprites))
 }
 
-pub fn load_sprite_texture(
-  asset_server: &Res<AssetServer>,
-  materials: &mut ResMut<Assets<ColorMaterial>>,
-  texture_local_path: &String,
-) -> Handle<ColorMaterial> {
-  materials.add(
-    asset_server
-      .load(from_game_root(
-        Path::new(SPRITE_TEXTURE_DIR_PATH).join(texture_local_path.as_str()),
-      ))
-      .into(),
-  )
+pub fn get_texture_path<'a>(texture_local_path: &String) -> AssetPath<'a> {
+  from_game_root(Path::new(SPRITE_TEXTURE_DIR_PATH).join(texture_local_path.as_str())).into()
 }
 
 pub fn levels_have_same_music(a: LevelId, b: LevelId) -> bool {

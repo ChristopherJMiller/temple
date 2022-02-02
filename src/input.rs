@@ -38,7 +38,6 @@ pub const DASH_UP: &str = "DASH_UP";
 /// Input key for moving dash controls down (usually used on mouse)
 pub const DASH_DOWN: &str = "DASH_DOWN";
 
-
 /// Loads [Kurinji] input config files
 fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
   if let Ok(bindings) = fs::read_to_string(from_game_root("assets/inputs/keyboard.ron")) {
@@ -68,14 +67,14 @@ fn dev_toggle_cursor(input: Res<Kurinji>, mut cursor_flag: ResMut<DevToggleCurso
 pub struct InputPlugin;
 
 impl Plugin for InputPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       // Kurinji Input Boostrapping
       .add_plugin(KurinjiPlugin)
-      .add_startup_system(setup_inputs.system())
+      .add_startup_system(setup_inputs)
 
       // Dev Systems
       .insert_resource(DevToggleCursor(false))
-      .add_system(dev_toggle_cursor.system());
+      .add_system(dev_toggle_cursor);
   }
 }

@@ -42,7 +42,7 @@ pub const MUSIC_DIR_PATH: &str = concatcp!(ASSET_PATH, "audio/music/");
 pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
   let mut base = current_exe().unwrap();
   base.pop();
-  if cfg!(debug_assertions) {
+  if cfg!(debug_assertions) || cfg!(feature = "devrootpath") {
     base.join("../..").join(path)
   } else {
     base.join(path)

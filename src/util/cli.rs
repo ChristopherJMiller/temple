@@ -109,7 +109,11 @@ pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
         .help("Enables the in-game fps counter"),
     )
     .arg(Arg::with_name(EDITOR_ARG).long("editor").help("Enters the editor"))
-    .arg(Arg::with_name(CREDITS_ARG).long("credits").help("Displays the game credits"));
+    .arg(
+      Arg::with_name(CREDITS_ARG)
+        .long("credits")
+        .help("Displays the game credits"),
+    );
 
   let matches = cli.get_matches();
 

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::load::{TransitionLevel, LoadLevel};
+use super::load::{LoadLevel, TransitionLevel};
 use crate::game::credits::PlayCredits;
 use crate::level::load::UnloadLevel;
 use crate::state::game_state::{GameMode, TempleState};
@@ -8,6 +8,7 @@ use crate::util::settings::{GameFile, LevelTransistionType};
 
 /// Command to determine next level to play, and transition to that level. Used
 /// after reaching a [Goal] when in `NoOverworld` mode.
+#[derive(Component)]
 pub struct NextLevel;
 
 pub fn auto_next_level(
@@ -29,7 +30,7 @@ pub fn auto_next_level(
             commands.spawn().insert(TransitionLevel(*next_level));
           } else {
             info!(target: "auto_next_level", "End of Game!");
-            if let Ok(ent) = loaded_level.single() {
+            if let Ok(ent) = loaded_level.get_single() {
               commands.entity(ent).insert(UnloadLevel);
               commands.spawn().insert(PlayCredits);
             }

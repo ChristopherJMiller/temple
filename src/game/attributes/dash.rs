@@ -6,9 +6,10 @@ use bevy::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::Attribute;
-use crate::level::LevelId;
 use crate::level::config::SPRITE_SIZE;
+use crate::level::LevelId;
 
+#[derive(Component)]
 pub struct Dash {
   charges: u32,
   capacity: u32,
@@ -19,19 +20,21 @@ pub struct Dash {
 impl Default for Dash {
   fn default() -> Self {
     const STARTING_CAP: u32 = 1;
-    Self { 
-      charges: STARTING_CAP, 
-      capacity: STARTING_CAP, 
-      holding: Default::default(), 
-      hold_vector: Default::default() 
+    Self {
+      charges: STARTING_CAP,
+      capacity: STARTING_CAP,
+      holding: Default::default(),
+      hold_vector: Default::default(),
     }
   }
 }
 
 const MAX_DIST_SQUARED: f32 = 3.0 * SPRITE_SIZE as f32;
 
+#[derive(Component)]
 pub struct DashCrosshair;
 
+#[derive(Component)]
 pub struct DashCounter(pub u32);
 
 impl Dash {
@@ -83,8 +86,6 @@ impl Attribute for Dash {
   const KEY: &'static str = "dash";
 
   fn build(commands: &mut Commands, target: Entity, _: LevelId, _: Vec2, _: Vec<ParseArgumentItem>) {
-    commands
-      .entity(target)
-      .insert(Dash::default());
+    commands.entity(target).insert(Dash::default());
   }
 }

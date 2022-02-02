@@ -5,6 +5,7 @@ use kurinji::Kurinji;
 use super::ui::EditorState;
 use crate::input::{DOWN, EDIT_ZOOM_IN, EDIT_ZOOM_OUT, LEFT, RIGHT, UP};
 
+#[derive(Component)]
 pub struct EditorCamera;
 
 pub fn handle_camera_input(
@@ -18,7 +19,7 @@ pub fn handle_camera_input(
     return;
   }
 
-  if let Ok(mut trans) = camera.single_mut() {
+  if let Ok(mut trans) = camera.get_single_mut() {
     if input.is_action_active(UP) {
       trans.translation.y += time.delta_seconds() * move_speed.0;
     }
@@ -56,7 +57,7 @@ pub fn handle_camera_zooming(
     return;
   }
 
-  if let Ok((mut camera, mut proj)) = camera.single_mut() {
+  if let Ok((mut camera, mut proj)) = camera.get_single_mut() {
     if input.is_action_active(EDIT_ZOOM_IN) {
       proj.scale = (proj.scale + time.delta_seconds()).min(2.0);
       camera.projection_matrix = Mat4::orthographic_rh(
@@ -89,10 +90,10 @@ pub struct CameraMoveSpeed(pub f32);
 pub struct EditorCameraPlugin;
 
 impl Plugin for EditorCameraPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .insert_resource(CameraMoveSpeed(get_camera_speed(1.0 / 3.0)))
-      .add_system(handle_camera_input.system())
-      .add_system(handle_camera_zooming.system());
+      .add_system(handle_camera_input)
+      .add_system(handle_camera_zooming);
   }
 }

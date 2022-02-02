@@ -91,7 +91,8 @@ impl LevelSaveState {
     &self.checkpoint_state
   }
 
-  /// Returns true if any exit is cleared on this level. Used for `NoOverworld` level order calculations
+  /// Returns true if any exit is cleared on this level. Used for `NoOverworld`
+  /// level order calculations
   pub fn an_exit_cleared(&self) -> bool {
     self.exits_cleared.iter().find(|&&x| x).is_some()
   }

@@ -10,7 +10,7 @@ pub mod settings;
 pub struct StatePlugin;
 
 impl Plugin for StatePlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     let saves = bootstrap_and_get_saves();
 
     app

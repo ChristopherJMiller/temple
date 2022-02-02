@@ -1,4 +1,5 @@
-//! Gives a player the component provided within the parameter. `give(component_name(params...))`
+//! Gives a player the component provided within the parameter.
+//! `give(component_name(params...))`
 
 use bevy::ecs::component::Component;
 use bevy::prelude::*;
@@ -10,6 +11,7 @@ use crate::game::collision::ContactSubscription;
 use crate::game::collision_groups::*;
 use crate::level::LevelId;
 
+#[derive(Component)]
 pub struct Give(Vec<ParseArgumentItem>);
 
 /// Typeless Give attribute, used to build [Give]
@@ -34,14 +36,15 @@ impl Attribute for GivableAttribute {
   fn build(commands: &mut Commands, target: Entity, _: LevelId, position: Vec2, params: Vec<ParseArgumentItem>) {
     let collider = ColliderBundle {
       position: position.into(),
-      shape: ColliderShape::cuboid(0.5, 0.5),
-      material: ColliderMaterial::default(),
+      shape: ColliderShape::cuboid(0.5, 0.5).into(),
+      material: ColliderMaterialComponent::default(),
       flags: ColliderFlags {
         collision_groups: DETECTS_PLAYER_GROUP,
         solver_groups: NONE_GROUP,
         active_events: ActiveEvents::CONTACT_EVENTS,
         ..Default::default()
-      },
+      }
+      .into(),
       ..Default::default()
     };
 

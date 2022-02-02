@@ -9,8 +9,6 @@ use std::vec::Vec;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use super::util::load_sprite_texture;
-
 // ==== Asset File Definitions
 
 /// Conversion of game unit to pixel.
@@ -132,8 +130,8 @@ impl LevelMapSpriteEntry {
 // ==== In Engine Definitions (Consumes Manifests)
 
 /// [LevelSpriteEntry] joined with position from [LevelMapSprite]
-#[derive(Clone)]
-pub struct JoinedLevelSpriteEntry {
+#[derive(Clone, Debug)]
+pub struct HandledSprite {
   /// Sprite name and identifier.
   pub name: String,
   /// Position in a level
@@ -146,11 +144,11 @@ pub struct JoinedLevelSpriteEntry {
   pub attributes: Vec<String>,
 }
 
-impl JoinedLevelSpriteEntry {
+impl HandledSprite {
   pub fn join_level_definitions(
     map_sprites: Vec<LevelMapSpriteEntry>,
     entries: Vec<LevelSpriteEntry>,
-  ) -> Vec<JoinedLevelSpriteEntry> {
+  ) -> Vec<HandledSprite> {
     let mut entries_map = HashMap::new();
     for entry in entries {
       entries_map.insert(entry.name.clone(), entry);
@@ -160,7 +158,7 @@ impl JoinedLevelSpriteEntry {
       .iter()
       .map(|map_sprite| {
         if let Some(sprite_entry) = entries_map.get(&map_sprite.name) {
-          JoinedLevelSpriteEntry {
+          HandledSprite {
             name: sprite_entry.name.clone(),
             pos: map_sprite.pos,
             offset: sprite_entry.offset,
@@ -174,7 +172,7 @@ impl JoinedLevelSpriteEntry {
       .collect()
   }
 
-  pub fn decompose(list: Vec<JoinedLevelSpriteEntry>) -> (Vec<LevelMapSpriteEntry>, Vec<LevelSpriteEntry>) {
+  pub fn decompose(list: Vec<Self>) -> (Vec<LevelMapSpriteEntry>, Vec<LevelSpriteEntry>) {
     let mut map_sprite_entries: Vec<LevelMapSpriteEntry> = Vec::default();
     let mut level_sprites: HashMap<String, LevelSpriteEntry> = HashMap::default();
     for entry in list {
@@ -200,55 +198,14 @@ impl JoinedLevelSpriteEntry {
   }
 }
 
-/// Sprite with loaded texture, to be used in game.
-#[derive(Debug, Clone, Default)]
-pub struct HandledSprite {
-  pub name: String,
-  pub pos: IVec2,
-  pub offset: IVec2,
-  pub texture_path: String,
-  pub texture: Handle<ColorMaterial>,
-  pub attributes: Vec<String>,
-}
-
-impl HandledSprite {
-  pub fn from_joined_entry(
-    entry: &JoinedLevelSpriteEntry,
-    asset_server: &Res<AssetServer>,
-    materials: &mut ResMut<Assets<ColorMaterial>>,
-  ) -> Self {
+impl From<(LevelSpriteEntry, IVec2)> for HandledSprite {
+  fn from((entry, pos): (LevelSpriteEntry, IVec2)) -> Self {
     Self {
       name: entry.name.clone(),
-      pos: entry.pos,
-      offset: entry.offset,
-      texture_path: entry.texture.clone(),
-      texture: load_sprite_texture(asset_server, materials, &entry.texture),
-      attributes: entry.attributes.clone(),
-    }
-  }
-}
-
-impl Into<JoinedLevelSpriteEntry> for &HandledSprite {
-  fn into(self) -> JoinedLevelSpriteEntry {
-    JoinedLevelSpriteEntry {
-      name: self.name.clone(),
-      pos: self.pos,
-      offset: self.offset,
-      texture: self.texture_path.clone(),
-      attributes: self.attributes.clone(),
-    }
-  }
-}
-
-impl From<(LevelSpriteEntry, IVec2, Handle<ColorMaterial>)> for HandledSprite {
-  fn from((entry, pos, handle): (LevelSpriteEntry, IVec2, Handle<ColorMaterial>)) -> Self {
-    HandledSprite {
-      name: entry.name,
       pos,
-      offset: entry.offset,
-      texture_path: entry.texture,
-      texture: handle,
-      attributes: entry.attributes,
+      offset: entry.offset.clone(),
+      texture: entry.texture.clone(),
+      attributes: entry.attributes.clone(),
     }
   }
 }
@@ -279,8 +236,7 @@ impl From<(LevelManifest, Vec<HandledSprite>)> for Level {
 /// Decompose Level into Manifest Forms
 impl Into<(LevelManifest, LevelMap)> for Level {
   fn into(self) -> (LevelManifest, LevelMap) {
-    let joined_entries: Vec<JoinedLevelSpriteEntry> = self.sprites.iter().map(|x| x.into()).collect();
-    let (map_sprites, level_sprites) = JoinedLevelSpriteEntry::decompose(joined_entries);
+    let (map_sprites, level_sprites) = HandledSprite::decompose(self.sprites);
     let manifest = LevelManifest {
       name: self.name,
       music: self.music,

@@ -1,12 +1,14 @@
-use bevy::{prelude::*, asset::LoadState};
-use bevy_egui::{EguiContext, egui};
-use kurinji::Kurinji;
-use pulldown_cmark::{Tag, Event, Parser, Options, HeadingLevel};
-
-use crate::{util::{settings::GameFile, files::{from_game_root, MUSIC_DIR_PATH}}, input::SELECT};
+use bevy::asset::LoadState;
+use bevy::prelude::*;
+use bevy_egui::{egui, EguiContext};
 use bevy_kira_audio::{Audio, AudioSource};
+use kurinji::Kurinji;
+use pulldown_cmark::{Event, HeadingLevel, Options, Parser, Tag};
 
 use super::sfx::AudioChannels;
+use crate::input::SELECT;
+use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
+use crate::util::settings::GameFile;
 
 #[derive(Debug, Clone, Copy)]
 pub enum TextStyle {
@@ -30,10 +32,7 @@ pub struct CreditsData {
   credits_data: Vec<CreditObject>,
 }
 
-pub fn set_scroll_speed (
-  mut credits_data: ResMut<CreditsData>,
-  input: Res<Kurinji>,
-) {
+pub fn set_scroll_speed(mut credits_data: ResMut<CreditsData>, input: Res<Kurinji>) {
   if credits_data.run_credits {
     if input.is_action_active(SELECT) {
       credits_data.scroll_speed = 150.0;
@@ -52,7 +51,7 @@ pub fn load_credits(
   audio: Res<Audio>,
   channels: Res<AudioChannels>,
 ) {
-  if let Ok(ent) = play_credits.single() {
+  if let Ok(ent) = play_credits.get_single() {
     let music_path = from_game_root(MUSIC_DIR_PATH).join(game_file.credit_music.clone());
     let music: Handle<AudioSource> = asset_server.get_handle(music_path.clone().into_os_string().to_str().unwrap());
 
@@ -81,21 +80,23 @@ pub fn load_credits(
     for event in parser {
       match event {
         Event::Start(tag) => match tag {
-            Tag::Heading(lvl, _, _) => heading_level = Some(lvl),
-            Tag::Emphasis => text_style = Some(TextStyle::Italics),
-            Tag::Strong => text_style = Some(TextStyle::Bold),
-            _ => (),
+          Tag::Heading(lvl, _, _) => heading_level = Some(lvl),
+          Tag::Emphasis => text_style = Some(TextStyle::Italics),
+          Tag::Strong => text_style = Some(TextStyle::Bold),
+          _ => (),
         },
         Event::End(tag) => match tag {
-            Tag::Heading(_, _, _) => heading_level = None,
-            Tag::Emphasis => text_style = None,
-            Tag::Strong => text_style = None,
-            _ => (),
+          Tag::Heading(_, _, _) => heading_level = None,
+          Tag::Emphasis => text_style = None,
+          Tag::Strong => text_style = None,
+          _ => (),
         },
-        Event::Text(text) => if let Some(lvl) = heading_level {
-          credits.push(CreditObject::Header(lvl, text.to_string()))
-        } else {
-          credits.push(CreditObject::Text(text_style, text.to_string()))
+        Event::Text(text) => {
+          if let Some(lvl) = heading_level {
+            credits.push(CreditObject::Header(lvl, text.to_string()))
+          } else {
+            credits.push(CreditObject::Text(text_style, text.to_string()))
+          }
         },
         Event::SoftBreak | Event::HardBreak => credits.push(CreditObject::Break),
         Event::Rule => credits.push(CreditObject::HLine),
@@ -105,7 +106,6 @@ pub fn load_credits(
 
     credits_data.credits_data = credits;
     credits_data.run_credits = true;
-
 
     commands.entity(ent).despawn();
   }
@@ -119,39 +119,44 @@ pub fn run_credits(
 ) {
   if credits.run_credits {
     egui::Area::new("Credits")
-    .anchor(egui::Align2::CENTER_BOTTOM, [0.0, credits.y_offset.round()])
-    .show(egui_context.ctx(), |ui| {
-      ui.set_width(window_desc.width * 0.66);
-      ui.vertical_centered(|ui| {
-        for element in credits.credits_data.iter() {
-          match element {
-            CreditObject::Header(_, text) => { ui.heading(text.as_str()); },
-            CreditObject::Text(_, text) => { 
-              ui.label(text.as_str());
-            },
-            CreditObject::HLine => { ui.separator(); },
-            CreditObject::Break => (),
+      .anchor(egui::Align2::CENTER_BOTTOM, [0.0, credits.y_offset.round()])
+      .show(egui_context.ctx(), |ui| {
+        ui.set_width(window_desc.width * 0.66);
+        ui.vertical_centered(|ui| {
+          for element in credits.credits_data.iter() {
+            match element {
+              CreditObject::Header(_, text) => {
+                ui.heading(text.as_str());
+              },
+              CreditObject::Text(_, text) => {
+                ui.label(text.as_str());
+              },
+              CreditObject::HLine => {
+                ui.separator();
+              },
+              CreditObject::Break => (),
+            }
           }
-        }
+        });
       });
-    });
 
     credits.y_offset -= time.delta_seconds() * credits.scroll_speed;
   }
 }
 
 /// Command to play credits. Does not unload current level.
+#[derive(Component)]
 pub struct PlayCredits;
 
 /// [Plugin] for handling credits.
 pub struct CreditsPlugin;
 
 impl Plugin for CreditsPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .init_resource::<CreditsData>()
-      .add_system(load_credits.system())
-      .add_system(set_scroll_speed.system())
-      .add_system(run_credits.system());
+      .add_system(load_credits)
+      .add_system(set_scroll_speed)
+      .add_system(run_credits);
   }
 }

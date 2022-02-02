@@ -8,17 +8,19 @@ use super::attributes::Player;
 
 /// Subscribes an Entity to collision events. Can be paired with attributes to
 /// be consumed with other systems.
+#[derive(Component)]
 pub struct ContactSubscription;
 
 /// Tags entity that a player contacted it.
+#[derive(Component)]
 pub struct PlayerContacted;
 
 /// Player contact query, for attributes that are stateless.
-pub type ContactTagQuery<'r, 's, K> = Query<'r, Entity, (With<K>, With<PlayerContacted>)>;
+pub type ContactTagQuery<'s, 'world, 'state, K> = Query<'world, 'state, Entity, (With<K>, With<PlayerContacted>)>;
 
 // Player contact query, for attributes that need access to state within the
 // system.
-pub type ContactQuery<'r, 's, K> = Query<'r, (Entity, &'s K), With<PlayerContacted>>;
+pub type ContactQuery<'s, 'world, 'state, K> = Query<'world, 'state, (Entity, &'s K), With<PlayerContacted>>;
 
 /// Check if an entity is subscribed to collision events, and hasn't received
 /// one yet.
@@ -58,7 +60,7 @@ pub fn handle_collision_events(
 pub struct CollisionPlugin;
 
 impl Plugin for CollisionPlugin {
-  fn build(&self, app: &mut AppBuilder) {
-    app.add_system(handle_collision_events.system());
+  fn build(&self, app: &mut App) {
+    app.add_system(handle_collision_events);
   }
 }

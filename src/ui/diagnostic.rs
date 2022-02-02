@@ -6,6 +6,7 @@ use bevy::prelude::*;
 use crate::util::cli::CliArgs;
 
 /// Component tag for the FPS counter [Text].
+#[derive(Component)]
 pub struct FpsText;
 
 /// Start up system for [FpsText] UI.
@@ -25,7 +26,7 @@ pub fn setup_fps_text(mut commands: Commands, cli_args: Res<CliArgs>, asset_serv
           TextSection {
             value: "FPS: ".to_string(),
             style: TextStyle {
-              font: asset_server.load("fonts/Vollkorn-Bold.ttf"),
+              font: asset_server.load("fonts/unifont.ttf"),
               font_size: 30.0,
               color: Color::WHITE,
             },
@@ -33,7 +34,7 @@ pub fn setup_fps_text(mut commands: Commands, cli_args: Res<CliArgs>, asset_serv
           TextSection {
             value: "".to_string(),
             style: TextStyle {
-              font: asset_server.load("fonts/Vollkorn-Medium.ttf"),
+              font: asset_server.load("fonts/unifont.ttf"),
               font_size: 30.0,
               color: Color::GOLD,
             },

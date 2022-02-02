@@ -9,6 +9,7 @@ use crate::game::collision::ContactSubscription;
 use crate::game::collision_groups::*;
 use crate::level::LevelId;
 
+#[derive(Component)]
 pub struct Goal(pub usize);
 
 fn parse_params(params: Vec<ParseArgumentItem>) -> usize {
@@ -33,14 +34,15 @@ impl Attribute for Goal {
 
     let collider = ColliderBundle {
       position: position.into(),
-      shape: ColliderShape::cuboid(0.5, 0.5),
-      material: ColliderMaterial::default(),
+      shape: ColliderShape::cuboid(0.5, 0.5).into(),
+      material: ColliderMaterialComponent::default(),
       flags: ColliderFlags {
         collision_groups: DETECTS_PLAYER_GROUP,
         solver_groups: NONE_GROUP,
         active_events: ActiveEvents::CONTACT_EVENTS,
         ..Default::default()
-      },
+      }
+      .into(),
       ..Default::default()
     };
 

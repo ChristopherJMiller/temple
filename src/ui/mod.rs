@@ -19,15 +19,15 @@ fn setup_uicamera(mut commands: Commands) {
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .init_resource::<TitleMenuState>()
-      .add_startup_system(setup_egui_font.system())
-      .add_startup_system(setup_uicamera.system())
-      .add_startup_system(setup_fps_text.system())
-      .add_system(setup_title_screen.system())
-      .add_system(update_fps_system.system())
-      .add_system(delete_title_screen.system())
-      .add_system(title_menu_buttons.system());
+      .add_startup_system(setup_egui_font)
+      .add_startup_system(setup_uicamera)
+      .add_startup_system(setup_fps_text)
+      .add_system(setup_title_screen)
+      .add_system(update_fps_system)
+      .add_system(delete_title_screen)
+      .add_system(title_menu_buttons);
   }
 }

@@ -10,12 +10,15 @@ use crate::util::files::from_game_root;
 use crate::VERSION;
 
 /// Tag command to load the title screen.
+#[derive(Component)]
 pub struct LoadTitleScreen;
 
 /// Tag attached to all title screen related entities.
+#[derive(Component)]
 pub struct TitleScreen;
 
 /// Tag to disable the title screen;
+#[derive(Component)]
 pub struct HideTitleScreen;
 
 pub enum TitleMenuStates {
@@ -108,7 +111,7 @@ pub fn setup_title_screen(
   ensure_not_loaded_query: Query<Entity, With<TitleScreen>>,
   asset_server: Res<AssetServer>,
 ) {
-  if let Ok(ent) = query.single() {
+  if let Ok(ent) = query.get_single() {
     if ensure_not_loaded_query.iter().next().is_none() {
       build_title_screen(&mut commands, &asset_server);
       title_menu_state.show_title_menu_egui = true;
@@ -125,7 +128,7 @@ pub fn delete_title_screen(
   tag: Query<Entity, With<HideTitleScreen>>,
   elements: Query<Entity, With<TitleScreen>>,
 ) {
-  if let Ok(ent) = tag.single() {
+  if let Ok(ent) = tag.get_single() {
     for ent in elements.iter() {
       commands.entity(ent).despawn();
     }
@@ -164,7 +167,7 @@ pub fn title_menu_buttons(
       egui::Area::new("Saves")
         .fixed_pos(egui::pos2((window_desc.width / 2.0) - 200.0, window_desc.height / 2.0))
         .show(egui_ctx.ctx(), |ui| {
-          ScrollArea::auto_sized().show(ui, |ui| {
+          ScrollArea::new([false; 2]).show(ui, |ui| {
             if ui.add_sized([400.0, 35.0], egui::Button::new("New Save")).clicked() {
               title_menu_state.state = TitleMenuStates::NewSavePrompt;
               title_menu_state.save_name_input = String::default();

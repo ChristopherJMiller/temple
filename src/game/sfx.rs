@@ -51,11 +51,11 @@ fn init_channel_volume(audio: Res<Audio>, channels: Res<AudioChannels>) {
 pub struct SfxPlugin;
 
 impl Plugin for SfxPlugin {
-  fn build(&self, app: &mut AppBuilder) {
+  fn build(&self, app: &mut App) {
     app
       .init_resource::<AudioChannels>()
       .init_resource::<SfxHandles>()
-      .add_startup_system(init_channel_volume.system())
-      .add_startup_system(load_sfx.system());
+      .add_startup_system(init_channel_volume)
+      .add_startup_system(load_sfx);
   }
 }
