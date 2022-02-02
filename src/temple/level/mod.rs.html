@@ -52,15 +52,15 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LevelPlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">LevelPlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
-      .<span class="ident">add_startup_system</span>(<span class="ident">verify_level_files</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">prepare_level</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">load_level</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">unload_level</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">apply_save_on_load</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">transition_level</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">auto_next_level</span>.<span class="ident">system</span>());
+      .<span class="ident">add_startup_system</span>(<span class="ident">verify_level_files</span>)
+      .<span class="ident">add_system</span>(<span class="ident">prepare_level</span>)
+      .<span class="ident">add_system</span>(<span class="ident">load_level</span>)
+      .<span class="ident">add_system</span>(<span class="ident">unload_level</span>)
+      .<span class="ident">add_system</span>(<span class="ident">apply_save_on_load</span>)
+      .<span class="ident">add_system</span>(<span class="ident">transition_level</span>)
+      .<span class="ident">add_system</span>(<span class="ident">auto_next_level</span>);
   }
 }
 </code></pre></div>

@@ -156,15 +156,22 @@
 <span id="155">155</span>
 <span id="156">156</span>
 <span id="157">157</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy</span>::{<span class="ident">prelude</span>::<span class="kw-2">*</span>, <span class="ident">asset::LoadState</span>};
-<span class="kw">use</span> <span class="ident">bevy_egui</span>::{<span class="ident">EguiContext</span>, <span class="ident">egui</span>};
-<span class="kw">use</span> <span class="ident">kurinji::Kurinji</span>;
-<span class="kw">use</span> <span class="ident">pulldown_cmark</span>::{<span class="ident">Tag</span>, <span class="ident">Event</span>, <span class="ident">Parser</span>, <span class="ident">Options</span>, <span class="ident">HeadingLevel</span>};
-
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">util</span>::{<span class="ident">settings::GameFile</span>, <span class="ident">files</span>::{<span class="ident">from_game_root</span>, <span class="ident">MUSIC_DIR_PATH</span>}}, <span class="ident">input::SELECT</span>};
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::asset::LoadState</span>;
+<span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">bevy_egui</span>::{<span class="ident">egui</span>, <span class="ident">EguiContext</span>};
 <span class="kw">use</span> <span class="ident">bevy_kira_audio</span>::{<span class="ident">Audio</span>, <span class="ident">AudioSource</span>};
+<span class="kw">use</span> <span class="ident">kurinji::Kurinji</span>;
+<span class="kw">use</span> <span class="ident">pulldown_cmark</span>::{<span class="ident">Event</span>, <span class="ident">HeadingLevel</span>, <span class="ident">Options</span>, <span class="ident">Parser</span>, <span class="ident">Tag</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::sfx::AudioChannels</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input::SELECT</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::{<span class="ident">from_game_root</span>, <span class="ident">MUSIC_DIR_PATH</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings::GameFile</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TextStyle</span> {
@@ -188,10 +195,7 @@
   <span class="ident">credits_data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">CreditObject</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_scroll_speed</span> (
-  <span class="kw-2">mut</span> <span class="ident">credits_data</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CreditsData</span><span class="op">&gt;</span>,
-  <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
-) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_scroll_speed</span>(<span class="kw-2">mut</span> <span class="ident">credits_data</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CreditsData</span><span class="op">&gt;</span>, <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>) {
   <span class="kw">if</span> <span class="ident">credits_data</span>.<span class="ident">run_credits</span> {
     <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">SELECT</span>) {
       <span class="ident">credits_data</span>.<span class="ident">scroll_speed</span> <span class="op">=</span> <span class="number">150.0</span>;
@@ -210,7 +214,7 @@
   <span class="ident">audio</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Audio</span><span class="op">&gt;</span>,
   <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">play_credits</span>.<span class="ident">single</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">play_credits</span>.<span class="ident">get_single</span>() {
     <span class="kw">let</span> <span class="ident">music_path</span> <span class="op">=</span> <span class="ident">from_game_root</span>(<span class="ident">MUSIC_DIR_PATH</span>).<span class="ident">join</span>(<span class="ident">game_file</span>.<span class="ident">credit_music</span>.<span class="ident">clone</span>());
     <span class="kw">let</span> <span class="ident">music</span>: <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">AudioSource</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">asset_server</span>.<span class="ident">get_handle</span>(<span class="ident">music_path</span>.<span class="ident">clone</span>().<span class="ident">into_os_string</span>().<span class="ident">to_str</span>().<span class="ident">unwrap</span>());
 
@@ -239,21 +243,23 @@
     <span class="kw">for</span> <span class="ident">event</span> <span class="kw">in</span> <span class="ident">parser</span> {
       <span class="kw">match</span> <span class="ident">event</span> {
         <span class="ident">Event::Start</span>(<span class="ident">tag</span>) =&gt; <span class="kw">match</span> <span class="ident">tag</span> {
-            <span class="ident">Tag::Heading</span>(<span class="ident">lvl</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="ident">heading_level</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">lvl</span>),
-            <span class="ident">Tag::Emphasis</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">TextStyle::Italics</span>),
-            <span class="ident">Tag::Strong</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">TextStyle::Bold</span>),
-            <span class="kw">_</span> =&gt; (),
+          <span class="ident">Tag::Heading</span>(<span class="ident">lvl</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="ident">heading_level</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">lvl</span>),
+          <span class="ident">Tag::Emphasis</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">TextStyle::Italics</span>),
+          <span class="ident">Tag::Strong</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">TextStyle::Bold</span>),
+          <span class="kw">_</span> =&gt; (),
         },
         <span class="ident">Event::End</span>(<span class="ident">tag</span>) =&gt; <span class="kw">match</span> <span class="ident">tag</span> {
-            <span class="ident">Tag::Heading</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="ident">heading_level</span> <span class="op">=</span> <span class="prelude-val">None</span>,
-            <span class="ident">Tag::Emphasis</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">None</span>,
-            <span class="ident">Tag::Strong</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">None</span>,
-            <span class="kw">_</span> =&gt; (),
+          <span class="ident">Tag::Heading</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="ident">heading_level</span> <span class="op">=</span> <span class="prelude-val">None</span>,
+          <span class="ident">Tag::Emphasis</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">None</span>,
+          <span class="ident">Tag::Strong</span> =&gt; <span class="ident">text_style</span> <span class="op">=</span> <span class="prelude-val">None</span>,
+          <span class="kw">_</span> =&gt; (),
         },
-        <span class="ident">Event::Text</span>(<span class="ident">text</span>) =&gt; <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">lvl</span>) <span class="op">=</span> <span class="ident">heading_level</span> {
-          <span class="ident">credits</span>.<span class="ident">push</span>(<span class="ident">CreditObject::Header</span>(<span class="ident">lvl</span>, <span class="ident">text</span>.<span class="ident">to_string</span>()))
-        } <span class="kw">else</span> {
-          <span class="ident">credits</span>.<span class="ident">push</span>(<span class="ident">CreditObject::Text</span>(<span class="ident">text_style</span>, <span class="ident">text</span>.<span class="ident">to_string</span>()))
+        <span class="ident">Event::Text</span>(<span class="ident">text</span>) =&gt; {
+          <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">lvl</span>) <span class="op">=</span> <span class="ident">heading_level</span> {
+            <span class="ident">credits</span>.<span class="ident">push</span>(<span class="ident">CreditObject::Header</span>(<span class="ident">lvl</span>, <span class="ident">text</span>.<span class="ident">to_string</span>()))
+          } <span class="kw">else</span> {
+            <span class="ident">credits</span>.<span class="ident">push</span>(<span class="ident">CreditObject::Text</span>(<span class="ident">text_style</span>, <span class="ident">text</span>.<span class="ident">to_string</span>()))
+          }
         },
         <span class="ident">Event::SoftBreak</span> <span class="op">|</span> <span class="ident">Event::HardBreak</span> =&gt; <span class="ident">credits</span>.<span class="ident">push</span>(<span class="ident">CreditObject::Break</span>),
         <span class="ident">Event::Rule</span> =&gt; <span class="ident">credits</span>.<span class="ident">push</span>(<span class="ident">CreditObject::HLine</span>),
@@ -263,7 +269,6 @@
 
     <span class="ident">credits_data</span>.<span class="ident">credits_data</span> <span class="op">=</span> <span class="ident">credits</span>;
     <span class="ident">credits_data</span>.<span class="ident">run_credits</span> <span class="op">=</span> <span class="bool-val">true</span>;
-
 
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>();
   }
@@ -277,40 +282,45 @@
 ) {
   <span class="kw">if</span> <span class="ident">credits</span>.<span class="ident">run_credits</span> {
     <span class="ident">egui::Area::new</span>(<span class="string">&quot;Credits&quot;</span>)
-    .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_BOTTOM</span>, [<span class="number">0.0</span>, <span class="ident">credits</span>.<span class="ident">y_offset</span>.<span class="ident">round</span>()])
-    .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
-      <span class="ident">ui</span>.<span class="ident">set_width</span>(<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">*</span> <span class="number">0.66</span>);
-      <span class="ident">ui</span>.<span class="ident">vertical_centered</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
-        <span class="kw">for</span> <span class="ident">element</span> <span class="kw">in</span> <span class="ident">credits</span>.<span class="ident">credits_data</span>.<span class="ident">iter</span>() {
-          <span class="kw">match</span> <span class="ident">element</span> {
-            <span class="ident">CreditObject::Header</span>(<span class="kw">_</span>, <span class="ident">text</span>) =&gt; { <span class="ident">ui</span>.<span class="ident">heading</span>(<span class="ident">text</span>.<span class="ident">as_str</span>()); },
-            <span class="ident">CreditObject::Text</span>(<span class="kw">_</span>, <span class="ident">text</span>) =&gt; { 
-              <span class="ident">ui</span>.<span class="ident">label</span>(<span class="ident">text</span>.<span class="ident">as_str</span>());
-            },
-            <span class="ident">CreditObject::HLine</span> =&gt; { <span class="ident">ui</span>.<span class="ident">separator</span>(); },
-            <span class="ident">CreditObject::Break</span> =&gt; (),
+      .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_BOTTOM</span>, [<span class="number">0.0</span>, <span class="ident">credits</span>.<span class="ident">y_offset</span>.<span class="ident">round</span>()])
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+        <span class="ident">ui</span>.<span class="ident">set_width</span>(<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">*</span> <span class="number">0.66</span>);
+        <span class="ident">ui</span>.<span class="ident">vertical_centered</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+          <span class="kw">for</span> <span class="ident">element</span> <span class="kw">in</span> <span class="ident">credits</span>.<span class="ident">credits_data</span>.<span class="ident">iter</span>() {
+            <span class="kw">match</span> <span class="ident">element</span> {
+              <span class="ident">CreditObject::Header</span>(<span class="kw">_</span>, <span class="ident">text</span>) =&gt; {
+                <span class="ident">ui</span>.<span class="ident">heading</span>(<span class="ident">text</span>.<span class="ident">as_str</span>());
+              },
+              <span class="ident">CreditObject::Text</span>(<span class="kw">_</span>, <span class="ident">text</span>) =&gt; {
+                <span class="ident">ui</span>.<span class="ident">label</span>(<span class="ident">text</span>.<span class="ident">as_str</span>());
+              },
+              <span class="ident">CreditObject::HLine</span> =&gt; {
+                <span class="ident">ui</span>.<span class="ident">separator</span>();
+              },
+              <span class="ident">CreditObject::Break</span> =&gt; (),
+            }
           }
-        }
+        });
       });
-    });
 
     <span class="ident">credits</span>.<span class="ident">y_offset</span> <span class="op">-</span><span class="op">=</span> <span class="ident">time</span>.<span class="ident">delta_seconds</span>() <span class="op">*</span> <span class="ident">credits</span>.<span class="ident">scroll_speed</span>;
   }
 }
 
 <span class="doccomment">/// Command to play credits. Does not unload current level.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayCredits</span>;
 
 <span class="doccomment">/// [Plugin] for handling credits.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CreditsPlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">CreditsPlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">CreditsData</span><span class="op">&gt;</span>()
-      .<span class="ident">add_system</span>(<span class="ident">load_credits</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">set_scroll_speed</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">run_credits</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">load_credits</span>)
+      .<span class="ident">add_system</span>(<span class="ident">set_scroll_speed</span>)
+      .<span class="ident">add_system</span>(<span class="ident">run_credits</span>);
   }
 }
 </code></pre></div>

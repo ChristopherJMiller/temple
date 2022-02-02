@@ -39,12 +39,10 @@
 <span id="38">38</span>
 <span id="39">39</span>
 <span id="40">40</span>
-<span id="41">41</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
-<span class="kw">use</span> <span class="ident">std::fs::read</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fs::read</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">bevy_egui::egui</span>::{<span class="self">self</span>, <span class="ident">FontDefinitions</span>};
+<span class="kw">use</span> <span class="ident">bevy_egui::egui</span>::{<span class="self">self</span>, <span class="ident">FontData</span>, <span class="ident">FontDefinitions</span>};
 <span class="kw">use</span> <span class="ident">bevy_egui::EguiContext</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files::from_game_root</span>;
@@ -56,7 +54,7 @@
 
   <span class="ident">fonts</span>.<span class="ident">font_data</span>.<span class="ident">insert</span>(
     <span class="string">&quot;unifont&quot;</span>.<span class="ident">to_owned</span>(),
-    <span class="ident">Cow::from</span>(<span class="ident">read</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/fonts/unifont.ttf&quot;</span>)).<span class="ident">unwrap</span>()),
+    <span class="ident">FontData::from_owned</span>(<span class="ident">read</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/fonts/unifont.ttf&quot;</span>)).<span class="ident">unwrap</span>()),
   );
 
   <span class="ident">fonts</span>

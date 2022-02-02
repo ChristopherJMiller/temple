@@ -87,7 +87,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input::EDIT_TOGGLE_BORDER</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load</span>::{<span class="ident">LevelLoadComplete</span>, <span class="ident">PreparedLevel</span>};
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::util::load_sprite_texture</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::util::get_texture_path</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EnableBorder</span> {
@@ -107,22 +107,22 @@
   }
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SpriteBorder</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_border</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="kw-2">mut</span> <span class="ident">enable_border</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EnableBorder</span><span class="op">&gt;</span>,
   <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>,
-  <span class="kw-2">mut</span> <span class="ident">materials</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">Assets</span><span class="op">&lt;</span><span class="ident">ColorMaterial</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+
   <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PreparedLevel</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="ident">enable_border</span>.<span class="ident">enabled</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">enable_border</span>.<span class="ident">border_built</span> {
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">p_level</span>) <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single</span>() {
-      <span class="kw">let</span> <span class="ident">border</span> <span class="op">=</span> <span class="ident">load_sprite_texture</span>(<span class="kw-2">&amp;</span><span class="ident">asset_server</span>, <span class="kw-2">&amp;mut</span> <span class="ident">materials</span>, <span class="kw-2">&amp;</span><span class="string">&quot;tileborder.png&quot;</span>.<span class="ident">to_string</span>());
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">p_level</span>) <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">get_single</span>() {
       <span class="kw">for</span> <span class="ident">sprite</span> <span class="kw">in</span> <span class="ident">p_level</span>.<span class="number">0</span>.<span class="ident">sprites</span>.<span class="ident">iter</span>() {
         <span class="ident">commands</span>
           .<span class="ident">spawn_bundle</span>(<span class="ident">SpriteBundle</span> {
-            <span class="ident">material</span>: <span class="ident">border</span>.<span class="ident">clone</span>(),
+            <span class="ident">texture</span>: <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">get_texture_path</span>(<span class="kw-2">&amp;</span><span class="string">&quot;tileborder.png&quot;</span>.<span class="ident">to_string</span>())),
             <span class="ident">transform</span>: <span class="ident">Transform::from_translation</span>(<span class="ident">Vec3::new</span>(
               <span class="ident">sprite</span>.<span class="ident">pos</span>.<span class="ident">x</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>,
               <span class="ident">sprite</span>.<span class="ident">pos</span>.<span class="ident">y</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>,
@@ -155,12 +155,12 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EditorBorderPlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">EditorBorderPlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">EnableBorder</span><span class="op">&gt;</span>()
-      .<span class="ident">add_system</span>(<span class="ident">handle_input</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">build_border</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">delete_border</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">handle_input</span>)
+      .<span class="ident">add_system</span>(<span class="ident">build_border</span>)
+      .<span class="ident">add_system</span>(<span class="ident">delete_border</span>);
   }
 }
 </code></pre></div>

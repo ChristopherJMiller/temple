@@ -32,7 +32,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StatePlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">StatePlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="kw">let</span> <span class="ident">saves</span> <span class="op">=</span> <span class="ident">bootstrap_and_get_saves</span>();
 
     <span class="ident">app</span>

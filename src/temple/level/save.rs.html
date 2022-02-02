@@ -46,6 +46,7 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fs</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -55,6 +56,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::LevelMapFile</span>;
 
 <span class="doccomment">/// Command to save loaded level</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SaveLevel</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">save_loaded_level</span>(
@@ -89,8 +91,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LevelSavePlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">LevelSavePlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
-    <span class="ident">app</span>.<span class="ident">add_system</span>(<span class="ident">save_loaded_level</span>.<span class="ident">system</span>());
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
+    <span class="ident">app</span>.<span class="ident">add_system</span>(<span class="ident">save_loaded_level</span>);
   }
 }
 </code></pre></div>

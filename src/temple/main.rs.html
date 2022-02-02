@@ -161,7 +161,7 @@
   }
 }
 
-<span class="kw">fn</span> <span class="ident">build_base_app</span>(<span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>, <span class="ident">game_file</span>: <span class="ident">GameFile</span>, <span class="ident">cli_args</span>: <span class="ident">CliArgs</span>) {
+<span class="kw">fn</span> <span class="ident">build_base_app</span>(<span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>, <span class="ident">game_file</span>: <span class="ident">GameFile</span>, <span class="ident">cli_args</span>: <span class="ident">CliArgs</span>) {
   <span class="ident">app</span>
     .<span class="ident">insert_resource</span>(<span class="ident">WindowDescriptor</span> {
       <span class="ident">title</span>: <span class="ident">game_file</span>.<span class="ident">title</span>.<span class="ident">clone</span>(),
@@ -185,12 +185,12 @@
     .<span class="ident">add_plugin</span>(<span class="ident">InputPlugin</span>)
     .<span class="ident">add_plugin</span>(<span class="ident">LevelPlugin</span>)
     .<span class="ident">add_plugin</span>(<span class="ident">UiPlugin</span>)
-    .<span class="ident">add_startup_system</span>(<span class="ident">handle_cli_args</span>.<span class="ident">system</span>());
+    .<span class="ident">add_startup_system</span>(<span class="ident">handle_cli_args</span>);
 }
 
 <span class="doccomment">/// Start Game</span>
 <span class="kw">fn</span> <span class="ident">start_game</span>(<span class="ident">game_file</span>: <span class="ident">GameFile</span>, <span class="ident">cli_args</span>: <span class="ident">CliArgs</span>) {
-  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">App::build</span>();
+  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">App::new</span>();
   <span class="ident">build_base_app</span>(<span class="kw-2">&amp;mut</span> <span class="ident">app</span>, <span class="ident">game_file</span>, <span class="ident">cli_args</span>);
 
   <span class="ident">app</span>
@@ -206,7 +206,7 @@
 }
 
 <span class="kw">fn</span> <span class="ident">start_editor</span>(<span class="ident">game_file</span>: <span class="ident">GameFile</span>, <span class="ident">cli_args</span>: <span class="ident">CliArgs</span>) {
-  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">App::build</span>();
+  <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">app</span> <span class="op">=</span> <span class="ident">App::new</span>();
   <span class="ident">build_base_app</span>(<span class="kw-2">&amp;mut</span> <span class="ident">app</span>, <span class="ident">game_file</span>, <span class="ident">cli_args</span>);
 
   <span class="ident">app</span>

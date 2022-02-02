@@ -78,11 +78,6 @@
 <span id="77">77</span>
 <span id="78">78</span>
 <span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
-<span id="82">82</span>
-<span id="83">83</span>
-<span id="84">84</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Attribute definitions and systems.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # About Attributes</span>
@@ -112,32 +107,32 @@
     <span class="ident">Checkpoint::KEY</span> =&gt; <span class="ident">Checkpoint::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
     <span class="ident">Transition::KEY</span> =&gt; <span class="ident">Transition::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
     <span class="ident">Goal::KEY</span> =&gt; <span class="ident">Goal::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
-    <span class="ident">Dash::KEY</span> =&gt; <span class="ident">Dash::build</span>(<span class="ident">commands</span>,<span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
-    <span class="ident">GivableAttribute::KEY</span> =&gt; <span class="ident">GivableAttribute::build</span>(<span class="ident">commands</span>,<span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">Dash::KEY</span> =&gt; <span class="ident">Dash::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
+    <span class="ident">GivableAttribute::KEY</span> =&gt; <span class="ident">GivableAttribute::build</span>(<span class="ident">commands</span>, <span class="ident">target</span>, <span class="ident">level</span>, <span class="ident">position</span>, <span class="ident">entry</span>.<span class="number">1</span>),
     <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Attempted to load invalid attribute with name {}&quot;</span>, <span class="ident">entry</span>.<span class="number">0</span>),
   }
 }
 
 <span class="kw">mod</span> <span class="ident">checkpoint</span>;
+<span class="kw">mod</span> <span class="ident">dash</span>;
 <span class="kw">mod</span> <span class="ident">deadly</span>;
+<span class="kw">mod</span> <span class="ident">give</span>;
 <span class="kw">mod</span> <span class="ident">goal</span>;
 <span class="kw">mod</span> <span class="ident">lex</span>;
 <span class="kw">mod</span> <span class="ident">moving</span>;
 <span class="kw">mod</span> <span class="ident">player</span>;
 <span class="kw">mod</span> <span class="ident">solid</span>;
 <span class="kw">mod</span> <span class="ident">transition</span>;
-<span class="kw">mod</span> <span class="ident">dash</span>;
-<span class="kw">mod</span> <span class="ident">give</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">checkpoint</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">dash</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">deadly</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">give</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">goal</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">moving</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">player</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">solid</span>::<span class="kw-2">*</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">transition</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">dash</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">give</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::lex</span>::{<span class="ident">AttributeEntry</span>, <span class="ident">ParseArgumentItem</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::physics::PlayerSimulationSteps</span>;
@@ -147,24 +142,19 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AttributePlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">AttributePlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
-      .<span class="ident">add_system</span>(
-        <span class="ident">moving_system</span>
-          .<span class="ident">system</span>()
-          .<span class="ident">label</span>(<span class="ident">MovingAttributeSystemSteps::ApplyDeltaTranslation</span>),
-      )
+      .<span class="ident">add_system</span>(<span class="ident">moving_system</span>.<span class="ident">label</span>(<span class="ident">MovingAttributeSystemSteps::ApplyDeltaTranslation</span>))
       .<span class="ident">add_system</span>(
         <span class="ident">move_player</span>
-          .<span class="ident">system</span>()
           .<span class="ident">after</span>(<span class="ident">MovingAttributeSystemSteps::ApplyDeltaTranslation</span>)
           .<span class="ident">after</span>(<span class="ident">PlayerSimulationSteps::ApplyMoving</span>),
       )
-      .<span class="ident">add_system</span>(<span class="ident">on_death_system</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">on_checkpoint_system</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">on_transition_system</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">on_goal_system</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">on_give_system</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">on_death_system</span>)
+      .<span class="ident">add_system</span>(<span class="ident">on_checkpoint_system</span>)
+      .<span class="ident">add_system</span>(<span class="ident">on_transition_system</span>)
+      .<span class="ident">add_system</span>(<span class="ident">on_goal_system</span>)
+      .<span class="ident">add_system</span>(<span class="ident">on_give_system</span>);
   }
 }
 </code></pre></div>

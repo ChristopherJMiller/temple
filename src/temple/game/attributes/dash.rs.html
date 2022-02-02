@@ -89,6 +89,7 @@
 <span id="88">88</span>
 <span id="89">89</span>
 <span id="90">90</span>
+<span id="91">91</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Grants the player a dash. `dash()`</span>
 
 <span class="kw">use</span> <span class="ident">std::mem</span>;
@@ -97,9 +98,10 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Attribute</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Dash</span> {
   <span class="ident">charges</span>: <span class="ident">u32</span>,
   <span class="ident">capacity</span>: <span class="ident">u32</span>,
@@ -110,19 +112,21 @@
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Dash</span> {
   <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
     <span class="kw">const</span> <span class="ident">STARTING_CAP</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">1</span>;
-    <span class="self">Self</span> { 
-      <span class="ident">charges</span>: <span class="ident">STARTING_CAP</span>, 
-      <span class="ident">capacity</span>: <span class="ident">STARTING_CAP</span>, 
-      <span class="ident">holding</span>: <span class="ident">Default::default</span>(), 
-      <span class="ident">hold_vector</span>: <span class="ident">Default::default</span>() 
+    <span class="self">Self</span> {
+      <span class="ident">charges</span>: <span class="ident">STARTING_CAP</span>,
+      <span class="ident">capacity</span>: <span class="ident">STARTING_CAP</span>,
+      <span class="ident">holding</span>: <span class="ident">Default::default</span>(),
+      <span class="ident">hold_vector</span>: <span class="ident">Default::default</span>(),
     }
   }
 }
 
 <span class="kw">const</span> <span class="ident">MAX_DIST_SQUARED</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">3.0</span> <span class="op">*</span> <span class="ident">SPRITE_SIZE</span> <span class="kw">as</span> <span class="ident">f32</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DashCrosshair</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DashCounter</span>(<span class="kw">pub</span> <span class="ident">u32</span>);
 
 <span class="kw">impl</span> <span class="ident">Dash</span> {
@@ -174,9 +178,7 @@
   <span class="kw">const</span> <span class="ident">KEY</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;dash&quot;</span>;
 
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="kw">_</span>: <span class="ident">LevelId</span>, <span class="kw">_</span>: <span class="ident">Vec2</span>, <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
-    <span class="ident">commands</span>
-      .<span class="ident">entity</span>(<span class="ident">target</span>)
-      .<span class="ident">insert</span>(<span class="ident">Dash::default</span>());
+    <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">target</span>).<span class="ident">insert</span>(<span class="ident">Dash::default</span>());
   }
 }
 </code></pre></div>

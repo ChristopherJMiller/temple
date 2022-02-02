@@ -113,12 +113,12 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SfxPlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">SfxPlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>()
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">SfxHandles</span><span class="op">&gt;</span>()
-      .<span class="ident">add_startup_system</span>(<span class="ident">init_channel_volume</span>.<span class="ident">system</span>())
-      .<span class="ident">add_startup_system</span>(<span class="ident">load_sfx</span>.<span class="ident">system</span>());
+      .<span class="ident">add_startup_system</span>(<span class="ident">init_channel_volume</span>)
+      .<span class="ident">add_startup_system</span>(<span class="ident">load_sfx</span>);
   }
 }
 </code></pre></div>

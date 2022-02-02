@@ -192,6 +192,7 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
+<span id="194">194</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!</span>
@@ -248,6 +249,7 @@
 }
 
 <span class="doccomment">/// `moving` attribute state.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MovingSprite</span> {
   <span class="kw">pub</span> <span class="ident">dir</span>: <span class="ident">MovingDirection</span>,
   <span class="kw">pub</span> <span class="ident">duration</span>: <span class="ident">f32</span>,
@@ -362,7 +364,7 @@
 }
 
 <span class="doccomment">/// System to move all moving sprites per change in [Time].</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">moving_system</span>(<span class="ident">time</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>, <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ColliderPosition</span>)<span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">moving_system</span>(<span class="ident">time</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ColliderPositionComponent</span>)<span class="op">&gt;</span>) {
   <span class="ident">moving_sprite</span>.<span class="ident">for_each_mut</span>(<span class="op">|</span>(<span class="kw-2">mut</span> <span class="ident">moving</span>, <span class="kw-2">mut</span> <span class="ident">collider_position</span>)<span class="op">|</span> {
     <span class="ident">moving</span>.<span class="ident">increment_time</span>(<span class="ident">time</span>.<span class="ident">delta</span>().<span class="ident">as_secs_f32</span>());
     <span class="ident">collider_position</span>.<span class="number">0</span> <span class="op">=</span> <span class="ident">moving</span>.<span class="ident">get_position</span>().<span class="ident">into</span>();
@@ -373,10 +375,10 @@
 <span class="doccomment">/// TODO: Make it move all entities with a Movable Attribute instead of just the</span>
 <span class="doccomment">/// player.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">move_player</span>(
-  <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">RigidBodyForces</span>, <span class="kw-2">&amp;mut</span> <span class="ident">Player</span>)<span class="op">&gt;</span>,
-  <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ColliderPosition</span>)<span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">RigidBodyForcesComponent</span>, <span class="kw-2">&amp;mut</span> <span class="ident">Player</span>)<span class="op">&gt;</span>,
+  <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ColliderPositionComponent</span>)<span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">forces</span>, <span class="ident">player_c</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">single_mut</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">forces</span>, <span class="ident">player_c</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">get_single_mut</span>() {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">entity</span>) <span class="op">=</span> <span class="ident">player_c</span>.<span class="ident">on_moving_entity</span> {
       <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">moving</span>) <span class="op">=</span> <span class="ident">moving_sprite</span>.<span class="ident">get_component</span>::<span class="op">&lt;</span><span class="ident">MovingSprite</span><span class="op">&gt;</span>(<span class="ident">entity</span>) {
         <span class="kw">let</span> <span class="ident">force</span>: <span class="ident">Vector</span><span class="op">&lt;</span><span class="ident">Real</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">7.0</span> <span class="op">*</span> <span class="ident">moving</span>.<span class="ident">get_passenger_force</span>()).<span class="ident">into</span>();

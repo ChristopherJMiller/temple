@@ -213,6 +213,7 @@
 <span id="212">212</span>
 <span id="213">213</span>
 <span id="214">214</span>
+<span id="215">215</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 <span class="kw">use</span> <span class="ident">std::fs</span>::{<span class="ident">create_dir</span>, <span class="ident">read</span>, <span class="ident">read_dir</span>, <span class="ident">write</span>};
 
@@ -306,7 +307,8 @@
     <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">checkpoint_state</span>
   }
 
-  <span class="doccomment">/// Returns true if any exit is cleared on this level. Used for `NoOverworld` level order calculations</span>
+  <span class="doccomment">/// Returns true if any exit is cleared on this level. Used for `NoOverworld`</span>
+  <span class="doccomment">/// level order calculations</span>
   <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">an_exit_cleared</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
     <span class="self">self</span>.<span class="ident">exits_cleared</span>.<span class="ident">iter</span>().<span class="ident">find</span>(<span class="op">|</span><span class="op">&amp;&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>).<span class="ident">is_some</span>()
   }

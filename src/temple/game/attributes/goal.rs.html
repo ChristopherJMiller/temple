@@ -53,6 +53,8 @@
 <span id="52">52</span>
 <span id="53">53</span>
 <span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Completes an exit for the active level. `goal(exit number)`</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -64,6 +66,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Goal</span>(<span class="kw">pub</span> <span class="ident">usize</span>);
 
 <span class="kw">fn</span> <span class="ident">parse_params</span>(<span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) -&gt; <span class="ident">usize</span> {
@@ -88,14 +91,15 @@
 
     <span class="kw">let</span> <span class="ident">collider</span> <span class="op">=</span> <span class="ident">ColliderBundle</span> {
       <span class="ident">position</span>: <span class="ident">position</span>.<span class="ident">into</span>(),
-      <span class="ident">shape</span>: <span class="ident">ColliderShape::cuboid</span>(<span class="number">0.5</span>, <span class="number">0.5</span>),
-      <span class="ident">material</span>: <span class="ident">ColliderMaterial::default</span>(),
+      <span class="ident">shape</span>: <span class="ident">ColliderShape::cuboid</span>(<span class="number">0.5</span>, <span class="number">0.5</span>).<span class="ident">into</span>(),
+      <span class="ident">material</span>: <span class="ident">ColliderMaterialComponent::default</span>(),
       <span class="ident">flags</span>: <span class="ident">ColliderFlags</span> {
         <span class="ident">collision_groups</span>: <span class="ident">DETECTS_PLAYER_GROUP</span>,
         <span class="ident">solver_groups</span>: <span class="ident">NONE_GROUP</span>,
         <span class="ident">active_events</span>: <span class="ident">ActiveEvents::CONTACT_EVENTS</span>,
         ..<span class="ident">Default::default</span>()
-      },
+      }
+      .<span class="ident">into</span>(),
       ..<span class="ident">Default::default</span>()
     };
 

@@ -63,6 +63,8 @@
 <span id="62">62</span>
 <span id="63">63</span>
 <span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles contant and interaction events from rapier</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -73,17 +75,19 @@
 
 <span class="doccomment">/// Subscribes an Entity to collision events. Can be paired with attributes to</span>
 <span class="doccomment">/// be consumed with other systems.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ContactSubscription</span>;
 
 <span class="doccomment">/// Tags entity that a player contacted it.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerContacted</span>;
 
 <span class="doccomment">/// Player contact query, for attributes that are stateless.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ContactTagQuery</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;s</span>, <span class="ident">K</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Query</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">K</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>)<span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ContactTagQuery</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="lifetime">&#39;world</span>, <span class="lifetime">&#39;state</span>, <span class="ident">K</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Query</span><span class="op">&lt;</span><span class="lifetime">&#39;world</span>, <span class="lifetime">&#39;state</span>, <span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">K</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span>)<span class="op">&gt;</span>;
 
 <span class="comment">// Player contact query, for attributes that need access to state within the</span>
 <span class="comment">// system.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ContactQuery</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, <span class="lifetime">&#39;s</span>, <span class="ident">K</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Query</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span>, (<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="ident">K</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">ContactQuery</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span>, <span class="lifetime">&#39;world</span>, <span class="lifetime">&#39;state</span>, <span class="ident">K</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Query</span><span class="op">&lt;</span><span class="lifetime">&#39;world</span>, <span class="lifetime">&#39;state</span>, (<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;s</span> <span class="ident">K</span>), <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PlayerContacted</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// Check if an entity is subscribed to collision events, and hasn&#39;t received</span>
 <span class="doccomment">/// one yet.</span>
@@ -123,8 +127,8 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CollisionPlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">CollisionPlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
-    <span class="ident">app</span>.<span class="ident">add_system</span>(<span class="ident">handle_collision_events</span>.<span class="ident">system</span>());
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
+    <span class="ident">app</span>.<span class="ident">add_system</span>(<span class="ident">handle_collision_events</span>);
   }
 }
 </code></pre></div>

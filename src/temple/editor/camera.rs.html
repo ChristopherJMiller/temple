@@ -97,6 +97,7 @@
 <span id="96">96</span>
 <span id="97">97</span>
 <span id="98">98</span>
+<span id="99">99</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy::render::camera</span>::{<span class="ident">Camera</span>, <span class="ident">OrthographicProjection</span>};
 <span class="kw">use</span> <span class="ident">kurinji::Kurinji</span>;
@@ -104,6 +105,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ui::EditorState</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input</span>::{<span class="ident">DOWN</span>, <span class="ident">EDIT_ZOOM_IN</span>, <span class="ident">EDIT_ZOOM_OUT</span>, <span class="ident">LEFT</span>, <span class="ident">RIGHT</span>, <span class="ident">UP</span>};
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EditorCamera</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_camera_input</span>(
@@ -117,7 +119,7 @@
     <span class="kw">return</span>;
   }
 
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">trans</span>) <span class="op">=</span> <span class="ident">camera</span>.<span class="ident">single_mut</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">trans</span>) <span class="op">=</span> <span class="ident">camera</span>.<span class="ident">get_single_mut</span>() {
     <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">UP</span>) {
       <span class="ident">trans</span>.<span class="ident">translation</span>.<span class="ident">y</span> <span class="op">+</span><span class="op">=</span> <span class="ident">time</span>.<span class="ident">delta_seconds</span>() <span class="op">*</span> <span class="ident">move_speed</span>.<span class="number">0</span>;
     }
@@ -155,7 +157,7 @@
     <span class="kw">return</span>;
   }
 
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">camera</span>, <span class="kw-2">mut</span> <span class="ident">proj</span>)) <span class="op">=</span> <span class="ident">camera</span>.<span class="ident">single_mut</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">camera</span>, <span class="kw-2">mut</span> <span class="ident">proj</span>)) <span class="op">=</span> <span class="ident">camera</span>.<span class="ident">get_single_mut</span>() {
     <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">EDIT_ZOOM_IN</span>) {
       <span class="ident">proj</span>.<span class="ident">scale</span> <span class="op">=</span> (<span class="ident">proj</span>.<span class="ident">scale</span> <span class="op">+</span> <span class="ident">time</span>.<span class="ident">delta_seconds</span>()).<span class="ident">min</span>(<span class="number">2.0</span>);
       <span class="ident">camera</span>.<span class="ident">projection_matrix</span> <span class="op">=</span> <span class="ident">Mat4::orthographic_rh</span>(
@@ -188,11 +190,11 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">EditorCameraPlugin</span>;
 
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">EditorCameraPlugin</span> {
-  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">AppBuilder</span>) {
+  <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
       .<span class="ident">insert_resource</span>(<span class="ident">CameraMoveSpeed</span>(<span class="ident">get_camera_speed</span>(<span class="number">1.0</span> <span class="op">/</span> <span class="number">3.0</span>)))
-      .<span class="ident">add_system</span>(<span class="ident">handle_camera_input</span>.<span class="ident">system</span>())
-      .<span class="ident">add_system</span>(<span class="ident">handle_camera_zooming</span>.<span class="ident">system</span>());
+      .<span class="ident">add_system</span>(<span class="ident">handle_camera_input</span>)
+      .<span class="ident">add_system</span>(<span class="ident">handle_camera_zooming</span>);
   }
 }
 </code></pre></div>

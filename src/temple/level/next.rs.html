@@ -40,9 +40,10 @@
 <span id="39">39</span>
 <span id="40">40</span>
 <span id="41">41</span>
+<span id="42">42</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::load</span>::{<span class="ident">TransitionLevel</span>, <span class="ident">LoadLevel</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::load</span>::{<span class="ident">LoadLevel</span>, <span class="ident">TransitionLevel</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::credits::PlayCredits</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::UnloadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">GameMode</span>, <span class="ident">TempleState</span>};
@@ -50,6 +51,7 @@
 
 <span class="doccomment">/// Command to determine next level to play, and transition to that level. Used</span>
 <span class="doccomment">/// after reaching a [Goal] when in `NoOverworld` mode.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NextLevel</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">auto_next_level</span>(
@@ -71,7 +73,7 @@
             <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">TransitionLevel</span>(<span class="kw-2">*</span><span class="ident">next_level</span>));
           } <span class="kw">else</span> {
             <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;auto_next_level&quot;</span>, <span class="string">&quot;End of Game!&quot;</span>);
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">single</span>() {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">get_single</span>() {
               <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">insert</span>(<span class="ident">UnloadLevel</span>);
               <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">PlayCredits</span>);
             }

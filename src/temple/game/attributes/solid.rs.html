@@ -30,6 +30,8 @@
 <span id="29">29</span>
 <span id="30">30</span>
 <span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Makes sprite solid to the player. `solid()`</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -40,6 +42,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::collision_groups</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Solid</span>;
 
 <span class="kw">impl</span> <span class="ident">Attribute</span> <span class="kw">for</span> <span class="ident">Solid</span> {
@@ -48,13 +51,14 @@
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">target</span>: <span class="ident">Entity</span>, <span class="kw">_</span>: <span class="ident">LevelId</span>, <span class="ident">position</span>: <span class="ident">Vec2</span>, <span class="kw">_</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParseArgumentItem</span><span class="op">&gt;</span>) {
     <span class="kw">let</span> <span class="ident">collider</span> <span class="op">=</span> <span class="ident">ColliderBundle</span> {
       <span class="ident">position</span>: <span class="ident">position</span>.<span class="ident">into</span>(),
-      <span class="ident">shape</span>: <span class="ident">ColliderShape::cuboid</span>(<span class="number">0.5</span>, <span class="number">0.5</span>),
-      <span class="ident">material</span>: <span class="ident">ColliderMaterial::default</span>(),
+      <span class="ident">shape</span>: <span class="ident">ColliderShape::cuboid</span>(<span class="number">0.5</span>, <span class="number">0.5</span>).<span class="ident">into</span>(),
+      <span class="ident">material</span>: <span class="ident">ColliderMaterialComponent::default</span>(),
       <span class="ident">flags</span>: <span class="ident">ColliderFlags</span> {
         <span class="ident">collision_groups</span>: <span class="ident">SOLID_GROUP</span>,
         <span class="ident">solver_groups</span>: <span class="ident">SOLID_GROUP</span>,
         ..<span class="ident">Default::default</span>()
-      },
+      }
+      .<span class="ident">into</span>(),
       ..<span class="ident">Default::default</span>()
     };
 

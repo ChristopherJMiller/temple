@@ -204,6 +204,9 @@
 <span id="203">203</span>
 <span id="204">204</span>
 <span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all title screen ui elements and state.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -216,12 +219,15 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::VERSION</span>;
 
 <span class="doccomment">/// Tag command to load the title screen.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LoadTitleScreen</span>;
 
 <span class="doccomment">/// Tag attached to all title screen related entities.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TitleScreen</span>;
 
 <span class="doccomment">/// Tag to disable the title screen;</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HideTitleScreen</span>;
 
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TitleMenuStates</span> {
@@ -314,7 +320,7 @@
   <span class="ident">ensure_not_loaded_query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">TitleScreen</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">query</span>.<span class="ident">single</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">query</span>.<span class="ident">get_single</span>() {
     <span class="kw">if</span> <span class="ident">ensure_not_loaded_query</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">is_none</span>() {
       <span class="ident">build_title_screen</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="kw-2">&amp;</span><span class="ident">asset_server</span>);
       <span class="ident">title_menu_state</span>.<span class="ident">show_title_menu_egui</span> <span class="op">=</span> <span class="bool-val">true</span>;
@@ -331,7 +337,7 @@
   <span class="ident">tag</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">HideTitleScreen</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">elements</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">TitleScreen</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">tag</span>.<span class="ident">single</span>() {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">tag</span>.<span class="ident">get_single</span>() {
     <span class="kw">for</span> <span class="ident">ent</span> <span class="kw">in</span> <span class="ident">elements</span>.<span class="ident">iter</span>() {
       <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>();
     }
@@ -370,7 +376,7 @@
       <span class="ident">egui::Area::new</span>(<span class="string">&quot;Saves&quot;</span>)
         .<span class="ident">fixed_pos</span>(<span class="ident">egui::pos2</span>((<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">/</span> <span class="number">2.0</span>) <span class="op">-</span> <span class="number">200.0</span>, <span class="ident">window_desc</span>.<span class="ident">height</span> <span class="op">/</span> <span class="number">2.0</span>))
         .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
-          <span class="ident">ScrollArea::auto_sized</span>().<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+          <span class="ident">ScrollArea::new</span>([<span class="bool-val">false</span>; <span class="number">2</span>]).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
             <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">add_sized</span>([<span class="number">400.0</span>, <span class="number">35.0</span>], <span class="ident">egui::Button::new</span>(<span class="string">&quot;New Save&quot;</span>)).<span class="ident">clicked</span>() {
               <span class="ident">title_menu_state</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">TitleMenuStates::NewSavePrompt</span>;
               <span class="ident">title_menu_state</span>.<span class="ident">save_name_input</span> <span class="op">=</span> <span class="ident">String::default</span>();
