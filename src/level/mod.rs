@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use load::{apply_save_on_load, load_level, prepare_level, transition_level, unload_level};
 use verify::verify_level_files;
 
-use self::next::auto_next_level;
+use self::{next::auto_next_level, load::wait_until_unloaded};
 
 pub mod config;
 pub mod load;
@@ -22,6 +22,7 @@ impl Plugin for LevelPlugin {
   fn build(&self, app: &mut App) {
     app
       .add_startup_system(verify_level_files)
+      .add_system(wait_until_unloaded)
       .add_system(prepare_level)
       .add_system(load_level)
       .add_system(unload_level)

@@ -8,6 +8,7 @@
 //! [LoadLevel] entity to instruct an unload.
 
 use bevy::asset::LoadState;
+use bevy::ecs::system::QuerySingleError;
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioSource};
 use bevy_rapier2d::prelude::RigidBodyPositionComponent;
@@ -50,10 +51,34 @@ pub struct LevelLoadedSprite;
 #[derive(Component)]
 pub struct TransitionLevel(pub LevelId);
 
+/// Instruction to not [LoadLevel] until previous level is unloaded.
+#[derive(Component)]
+pub struct WaitUntilUnloaded;
+
 /// Instruction used by transition level to prevent the same music from being
 /// replayed.
 #[derive(Component)]
 pub struct KeepMusic;
+
+pub fn wait_until_unloaded(
+  mut commands: Commands,
+  loaded_level: Query<(Entity, &LoadLevel), (With<LevelLoadComplete>, Without<WaitUntilUnloaded>)>,
+  new_level: Query<Entity, (With<LoadLevel>, With<WaitUntilUnloaded>)>
+) {
+  if let Ok(ent) = new_level.get_single() {
+    match loaded_level.get_single() {
+      Ok(_) => {},
+      Err(err) => match err {
+        QuerySingleError::NoEntities(_) => {
+          commands.entity(ent).remove::<WaitUntilUnloaded>();
+        },
+        QuerySingleError::MultipleEntities(_) => {
+          warn!(target: "wait_until_unloaded", "Multiple fully loaded levels detected. Things may get weird...");
+        },
+    },
+    }
+  }
+}
 
 /// System that prepares the level from files, to be loaded by [load_level]
 pub fn prepare_level(
@@ -64,6 +89,7 @@ pub fn prepare_level(
   mut query: Query<(Entity, &mut LoadLevel), (Without<PreparedLevel>, Without<LevelLoadComplete>)>,
 ) {
   query.for_each_mut(|(e, mut load_level)| {
+    info!(target: "prepare_level", "Loading level {}", load_level.0);
     let in_edit_mode = temple_state.in_edit_mode();
     // Load checkpoint in play mode if avaliable
     if !in_edit_mode {
@@ -106,7 +132,7 @@ pub fn prepare_level(
 /// Can be tracked with [LevelLoadComplete]
 pub fn load_level(
   mut commands: Commands,
-  query: Query<(Entity, &LoadLevel, &PreparedLevel), Without<LevelLoadComplete>>,
+  query: Query<(Entity, &LoadLevel, &PreparedLevel), (Without<LevelLoadComplete>, Without<WaitUntilUnloaded>)>,
   keep_music: Query<&KeepMusic>,
   asset_server: Res<AssetServer>,
   temple_state: Res<TempleState>,
@@ -273,7 +299,7 @@ pub fn transition_level(
         if let Ok((ent, old_level)) = loaded_level.get_single() {
           commands.entity(ent).insert(UnloadLevel);
           let mut level_ent = commands.spawn();
-          level_ent.insert(LoadLevel(trans.0));
+          level_ent.insert(LoadLevel(trans.0)).insert(WaitUntilUnloaded);
           if levels_have_same_music(old_level.0, trans.0) {
             level_ent.insert(KeepMusic);
           } else {

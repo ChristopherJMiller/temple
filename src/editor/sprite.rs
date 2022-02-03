@@ -33,7 +33,7 @@ pub fn create_selected_sprite_cursor(
       commands
         .spawn_bundle(SpriteBundle {
           texture: asset_server.load(get_texture_path(&sprite.texture)),
-          transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
+          transform: Transform::from_translation(Vec3::new(0.0, 0.0, 2.0)),
           ..Default::default()
         })
         .insert(SelectedSpriteEntity(sprite.name.clone(), sprite.clone()));
@@ -50,8 +50,8 @@ pub fn handle_selected_sprite(
   win: Res<Windows>,
   selected_sprite: Res<SelectedSprite>,
   proj: Query<&OrthographicProjection, With<EditorCamera>>,
-  camera_query: Query<&Transform, With<EditorCamera>>,
-  mut trans_query: Query<&mut Transform, With<SelectedSpriteEntity>>,
+  camera_query: Query<&Transform, (With<EditorCamera>, Without<SelectedSpriteEntity>)>,
+  mut trans_query: Query<&mut Transform, (With<SelectedSpriteEntity>, Without<EditorCamera>)>,
 ) {
   if selected_sprite.0.is_some() {
     let camera = camera_query.get_single().expect("failed to find editor camera").clone();
@@ -96,7 +96,7 @@ pub fn handle_placing_sprite(
           let handled_sprite: HandledSprite = (sprite.1.clone(), tile_pos).into();
           level.0.sprites.push(handled_sprite.clone());
           commands.spawn_bundle(SpriteBundle {
-            texture: asset_server.load(handled_sprite.texture.clone().as_str()),
+            texture: asset_server.load(get_texture_path(&handled_sprite.texture.clone())),
             transform: transform.clone(),
             ..Default::default()
           });
