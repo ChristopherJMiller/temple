@@ -477,7 +477,7 @@
       .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
       .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="ident">ui</span>.<span class="ident">label</span>(<span class="string">&quot;Load Level&quot;</span>);
-        <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>, <span class="bool-val">false</span>]).<span class="ident">max_height</span>(<span class="number">100.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+        <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>, <span class="bool-val">true</span>]).<span class="ident">max_height</span>(<span class="number">100.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="kw">let</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">toolbar_state</span>
             .<span class="ident">level_items</span>
             .<span class="ident">iter</span>()
@@ -555,7 +555,7 @@
             <span class="ident">toolbar_state</span>.<span class="ident">show_add_sprite_menu</span> <span class="op">=</span> <span class="bool-val">true</span>;
           }
 
-          <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>; <span class="number">2</span>]).<span class="ident">max_height</span>(<span class="number">500.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+          <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>, <span class="bool-val">true</span>]).<span class="ident">max_height</span>(<span class="number">500.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
             <span class="kw">for</span> <span class="ident">sprite_entry</span> <span class="kw">in</span> <span class="ident">toolbar_state</span>.<span class="ident">loaded_sprites</span>.<span class="ident">iter</span>() {
               <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="ident">sprite_entry</span>.<span class="ident">name</span>.<span class="ident">as_str</span>()).<span class="ident">clicked</span>() {
                 <span class="ident">selected_sprite</span>.<span class="number">0</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">sprite_entry</span>.<span class="ident">clone</span>());
@@ -582,7 +582,7 @@
       .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
       .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="ident">ui</span>.<span class="ident">label</span>(<span class="string">&quot;Select Background Music&quot;</span>);
-        <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>; <span class="number">2</span>]).<span class="ident">max_height</span>(<span class="number">100.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+        <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>, <span class="bool-val">true</span>]).<span class="ident">max_height</span>(<span class="number">100.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="kw">let</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">toolbar_state</span>
             .<span class="ident">music_items</span>
             .<span class="ident">iter</span>()
