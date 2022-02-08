@@ -29,12 +29,8 @@ jobs:
     - name: Get Version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-    - name: Cache target
-      id: cache-windows-target
-      uses: actions/cache@v2
-      with:
-        path: target
-        key: ${{ runner.os }}-windows-target
+    - name: Setup Cache
+      uses: Swatinem/rust-cache@v1
     - name: Build Windows Game
       env:
         VERSION: ${{ steps.get_version.outputs.VERSION }}
@@ -64,12 +60,8 @@ jobs:
     - name: Get Version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-    - name: Cache target
-      id: cache-linux-target
-      uses: actions/cache@v2
-      with:
-        path: target
-        key: ${{ runner.os }}-linux-target
+    - name: Setup Cache
+      uses: Swatinem/rust-cache@v1
     - name: Build Linux Game
       env:
         VERSION: ${{ steps.get_version.outputs.VERSION }}

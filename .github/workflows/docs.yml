@@ -21,6 +21,8 @@ jobs:
       with:
         toolchain: stable
         override: true
+    - name: Setup Cache
+      uses: Swatinem/rust-cache@v1
     - name: Build Docs
       run: cargo doc --quiet --no-deps --bin temple
     - name: Deploy
