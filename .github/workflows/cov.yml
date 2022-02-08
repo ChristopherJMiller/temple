@@ -23,7 +23,7 @@ jobs:
         toolchain: nightly
         override: true
     - name: Download grcov
-      run: curl -L https://github.com/mozilla/grcov/releases/download/v0.8.6/grcov-v0.8.6-x86_64-unknown-linux-gnu.tar.gz | tar jzxf -
+      run: curl -L https://github.com/mozilla/grcov/releases/download/v0.8.6/grcov-v0.8.6-x86_64-unknown-linux-gnu.tar.gz | tar zxf -
     - name: Build Project
       run: cargo build
     - name: Run tests
