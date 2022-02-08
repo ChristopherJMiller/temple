@@ -2,6 +2,12 @@
 <p align="center">
   A platformer designed around configurability.
 </p>
+<p align="center">
+  <a href="https://codecov.io/gh/ChristopherJMiller/temple">
+    <img src="https://codecov.io/gh/ChristopherJMiller/temple/branch/main/graph/badge.svg?token=80GAR043MP"/>
+  </a>
+  <img src="https://img.shields.io/github/v/tag/ChristopherJMiller/temple?label=latest%20release" />
+</p>
 
 ## About
 
