@@ -48,7 +48,7 @@ pub struct UnloadLevel;
 pub struct LevelLoadedSprite;
 
 /// Instruction to unload current level and transition to another.
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct TransitionLevel(pub LevelId);
 
 /// Instruction to not [LoadLevel] until previous level is unloaded.

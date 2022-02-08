@@ -3,6 +3,7 @@ install/
 windows/
 windows*.zip
 saves/
+test/
 
 *.profraw
 *.info

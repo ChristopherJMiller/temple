@@ -21,7 +21,11 @@ use crate::level::config::LevelManifest;
 use crate::util::settings::{GameFile, LevelTransistionType};
 
 /// Asset Root Location
+#[cfg(not(test))]
 const ASSET_PATH: &str = "assets/";
+/// Asset Root Location for Tests
+#[cfg(test)]
+const ASSET_PATH: &str = "test/assets/";
 
 /// `game.toml` location
 pub const GAME_SETTING_PATH: &str = concatcp!(ASSET_PATH, "game.toml");
@@ -42,7 +46,9 @@ pub const MUSIC_DIR_PATH: &str = concatcp!(ASSET_PATH, "audio/music/");
 pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
   let mut base = current_exe().unwrap();
   base.pop();
-  if cfg!(debug_assertions) || cfg!(feature = "devrootpath") {
+  if cfg!(test) {
+    base.join("../../..").join(path)
+  } else if cfg!(debug_assertions) || cfg!(feature = "devrootpath") {
     base.join("../..").join(path)
   } else {
     base.join(path)

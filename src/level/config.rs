@@ -62,7 +62,7 @@ impl Into<LevelMap> for LevelMapFile {
   }
 }
 
-#[derive(Serialize, Deserialize, Clone, Default, Debug)]
+#[derive(Serialize, Deserialize, Clone, Default, Debug, PartialEq)]
 pub struct LevelMapFileSpriteEntry {
   /// Position in the level (tile size independent)
   pub pos: IVec2,
@@ -130,7 +130,7 @@ impl LevelMapSpriteEntry {
 // ==== In Engine Definitions (Consumes Manifests)
 
 /// [LevelSpriteEntry] joined with position from [LevelMapSprite]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct HandledSprite {
   /// Sprite name and identifier.
   pub name: String,
@@ -145,6 +145,16 @@ pub struct HandledSprite {
 }
 
 impl HandledSprite {
+  pub fn new<S: ToString, I: Into<IVec2>>(name: S, pos: I, offset: I, texture: S, attributes: Vec<S>) -> Self {
+    Self {
+      name: name.to_string(),
+      pos: pos.into(),
+      offset: offset.into(),
+      texture: texture.to_string(),
+      attributes: attributes.iter().map(|x| x.to_string()).collect(),
+    }
+  }
+
   pub fn join_level_definitions(
     map_sprites: Vec<LevelMapSpriteEntry>,
     entries: Vec<LevelSpriteEntry>,
@@ -158,13 +168,7 @@ impl HandledSprite {
       .iter()
       .map(|map_sprite| {
         if let Some(sprite_entry) = entries_map.get(&map_sprite.name) {
-          HandledSprite {
-            name: sprite_entry.name.clone(),
-            pos: map_sprite.pos,
-            offset: sprite_entry.offset,
-            texture: sprite_entry.texture.clone(),
-            attributes: sprite_entry.attributes.clone(),
-          }
+          HandledSprite::new(sprite_entry.name.clone(), map_sprite.pos, sprite_entry.offset, sprite_entry.texture.clone(), sprite_entry.attributes.clone())
         } else {
           panic!("Could not find sprite entry for {}", map_sprite.name);
         }
@@ -212,7 +216,7 @@ impl From<(LevelSpriteEntry, IVec2)> for HandledSprite {
 
 /// Stored object of a level, stores associated info and list of sprites used in
 /// level
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Level {
   /// Level Name
   pub name: String,
@@ -246,5 +250,49 @@ impl Into<(LevelManifest, LevelMap)> for Level {
     let map = LevelMap { sprites: map_sprites };
 
     (manifest, map)
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use crate::level::config::*;
+  use crate::level::util::*;
+
+  #[test]
+  fn test_config_transformations() {
+    const LEVEL_NAME: &str = "test level";
+    const SPRITE_NAME: &str = "sprite";
+    const ATTR: &str = "solid";
+
+    // Set up Level
+    let level = Level {
+      name: LEVEL_NAME.to_string(),
+      music: "test.ogg".to_string(),
+      sprites: vec![
+        HandledSprite::new(SPRITE_NAME, (0, 0), (0, 0), "", vec![ATTR]),
+      ],
+    };
+
+    let level_copy = level.clone();
+
+    // Decompose level into serializable manifests
+    let (manifest, map) = level.into();
+    let map_file: LevelMapFile = map.into();
+
+    // Verify contents
+    assert_eq!(manifest.name, LEVEL_NAME.to_string());
+    assert_eq!(manifest.sprites[0].name, SPRITE_NAME);
+    assert_eq!(manifest.sprites[0].attributes[0], ATTR);
+    assert_eq!(map_file.sprite_types[&0], SPRITE_NAME.to_string());
+    assert_eq!(map_file.sprite_entries[0], LevelMapFileSpriteEntry {
+      pos: (0, 0).into(),
+      id: 0
+    });
+
+    // Reform level out of manifests
+    let new_level = prepare_level_from_manifests(manifest, map_file.into());
+
+    // Verify equal
+    assert_eq!(level_copy, new_level);
   }
 }
