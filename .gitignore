@@ -4,4 +4,5 @@ windows/
 windows*.zip
 saves/
 
-default.profraw
+*.profraw
+*.info
