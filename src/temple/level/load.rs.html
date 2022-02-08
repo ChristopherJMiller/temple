@@ -365,7 +365,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LevelLoadedSprite</span>;
 
 <span class="doccomment">/// Instruction to unload current level and transition to another.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TransitionLevel</span>(<span class="kw">pub</span> <span class="ident">LevelId</span>);
 
 <span class="doccomment">/// Instruction to not [LoadLevel] until previous level is unloaded.</span>
