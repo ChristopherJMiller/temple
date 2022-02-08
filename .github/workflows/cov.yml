@@ -20,8 +20,9 @@ jobs:
     - name: Install latest nightly
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly
+        toolchain: nightly-2022-02-06
         override: true
+        default: true
         components: llvm-tools-preview
     - name: Download grcov
       run: curl -L https://github.com/mozilla/grcov/releases/download/v0.8.6/grcov-v0.8.6-x86_64-unknown-linux-gnu.tar.gz | tar zxf -
