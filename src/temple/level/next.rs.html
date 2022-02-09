@@ -104,6 +104,10 @@
 <span id="103">103</span>
 <span id="104">104</span>
 <span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::load</span>::{<span class="ident">LoadLevel</span>, <span class="ident">TransitionLevel</span>};
@@ -153,8 +157,12 @@
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::<span class="kw-2">*</span>;
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings</span>::<span class="kw-2">*</span>;
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
+  <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::<span class="kw-2">*</span>;
+  <span class="kw">use</span> <span class="ident">std::fs</span>;
 
   <span class="kw">fn</span> <span class="ident">setup_world</span>(<span class="ident">current_level</span>: <span class="ident">LevelId</span>) -&gt; (<span class="ident">World</span>, <span class="ident">SystemStage</span>) {
+    <span class="ident">fs::create_dir_all</span>(<span class="ident">from_game_root</span>(<span class="ident">LEVEL_DIR_PATH</span>)).<span class="ident">unwrap</span>();
+
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">world</span> <span class="op">=</span> <span class="ident">World::default</span>();
 
     <span class="comment">// Set up Resources</span>
