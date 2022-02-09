@@ -69,3 +69,26 @@ pub fn get_game_file() -> GameFile {
     panic!("Failed to find game file at path {}", GAME_SETTING_PATH);
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use crate::util::settings::*;
+  use crate::util::files::*;
+  use std::fs;
+
+  #[test]
+  #[should_panic]
+  fn test_game_file_load() {
+    fs::create_dir_all(from_game_root(ASSET_PATH)).unwrap();
+
+    let game_file = GameFile::default();
+    fs::write(from_game_root(GAME_SETTING_PATH), toml::to_string_pretty(&game_file).unwrap()).unwrap();
+
+    let read_game_file = get_game_file();
+    assert_eq!(game_file.title, read_game_file.title);
+
+    fs::remove_file(from_game_root(GAME_SETTING_PATH)).unwrap();
+
+    get_game_file();
+  }
+}

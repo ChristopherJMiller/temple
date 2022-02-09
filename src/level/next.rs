@@ -47,8 +47,12 @@ mod tests {
   use crate::state::game_state::*;
   use crate::util::settings::*;
   use crate::level::LevelId;
+  use crate::util::files::*;
+  use std::fs;
 
   fn setup_world(current_level: LevelId) -> (World, SystemStage) {
+    fs::create_dir_all(from_game_root(LEVEL_DIR_PATH)).unwrap();
+
     let mut world = World::default();
 
     // Set up Resources

@@ -120,15 +120,18 @@ impl GameSaveState {
     format!("L{}", id)
   }
 
-  pub fn new(name: String) -> Self {
+  pub fn new<S: ToString>(name: S) -> Self {
     Self {
-      name,
+      name: name.to_string(),
       level_clears: Default::default(),
     }
   }
 }
 
+#[cfg(not(test))]
 const SAVES_PATH: &str = "saves";
+#[cfg(test)]
+const SAVES_PATH: &str = "test/saves";
 
 /// [Res] of loaded save files
 pub struct AvaliableSaves(pub HashMap<String, GameSaveState>);
@@ -203,13 +206,41 @@ mod tests {
   #[test]
   fn test_game_save() {
     let mut save = LevelSaveState::default();
-    assert_eq!(false, save.exit_cleared(0));
+    assert!(!save.exit_cleared(0));
     save.clear_exit(1);
-    assert_eq!(false, save.exit_cleared(0));
-    assert_eq!(true, save.exit_cleared(1));
-    assert_eq!(false, save.exit_cleared(2));
+    assert!(!save.exit_cleared(0));
+    assert!(save.exit_cleared(1));
+    assert!(!save.exit_cleared(2));
     save.clear_exit(5);
-    assert_eq!(true, save.exit_cleared(1));
-    assert_eq!(true, save.exit_cleared(5));
+    assert!(save.exit_cleared(1));
+    assert!(save.exit_cleared(5));
+    assert!(save.an_exit_cleared());
+
+    let mut save2 = LevelSaveState::new_with_checkpoint((0, 5.0, 10.0));
+    assert_eq!(save2.checkpoint().unwrap(), (0, 5.0, 10.0));
+    save2.set_checkpoint((0, 10.0, 20.0));
+    assert_eq!(save2.checkpoint().unwrap(), (0, 10.0, 20.0));
+  }
+
+  #[test]
+  fn test_save_bootstrapping() {
+    let _ = bootstrap_and_get_saves();
+    write_saves(&HashMap::from([("test1".to_string(), GameSaveState::new("test1")), ("test2".to_string(), GameSaveState::new("test2"))]));
+    let new_saves = bootstrap_and_get_saves();
+    assert!(new_saves.contains_key("test1"));
+    assert!(new_saves.contains_key("test2"));
+  }
+
+  #[test]
+  fn test_gamesave_key() {
+    assert_eq!("L0".to_string(), GameSaveState::key(0));
+  }
+
+  #[test]
+  fn test_temple_state() {
+    let main_menu = TempleState::default();
+    assert_eq!(GameMode::MainMenu, main_menu.game_mode);
+    let temple_state = TempleState::edit_mode();
+    assert!(temple_state.in_edit_mode());
   }
 }

@@ -22,10 +22,10 @@ use crate::util::settings::{GameFile, LevelTransistionType};
 
 /// Asset Root Location
 #[cfg(not(test))]
-const ASSET_PATH: &str = "assets/";
+pub const ASSET_PATH: &str = "assets/";
 /// Asset Root Location for Tests
 #[cfg(test)]
-const ASSET_PATH: &str = "test/assets/";
+pub const ASSET_PATH: &str = "test/assets/";
 
 /// `game.toml` location
 pub const GAME_SETTING_PATH: &str = concatcp!(ASSET_PATH, "game.toml");

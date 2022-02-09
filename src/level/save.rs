@@ -21,11 +21,11 @@ pub fn save_loaded_level(
     // Save Manifest
     let manifest_path = get_level_manifest_path_from_id(level_id);
     let manifest_contents = toml::to_string_pretty(&manifest).unwrap();
-    if let Err(err) = fs::write(manifest_path, manifest_contents) {
+    if let Err(err) = fs::write(manifest_path.clone(), manifest_contents) {
       if cfg!(not(test)) {
         error!(target: "save_loaded_level", "Was unable to save the level manifest! {}", err.to_string());
       } else {
-        panic!("{}", err.to_string());
+        panic!("Cannot write to {:?}: {}", manifest_path, err.to_string());
       }
     }
 
@@ -84,8 +84,9 @@ mod tests {
     ));
 
     // Bootstrap dirs
-    fs::create_dir_all(LEVEL_DIR_PATH).unwrap();
-    fs::create_dir_all(LEVEL_MAP_DIR_PATH).unwrap();
+    fs::remove_dir_all(from_game_root(ASSET_PATH));
+    fs::create_dir_all(from_game_root(LEVEL_DIR_PATH)).unwrap();
+    fs::create_dir_all(from_game_root(LEVEL_MAP_DIR_PATH)).unwrap();
 
 
     update_stage.run(&mut world);
