@@ -4,7 +4,8 @@ use bevy::prelude::*;
 use load::{apply_save_on_load, load_level, prepare_level, transition_level, unload_level};
 use verify::verify_level_files;
 
-use self::{next::auto_next_level, load::wait_until_unloaded};
+use self::load::wait_until_unloaded;
+use self::next::auto_next_level;
 
 pub mod config;
 pub mod load;

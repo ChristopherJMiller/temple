@@ -57,13 +57,14 @@ impl Plugin for LevelSavePlugin {
 
 #[cfg(test)]
 mod tests {
+  use std::fs;
+
   use crate::level::config::*;
-  use crate::level::save::*;
   use crate::level::load::*;
+  use crate::level::save::*;
   use crate::level::util::*;
   use crate::util::files::*;
-  use std::fs;
-  
+
   #[test]
   fn test_save_loaded_level() {
     const NAME: &str = "test level";
@@ -87,7 +88,6 @@ mod tests {
     fs::remove_dir_all(from_game_root(ASSET_PATH));
     fs::create_dir_all(from_game_root(LEVEL_DIR_PATH)).unwrap();
     fs::create_dir_all(from_game_root(LEVEL_MAP_DIR_PATH)).unwrap();
-
 
     update_stage.run(&mut world);
     assert_eq!(world.query::<&SaveLevel>().iter(&world).len(), 0);

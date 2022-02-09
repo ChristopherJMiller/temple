@@ -5,8 +5,9 @@ use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::Attribute;
-use crate::game::collision::ContactSubscription;
+use crate::game::collision::{ContactQuery, ContactSubscription, PlayerContacted};
 use crate::game::collision_groups::*;
+use crate::level::load::TransitionLevel;
 use crate::level::LevelId;
 
 #[derive(Component)]
@@ -58,5 +59,12 @@ impl Attribute for Transition {
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete)
       .insert(Transition(id.unwrap()));
+  }
+}
+
+pub fn on_transition_system(mut commands: Commands, transition_activated: ContactQuery<Transition>) {
+  for (entity, trans) in transition_activated.iter() {
+    commands.spawn().insert(TransitionLevel(trans.0));
+    commands.entity(entity).remove::<PlayerContacted>();
   }
 }

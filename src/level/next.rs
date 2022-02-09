@@ -43,12 +43,13 @@ pub fn auto_next_level(
 
 #[cfg(test)]
 mod tests {
-  use crate::level::next::*;
-  use crate::state::game_state::*;
-  use crate::util::settings::*;
-  use crate::level::LevelId;
-  use crate::util::files::*;
   use std::fs;
+
+  use crate::level::next::*;
+  use crate::level::LevelId;
+  use crate::state::game_state::*;
+  use crate::util::files::*;
+  use crate::util::settings::*;
 
   fn setup_world(current_level: LevelId) -> (World, SystemStage) {
     fs::create_dir_all(from_game_root(LEVEL_DIR_PATH)).unwrap();

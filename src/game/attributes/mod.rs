@@ -9,6 +9,16 @@
 
 use bevy::prelude::*;
 
+macro_rules! attribute_build_tree {
+  ($incoming_attr:expr, $commands:expr, $target:expr, $level:expr, $position:expr, [$($attribute:path),+]) => {
+    let entry = AttributeEntry::from($incoming_attr);
+    match entry.0.as_str() {
+      $(<$attribute>::KEY => <$attribute>::build($commands, $target, $level, $position, entry.1),)+
+      _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
+    }
+  };
+}
+
 /// Attribute, as used with a [crate::sprite::SpriteType]
 pub trait Attribute {
   const KEY: &'static str;
@@ -18,19 +28,24 @@ pub trait Attribute {
 /// Constructs attribute onto a given [Entity]. Used during level load (see
 /// [crate::level::load::load_level]).
 pub fn build_attribute(attribute: String, commands: &mut Commands, target: Entity, level: LevelId, position: Vec2) {
-  let entry = AttributeEntry::from(attribute);
-  match entry.0.as_str() {
-    Player::KEY => Player::build(commands, target, level, position, entry.1),
-    Solid::KEY => Solid::build(commands, target, level, position, entry.1),
-    MovingSprite::KEY => MovingSprite::build(commands, target, level, position, entry.1),
-    Deadly::KEY => Deadly::build(commands, target, level, position, entry.1),
-    Checkpoint::KEY => Checkpoint::build(commands, target, level, position, entry.1),
-    Transition::KEY => Transition::build(commands, target, level, position, entry.1),
-    Goal::KEY => Goal::build(commands, target, level, position, entry.1),
-    Dash::KEY => Dash::build(commands, target, level, position, entry.1),
-    GivableAttribute::KEY => GivableAttribute::build(commands, target, level, position, entry.1),
-    _ => panic!("Attempted to load invalid attribute with name {}", entry.0),
-  }
+  attribute_build_tree!(
+    attribute,
+    commands,
+    target,
+    level,
+    position,
+    [
+      Player,
+      Solid,
+      MovingSprite,
+      Deadly,
+      Checkpoint,
+      Transition,
+      Goal,
+      Dash,
+      GivableAttribute
+    ]
+  );
 }
 
 mod checkpoint;

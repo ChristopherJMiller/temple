@@ -4,9 +4,10 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
-use super::Attribute;
-use crate::game::collision::ContactSubscription;
+use super::{Attribute, Player};
+use crate::game::collision::{ContactSubscription, ContactTagQuery, PlayerContacted};
 use crate::game::collision_groups::*;
+use crate::level::load::{LevelLoadComplete, LoadLevel, TransitionLevel};
 use crate::level::LevelId;
 
 #[derive(Component)]
@@ -36,5 +37,26 @@ impl Attribute for Deadly {
       .insert(ContactSubscription)
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete);
+  }
+}
+
+/// Consumes [PlayerContacted] tags and respawns the player.
+pub fn on_death_system(
+  mut commands: Commands,
+  deadly_contacted: ContactTagQuery<Deadly>,
+  loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
+  mut player: Query<(&mut RigidBodyPositionComponent, &Player)>,
+) {
+  if let Ok((mut pos, player)) = player.get_single_mut() {
+    deadly_contacted.for_each(|ent| {
+      let level_id = loaded_level.get_single().unwrap().0;
+      if player.respawn_level != level_id {
+        commands.spawn().insert(TransitionLevel(player.respawn_level));
+      } else {
+        pos.position.translation = player.respawn_pos.into();
+      }
+
+      commands.entity(ent).remove::<PlayerContacted>();
+    });
   }
 }

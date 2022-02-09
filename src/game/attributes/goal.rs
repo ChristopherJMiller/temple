@@ -5,9 +5,12 @@ use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::Attribute;
-use crate::game::collision::ContactSubscription;
+use crate::game::collision::{ContactQuery, ContactSubscription, PlayerContacted};
 use crate::game::collision_groups::*;
+use crate::level::next::NextLevel;
 use crate::level::LevelId;
+use crate::state::game_state::{write_save, ActiveSave, GameMode, GameSaveState, TempleState};
+use crate::util::settings::{GameFile, LevelTransistionType};
 
 #[derive(Component)]
 pub struct Goal(pub usize);
@@ -53,4 +56,34 @@ impl Attribute for Goal {
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete);
   }
+}
+
+pub fn on_goal_system(
+  mut commands: Commands,
+  goal_reached: ContactQuery<Goal>,
+  temple_state: Res<TempleState>,
+  game_file: Res<GameFile>,
+  mut active_save: ResMut<ActiveSave>,
+) {
+  goal_reached.for_each(|(ent, goal)| {
+    // Get active save file
+    if let Some(save) = &mut active_save.0 {
+      // Get what level player is currently in
+      if let GameMode::InLevel(level) = temple_state.game_mode {
+        // Save exit clear
+        if let Some(level) = save.level_clears.get_mut(&GameSaveState::key(level)) {
+          level.clear_exit(goal.0);
+          write_save(save);
+        }
+      }
+    } else {
+      warn!(target: "on_goal_system", "No active save to clear level on. Ignoring...");
+    }
+
+    if game_file.level_transistion == LevelTransistionType::NoOverworld {
+      commands.spawn().insert(NextLevel);
+    }
+
+    commands.entity(ent).remove::<PlayerContacted>();
+  });
 }

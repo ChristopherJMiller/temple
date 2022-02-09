@@ -6,8 +6,8 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
-use super::{Attribute, Dash};
-use crate::game::collision::ContactSubscription;
+use super::{Attribute, Dash, Player};
+use crate::game::collision::{ContactQuery, ContactSubscription};
 use crate::game::collision_groups::*;
 use crate::level::LevelId;
 
@@ -54,5 +54,14 @@ impl Attribute for GivableAttribute {
       .insert(ContactSubscription)
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete);
+  }
+}
+
+pub fn on_give_system(mut commands: Commands, player: Query<Entity, With<Player>>, goal: ContactQuery<Give>) {
+  if let Ok(player) = player.get_single() {
+    goal.for_each(|(ent, give)| {
+      commands.entity(player).insert(give.build_component());
+      commands.entity(ent).despawn();
+    });
   }
 }

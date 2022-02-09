@@ -168,7 +168,13 @@ impl HandledSprite {
       .iter()
       .map(|map_sprite| {
         if let Some(sprite_entry) = entries_map.get(&map_sprite.name) {
-          HandledSprite::new(sprite_entry.name.clone(), map_sprite.pos, sprite_entry.offset, sprite_entry.texture.clone(), sprite_entry.attributes.clone())
+          HandledSprite::new(
+            sprite_entry.name.clone(),
+            map_sprite.pos,
+            sprite_entry.offset,
+            sprite_entry.texture.clone(),
+            sprite_entry.attributes.clone(),
+          )
         } else {
           panic!("Could not find sprite entry for {}", map_sprite.name);
         }
@@ -268,9 +274,7 @@ mod tests {
     let level = Level {
       name: LEVEL_NAME.to_string(),
       music: "test.ogg".to_string(),
-      sprites: vec![
-        HandledSprite::new(SPRITE_NAME, (0, 0), (0, 0), "", vec![ATTR]),
-      ],
+      sprites: vec![HandledSprite::new(SPRITE_NAME, (0, 0), (0, 0), "", vec![ATTR])],
     };
 
     let level_copy = level.clone();
@@ -284,10 +288,13 @@ mod tests {
     assert_eq!(manifest.sprites[0].name, SPRITE_NAME);
     assert_eq!(manifest.sprites[0].attributes[0], ATTR);
     assert_eq!(map_file.sprite_types[&0], SPRITE_NAME.to_string());
-    assert_eq!(map_file.sprite_entries[0], LevelMapFileSpriteEntry {
-      pos: (0, 0).into(),
-      id: 0
-    });
+    assert_eq!(
+      map_file.sprite_entries[0],
+      LevelMapFileSpriteEntry {
+        pos: (0, 0).into(),
+        id: 0
+      }
+    );
 
     // Reform level out of manifests
     let new_level = prepare_level_from_manifests(manifest, map_file.into());

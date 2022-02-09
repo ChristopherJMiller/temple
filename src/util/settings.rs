@@ -72,9 +72,10 @@ pub fn get_game_file() -> GameFile {
 
 #[cfg(test)]
 mod tests {
-  use crate::util::settings::*;
-  use crate::util::files::*;
   use std::fs;
+
+  use crate::util::files::*;
+  use crate::util::settings::*;
 
   #[test]
   #[should_panic]
@@ -82,7 +83,11 @@ mod tests {
     fs::create_dir_all(from_game_root(ASSET_PATH)).unwrap();
 
     let game_file = GameFile::default();
-    fs::write(from_game_root(GAME_SETTING_PATH), toml::to_string_pretty(&game_file).unwrap()).unwrap();
+    fs::write(
+      from_game_root(GAME_SETTING_PATH),
+      toml::to_string_pretty(&game_file).unwrap(),
+    )
+    .unwrap();
 
     let read_game_file = get_game_file();
     assert_eq!(game_file.title, read_game_file.title);

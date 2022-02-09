@@ -225,7 +225,10 @@ mod tests {
   #[test]
   fn test_save_bootstrapping() {
     let _ = bootstrap_and_get_saves();
-    write_saves(&HashMap::from([("test1".to_string(), GameSaveState::new("test1")), ("test2".to_string(), GameSaveState::new("test2"))]));
+    write_saves(&HashMap::from([
+      ("test1".to_string(), GameSaveState::new("test1")),
+      ("test2".to_string(), GameSaveState::new("test2")),
+    ]));
     let new_saves = bootstrap_and_get_saves();
     assert!(new_saves.contains_key("test1"));
     assert!(new_saves.contains_key("test2"));

@@ -63,7 +63,7 @@ pub struct KeepMusic;
 pub fn wait_until_unloaded(
   mut commands: Commands,
   loaded_level: Query<(Entity, &LoadLevel), (With<LevelLoadComplete>, Without<WaitUntilUnloaded>)>,
-  new_level: Query<Entity, (With<LoadLevel>, With<WaitUntilUnloaded>)>
+  new_level: Query<Entity, (With<LoadLevel>, With<WaitUntilUnloaded>)>,
 ) {
   if let Ok(ent) = new_level.get_single() {
     match loaded_level.get_single() {
@@ -75,7 +75,7 @@ pub fn wait_until_unloaded(
         QuerySingleError::MultipleEntities(_) => {
           warn!(target: "wait_until_unloaded", "Multiple fully loaded levels detected. Things may get weird...");
         },
-    },
+      },
     }
   }
 }
