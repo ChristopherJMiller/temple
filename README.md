@@ -33,7 +33,7 @@ cargo run -- -l 0
 cargo run -- --editor
 
 # Open documentation
-cargo doc --open
+cargo doc --no-deps --bin temple --open
 ```
 
 ## Config Structure
