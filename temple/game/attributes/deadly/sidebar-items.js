@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Deadly",""]]});
+initSidebarItems({"fn":[["on_death_system","Consumes [PlayerContacted] tags and respawns the player."]],"struct":[["Deadly",""]]});

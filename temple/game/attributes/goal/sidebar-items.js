@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse_params",""]],"struct":[["Goal",""]]});
+initSidebarItems({"fn":[["on_goal_system",""],["parse_params",""]],"struct":[["Goal",""]]});

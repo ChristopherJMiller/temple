@@ -156,13 +156,14 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
+  <span class="kw">use</span> <span class="ident">std::fs</span>;
+
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config</span>::<span class="kw-2">*</span>;
-  <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::save</span>::<span class="kw-2">*</span>;
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load</span>::<span class="kw-2">*</span>;
+  <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::save</span>::<span class="kw-2">*</span>;
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::util</span>::<span class="kw-2">*</span>;
   <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::<span class="kw-2">*</span>;
-  <span class="kw">use</span> <span class="ident">std::fs</span>;
-  
+
   <span class="attribute">#[<span class="ident">test</span>]</span>
   <span class="kw">fn</span> <span class="ident">test_save_loaded_level</span>() {
     <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;test level&quot;</span>;
@@ -186,7 +187,6 @@
     <span class="ident">fs::remove_dir_all</span>(<span class="ident">from_game_root</span>(<span class="ident">ASSET_PATH</span>));
     <span class="ident">fs::create_dir_all</span>(<span class="ident">from_game_root</span>(<span class="ident">LEVEL_DIR_PATH</span>)).<span class="ident">unwrap</span>();
     <span class="ident">fs::create_dir_all</span>(<span class="ident">from_game_root</span>(<span class="ident">LEVEL_MAP_DIR_PATH</span>)).<span class="ident">unwrap</span>();
-
 
     <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
     <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">SaveLevel</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">len</span>(), <span class="number">0</span>);

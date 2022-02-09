@@ -380,7 +380,7 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wait_until_unloaded</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>), (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>, <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">WaitUntilUnloaded</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
-  <span class="ident">new_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LoadLevel</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">WaitUntilUnloaded</span><span class="op">&gt;</span>)<span class="op">&gt;</span>
+  <span class="ident">new_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LoadLevel</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">WaitUntilUnloaded</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">new_level</span>.<span class="ident">get_single</span>() {
     <span class="kw">match</span> <span class="ident">loaded_level</span>.<span class="ident">get_single</span>() {
@@ -392,7 +392,7 @@
         <span class="ident">QuerySingleError::MultipleEntities</span>(<span class="kw">_</span>) =&gt; {
           <span class="macro">warn!</span>(<span class="ident">target</span>: <span class="string">&quot;wait_until_unloaded&quot;</span>, <span class="string">&quot;Multiple fully loaded levels detected. Things may get weird...&quot;</span>);
         },
-    },
+      },
     }
   }
 }

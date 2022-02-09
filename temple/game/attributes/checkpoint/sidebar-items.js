@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Checkpoint",""]]});
+initSidebarItems({"fn":[["on_checkpoint_system","Consumes [PlayerContacted] tags and sets the new player respawn point."]],"struct":[["Checkpoint",""]]});

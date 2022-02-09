@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["GivableAttribute","Typeless Give attribute, used to build [Give]"],["Give",""]]});
+initSidebarItems({"fn":[["on_give_system",""]],"struct":[["GivableAttribute","Typeless Give attribute, used to build [Give]"],["Give",""]]});

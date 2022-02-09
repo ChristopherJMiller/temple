@@ -32,13 +32,15 @@
 <span id="31">31</span>
 <span id="32">32</span>
 <span id="33">33</span>
+<span id="34">34</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Level config management and level loading.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">prepare_level</span>, <span class="ident">transition_level</span>, <span class="ident">unload_level</span>};
 <span class="kw">use</span> <span class="ident">verify::verify_level_files</span>;
 
-<span class="kw">use</span> <span class="self">self</span>::{<span class="ident">next::auto_next_level</span>, <span class="ident">load::wait_until_unloaded</span>};
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::load::wait_until_unloaded</span>;
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::next::auto_next_level</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">config</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">load</span>;
