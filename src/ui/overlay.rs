@@ -1,4 +1,5 @@
 //! Overlay System
+//! 
 //! [OverlayCommands] is a resource that handles a queue of effects for fading in and out the game.
 //! Queue [OverlayCommand]s to manage the effect.
 //! Effect`In` is the overlay becoming more opaque, Effect`Out` is the overlay becoming more transparent.
@@ -11,6 +12,7 @@ use bevy_egui::{EguiContext, egui::{Rgba, self, Frame}};
 use crate::state::game_state::TempleState;
 
 
+/// Commands that are queued using [OverlayCommands::command]
 #[derive(Debug)]
 pub enum OverlayCommand {
   CutIn,
@@ -25,6 +27,7 @@ impl Default for OverlayCommand {
   }
 }
 
+/// Bevy Resource to manage overlay
 #[derive(Default)]
 pub struct OverlayCommands {
   queue: VecDeque<OverlayCommand>,
@@ -34,10 +37,12 @@ pub struct OverlayCommands {
 }
 
 impl OverlayCommands {
+  /// Queues command for overlay
   pub fn command(&mut self, action: OverlayCommand) {
     self.queue.push_back(action);
   }
 
+  /// Returns the color to be used in the overlay, per time dt
   pub fn get_color(&mut self, dt: f32) -> Rgba {
     if self.action_done {
       if let Some(action) = self.queue.pop_front() {
