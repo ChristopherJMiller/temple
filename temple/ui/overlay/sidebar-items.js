@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["OverlayCommand","Commands that are queued using [OverlayCommands::command]"]],"fn":[["handle_overlay",""]],"struct":[["OverlayCommands","Bevy Resource to manage overlay"]]});

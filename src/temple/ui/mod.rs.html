@@ -32,6 +32,13 @@
 <span id="31">31</span>
 <span id="32">32</span>
 <span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all UI elements for the game.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
@@ -40,9 +47,13 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">title_screen::LoadTitleScreen</span>;
 <span class="kw">use</span> <span class="ident">title_screen</span>::{<span class="ident">delete_title_screen</span>, <span class="ident">setup_title_screen</span>, <span class="ident">title_menu_buttons</span>, <span class="ident">TitleMenuState</span>};
 
+<span class="kw">use</span> <span class="self">self</span>::{<span class="ident">pause::pause_menu_buttons</span>, <span class="ident">overlay</span>::{<span class="ident">handle_overlay</span>, <span class="ident">OverlayCommands</span>}};
+
 <span class="kw">mod</span> <span class="ident">diagnostic</span>;
 <span class="kw">mod</span> <span class="ident">font</span>;
 <span class="kw">mod</span> <span class="ident">title_screen</span>;
+<span class="kw">mod</span> <span class="ident">pause</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">overlay</span>;
 
 <span class="comment">// Spawns a [UiCameraBundle]</span>
 <span class="kw">fn</span> <span class="ident">setup_uicamera</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>) {
@@ -56,13 +67,16 @@
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">TitleMenuState</span><span class="op">&gt;</span>()
+      .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">OverlayCommands</span><span class="op">&gt;</span>()
       .<span class="ident">add_startup_system</span>(<span class="ident">setup_egui_font</span>)
       .<span class="ident">add_startup_system</span>(<span class="ident">setup_uicamera</span>)
       .<span class="ident">add_startup_system</span>(<span class="ident">setup_fps_text</span>)
       .<span class="ident">add_system</span>(<span class="ident">setup_title_screen</span>)
       .<span class="ident">add_system</span>(<span class="ident">update_fps_system</span>)
       .<span class="ident">add_system</span>(<span class="ident">delete_title_screen</span>)
-      .<span class="ident">add_system</span>(<span class="ident">title_menu_buttons</span>);
+      .<span class="ident">add_system</span>(<span class="ident">title_menu_buttons</span>)
+      .<span class="ident">add_system</span>(<span class="ident">pause_menu_buttons</span>)
+      .<span class="ident">add_system</span>(<span class="ident">handle_overlay</span>);
   }
 }
 </code></pre></div>

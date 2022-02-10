@@ -207,13 +207,27 @@
 <span id="206">206</span>
 <span id="207">207</span>
 <span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all title screen ui elements and state.</span>
+
+<span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_egui::egui::ScrollArea</span>;
 <span class="kw">use</span> <span class="ident">bevy_egui</span>::{<span class="ident">egui</span>, <span class="ident">EguiContext</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::BeginGame</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::TotalExits</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">write_saves</span>, <span class="ident">ActiveSave</span>, <span class="ident">AvaliableSaves</span>, <span class="ident">GameSaveState</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files::from_game_root</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::VERSION</span>;
@@ -355,6 +369,8 @@
   <span class="kw-2">mut</span> <span class="ident">title_menu_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TitleMenuState</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">saves</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">AvaliableSaves</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">active_save</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">exit_count_cache</span>: <span class="ident">Local</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+  <span class="ident">total_exits</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TotalExits</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="op">!</span><span class="ident">title_menu_state</span>.<span class="ident">show_title_menu_egui</span> {
     <span class="kw">return</span>;
@@ -383,7 +399,13 @@
             }
 
             <span class="kw">for</span> (<span class="ident">name</span>, <span class="ident">save</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">saves</span>.<span class="number">0</span> {
-              <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">add_sized</span>([<span class="number">400.0</span>, <span class="number">35.0</span>], <span class="ident">egui::Button::new</span>(<span class="ident">name</span>)).<span class="ident">clicked</span>() {
+              <span class="kw">if</span> <span class="op">!</span><span class="ident">exit_count_cache</span>.<span class="ident">contains_key</span>(<span class="ident">name</span>) {
+                <span class="ident">exit_count_cache</span>.<span class="ident">insert</span>(<span class="ident">name</span>.<span class="ident">to_string</span>(), <span class="ident">save</span>.<span class="ident">num_cleared_exits</span>());
+              }
+              
+              <span class="kw">let</span> <span class="ident">file_fmt</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{} {}/{}&quot;</span>, <span class="ident">name</span>, <span class="ident">exit_count_cache</span>[<span class="ident">name</span>], <span class="ident">total_exits</span>.<span class="number">0</span>);
+
+              <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">add_sized</span>([<span class="number">400.0</span>, <span class="number">35.0</span>], <span class="ident">egui::Button::new</span>(<span class="ident">file_fmt</span>)).<span class="ident">clicked</span>() {
                 <span class="ident">active_save</span>.<span class="number">0</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">save</span>.<span class="ident">clone</span>());
                 <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">HideTitleScreen</span>);
                 <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">BeginGame</span>);

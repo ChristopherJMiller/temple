@@ -99,6 +99,12 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Game mechanisms and sprite attribute definitions.</span>
 
 <span class="kw">use</span> <span class="ident">attributes::AttributePlugin</span>;
@@ -111,8 +117,10 @@
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::credits::CreditsPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::sfx::SfxPlugin</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input::CursorCommands</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">GameMode</span>, <span class="ident">GameSaveState</span>, <span class="ident">TempleState</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ui::overlay</span>::{<span class="ident">OverlayCommands</span>, <span class="ident">OverlayCommand</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::settings</span>::{<span class="ident">GameFile</span>, <span class="ident">LevelTransistionType</span>};
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">attributes</span>;
@@ -136,8 +144,12 @@
   <span class="ident">active_save</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
   <span class="ident">game_file</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">GameFile</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">temple_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">cursor_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CursorCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">overlay_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">OverlayCommands</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">query</span>.<span class="ident">get_single</span>() {
+    <span class="ident">overlay_commands</span>.<span class="ident">command</span>(<span class="ident">OverlayCommand::CutIn</span>);
+    <span class="ident">cursor_commands</span>.<span class="ident">lock_cursor</span>();
     <span class="kw">match</span> <span class="ident">game_file</span>.<span class="ident">level_transistion</span> {
       <span class="ident">LevelTransistionType::Overworld</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Temple does not support overworlds yet&quot;</span>),
       <span class="ident">LevelTransistionType::NoOverworld</span> =&gt; {

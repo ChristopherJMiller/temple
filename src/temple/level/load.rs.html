@@ -315,6 +315,9 @@
 <span id="314">314</span>
 <span id="315">315</span>
 <span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -340,6 +343,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::util::get_texture_path</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">GameMode</span>, <span class="ident">TempleState</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::ui::overlay</span>::{<span class="ident">OverlayCommands</span>, <span class="ident">OverlayCommand</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files</span>::{<span class="ident">from_game_root</span>, <span class="ident">MUSIC_DIR_PATH</span>};
 
 <span class="doccomment">/// Instruction to load a new level</span>
@@ -455,6 +459,7 @@
   <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
   <span class="ident">audio</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Audio</span><span class="op">&gt;</span>,
   <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">overlay_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">OverlayCommands</span><span class="op">&gt;</span>,
 ) {
   <span class="ident">query</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="ident">load_level</span>, <span class="ident">prepared_level</span>)<span class="op">|</span> {
     <span class="kw">let</span> <span class="ident">level_id</span> <span class="op">=</span> <span class="ident">load_level</span>.<span class="number">0</span>;
@@ -543,6 +548,7 @@
 
     <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;load_level&quot;</span>, <span class="string">&quot;Loaded Level {}&quot;</span>, <span class="ident">level_id</span>);
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">e</span>).<span class="ident">insert</span>(<span class="ident">LevelLoadComplete</span>);
+    <span class="ident">overlay_commands</span>.<span class="ident">command</span>(<span class="ident">OverlayCommand::FadeOut</span>(<span class="number">1.0</span>));
   });
 }
 

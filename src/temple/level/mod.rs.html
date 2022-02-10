@@ -33,14 +33,42 @@
 <span id="32">32</span>
 <span id="33">33</span>
 <span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Level config management and level loading.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">prepare_level</span>, <span class="ident">transition_level</span>, <span class="ident">unload_level</span>};
 <span class="kw">use</span> <span class="ident">verify::verify_level_files</span>;
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::{<span class="ident">Goal</span>, <span class="ident">Attribute</span>};
+
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::load::wait_until_unloaded</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::next::auto_next_level</span>;
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::util::get_level_manifests</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">config</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">load</span>;
@@ -57,7 +85,9 @@
 <span class="kw">impl</span> <span class="ident">Plugin</span> <span class="kw">for</span> <span class="ident">LevelPlugin</span> {
   <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">app</span>: <span class="kw-2">&amp;mut</span> <span class="ident">App</span>) {
     <span class="ident">app</span>
+      .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">TotalExits</span><span class="op">&gt;</span>()
       .<span class="ident">add_startup_system</span>(<span class="ident">verify_level_files</span>)
+      .<span class="ident">add_startup_system</span>(<span class="ident">count_exits</span>)
       .<span class="ident">add_system</span>(<span class="ident">wait_until_unloaded</span>)
       .<span class="ident">add_system</span>(<span class="ident">prepare_level</span>)
       .<span class="ident">add_system</span>(<span class="ident">load_level</span>)
@@ -66,6 +96,26 @@
       .<span class="ident">add_system</span>(<span class="ident">transition_level</span>)
       .<span class="ident">add_system</span>(<span class="ident">auto_next_level</span>);
   }
+}
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TotalExits</span>(<span class="kw">pub</span> <span class="ident">usize</span>);
+
+<span class="kw">fn</span> <span class="ident">count_exits</span>(<span class="kw-2">mut</span> <span class="ident">exits</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TotalExits</span><span class="op">&gt;</span>) {
+  <span class="kw">let</span> <span class="ident">levels</span> <span class="op">=</span> <span class="ident">get_level_manifests</span>();
+  <span class="kw">let</span> <span class="ident">exit_count</span> <span class="op">=</span> <span class="ident">levels</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, (<span class="kw">_</span>, <span class="ident">manifest</span>)<span class="op">|</span> {
+    <span class="kw">let</span> <span class="ident">level_exit_count</span> <span class="op">=</span> <span class="ident">manifest</span>.<span class="ident">sprites</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="ident">item</span><span class="op">|</span> {
+      <span class="kw">if</span> <span class="ident">item</span>.<span class="ident">name</span>.<span class="ident">as_str</span>() <span class="op">==</span> <span class="ident">Goal::KEY</span> {
+        <span class="ident">acc</span> <span class="op">+</span> <span class="number">1</span>
+      } <span class="kw">else</span> {
+        <span class="ident">acc</span>
+      }
+    });
+
+    <span class="ident">acc</span> <span class="op">+</span> <span class="ident">level_exit_count</span>
+  });
+
+  <span class="ident">exits</span>.<span class="number">0</span> <span class="op">=</span> <span class="ident">exit_count</span>;
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="temple" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
