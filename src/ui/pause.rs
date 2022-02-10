@@ -11,10 +11,10 @@ pub struct PauseMenuState {
 }
 
 pub fn pause_menu_buttons(
-  mut commands: Commands,
+  //mut commands: Commands,
   input: Res<Kurinji>,
-  egui_ctx: Res<EguiContext>,
-  window_desc: Res<WindowDescriptor>,
+  //egui_ctx: Res<EguiContext>,
+  //window_desc: Res<WindowDescriptor>,
   mut state: Local<PauseMenuState>,
   mut cursor_commands: ResMut<CursorCommands>,
   temple_state: Res<TempleState>,

@@ -23,6 +23,7 @@ use crate::game::sfx::AudioChannels;
 use crate::level::config::SPRITE_SIZE;
 use crate::level::util::get_texture_path;
 use crate::state::game_state::{ActiveSave, GameMode, TempleState};
+use crate::ui::overlay::{OverlayCommands, OverlayCommand};
 use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
 
 /// Instruction to load a new level
@@ -138,6 +139,7 @@ pub fn load_level(
   temple_state: Res<TempleState>,
   audio: Res<Audio>,
   channels: Res<AudioChannels>,
+  mut overlay_commands: ResMut<OverlayCommands>,
 ) {
   query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
@@ -226,6 +228,7 @@ pub fn load_level(
 
     info!(target: "load_level", "Loaded Level {}", level_id);
     commands.entity(e).insert(LevelLoadComplete);
+    overlay_commands.command(OverlayCommand::FadeOut(1.0));
   });
 }
 

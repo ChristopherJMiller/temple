@@ -13,6 +13,7 @@ use self::sfx::SfxPlugin;
 use crate::input::CursorCommands;
 use crate::level::load::LoadLevel;
 use crate::state::game_state::{ActiveSave, GameMode, GameSaveState, TempleState};
+use crate::ui::overlay::{OverlayCommands, OverlayCommand};
 use crate::util::settings::{GameFile, LevelTransistionType};
 
 pub mod attributes;
@@ -37,8 +38,10 @@ fn bootstrap_game(
   game_file: Res<GameFile>,
   mut temple_state: ResMut<TempleState>,
   mut cursor_commands: ResMut<CursorCommands>,
+  mut overlay_commands: ResMut<OverlayCommands>,
 ) {
   if let Ok(ent) = query.get_single() {
+    overlay_commands.command(OverlayCommand::CutIn);
     cursor_commands.lock_cursor();
     match game_file.level_transistion {
       LevelTransistionType::Overworld => panic!("Temple does not support overworlds yet"),
