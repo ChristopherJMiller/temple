@@ -10,6 +10,7 @@ use player::PlayerPlugin;
 
 use self::credits::CreditsPlugin;
 use self::sfx::SfxPlugin;
+use crate::input::CursorCommands;
 use crate::level::load::LoadLevel;
 use crate::state::game_state::{ActiveSave, GameMode, GameSaveState, TempleState};
 use crate::util::settings::{GameFile, LevelTransistionType};
@@ -35,8 +36,10 @@ fn bootstrap_game(
   active_save: Res<ActiveSave>,
   game_file: Res<GameFile>,
   mut temple_state: ResMut<TempleState>,
+  mut cursor_commands: ResMut<CursorCommands>,
 ) {
   if let Ok(ent) = query.get_single() {
+    cursor_commands.lock_cursor();
     match game_file.level_transistion {
       LevelTransistionType::Overworld => panic!("Temple does not support overworlds yet"),
       LevelTransistionType::NoOverworld => {

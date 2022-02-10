@@ -6,9 +6,12 @@ use font::setup_egui_font;
 pub use title_screen::LoadTitleScreen;
 use title_screen::{delete_title_screen, setup_title_screen, title_menu_buttons, TitleMenuState};
 
+use self::pause::pause_menu_buttons;
+
 mod diagnostic;
 mod font;
 mod title_screen;
+mod pause;
 
 // Spawns a [UiCameraBundle]
 fn setup_uicamera(mut commands: Commands) {
@@ -28,6 +31,7 @@ impl Plugin for UiPlugin {
       .add_system(setup_title_screen)
       .add_system(update_fps_system)
       .add_system(delete_title_screen)
-      .add_system(title_menu_buttons);
+      .add_system(title_menu_buttons)
+      .add_system(pause_menu_buttons);
   }
 }

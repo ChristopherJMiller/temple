@@ -1,6 +1,6 @@
 //! Input config management and associated systems.
 
-use std::fs;
+use std::{fs, collections::VecDeque};
 
 use bevy::prelude::*;
 use kurinji::{Kurinji, KurinjiPlugin};
@@ -47,19 +47,30 @@ fn setup_inputs(mut kurinji: ResMut<Kurinji>) {
   }
 }
 
-/// Temporary component to handle locking and unlocking the cursor within the
-/// window. To be replaced with menu-based cursor toggling
-struct DevToggleCursor(pub bool);
+/// Toggle cursor command queue
+#[derive(Default)]
+pub struct CursorCommands(VecDeque<bool>);
 
-/// System for toggling the cursor via [DevToggleCursor].
-fn dev_toggle_cursor(input: Res<Kurinji>, mut cursor_flag: ResMut<DevToggleCursor>, mut windows: ResMut<Windows>) {
-  if input.is_action_active(MENU) && !cursor_flag.0 {
-    cursor_flag.0 = true;
+impl CursorCommands {
+  pub fn lock_cursor(&mut self) {
+    self.0.push_back(true);
+  }
+
+  pub fn unlock_cursor(&mut self) {
+    self.0.push_back(false);
+  }
+
+  pub fn pop(&mut self) -> Option<bool> {
+    self.0.pop_front()
+  }
+}
+
+/// System for toggling the cursor via [CursorCommands].
+fn handle_toggle_cursor(mut queue: ResMut<CursorCommands>, mut windows: ResMut<Windows>) {
+  if let Some(lock) = queue.pop() {
     let window = windows.get_primary_mut().unwrap();
-    window.set_cursor_lock_mode(!window.cursor_locked());
-    window.set_cursor_visibility(!window.cursor_visible());
-  } else if !input.is_action_active(MENU) && cursor_flag.0 {
-    cursor_flag.0 = false;
+    window.set_cursor_lock_mode(lock);
+    window.set_cursor_visibility(!lock);
   }
 }
 
@@ -73,8 +84,8 @@ impl Plugin for InputPlugin {
       .add_plugin(KurinjiPlugin)
       .add_startup_system(setup_inputs)
 
-      // Dev Systems
-      .insert_resource(DevToggleCursor(false))
-      .add_system(dev_toggle_cursor);
+      // Cursor System
+      .init_resource::<CursorCommands>()
+      .add_system(handle_toggle_cursor);
   }
 }

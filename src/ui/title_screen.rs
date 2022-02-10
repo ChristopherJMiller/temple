@@ -1,10 +1,13 @@
 //! Handles all title screen ui elements and state.
 
+use std::collections::HashMap;
+
 use bevy::prelude::*;
 use bevy_egui::egui::ScrollArea;
 use bevy_egui::{egui, EguiContext};
 
 use crate::game::BeginGame;
+use crate::level::TotalExits;
 use crate::state::game_state::{write_saves, ActiveSave, AvaliableSaves, GameSaveState};
 use crate::util::files::from_game_root;
 use crate::VERSION;
@@ -146,6 +149,8 @@ pub fn title_menu_buttons(
   mut title_menu_state: ResMut<TitleMenuState>,
   mut saves: ResMut<AvaliableSaves>,
   mut active_save: ResMut<ActiveSave>,
+  mut exit_count_cache: Local<HashMap<String, usize>>,
+  total_exits: Res<TotalExits>,
 ) {
   if !title_menu_state.show_title_menu_egui {
     return;
@@ -174,7 +179,13 @@ pub fn title_menu_buttons(
             }
 
             for (name, save) in &saves.0 {
-              if ui.add_sized([400.0, 35.0], egui::Button::new(name)).clicked() {
+              if !exit_count_cache.contains_key(name) {
+                exit_count_cache.insert(name.to_string(), save.num_cleared_exits());
+              }
+              
+              let file_fmt = format!("{} {}/{}", name, exit_count_cache[name], total_exits.0);
+
+              if ui.add_sized([400.0, 35.0], egui::Button::new(file_fmt)).clicked() {
                 active_save.0 = Some(save.clone());
                 commands.spawn().insert(HideTitleScreen);
                 commands.spawn().insert(BeginGame);

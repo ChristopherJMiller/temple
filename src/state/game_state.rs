@@ -43,6 +43,14 @@ impl TempleState {
   pub fn in_edit_mode(&self) -> bool {
     self.game_mode == GameMode::EditMode
   }
+
+  pub fn in_game(&self) -> bool {
+    if let GameMode::InLevel(_) = self.game_mode {
+      true
+    } else {
+      self.game_mode == GameMode::Overworld
+    }
+  }
 }
 
 pub type CheckpointState = (LevelId, f32, f32);
@@ -96,6 +104,11 @@ impl LevelSaveState {
   pub fn an_exit_cleared(&self) -> bool {
     self.exits_cleared.iter().find(|&&x| x).is_some()
   }
+
+  /// Returns the list of exits cleared
+  pub fn exits_cleared(&self) -> Vec<bool> {
+    self.exits_cleared.clone()
+  }
 }
 
 impl Default for LevelSaveState {
@@ -111,6 +124,7 @@ impl Default for LevelSaveState {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GameSaveState {
   pub name: String,
+  #[serde(skip_serializing_if = "HashMap::is_empty", default)]
   pub level_clears: HashMap<String, LevelSaveState>,
 }
 
@@ -125,6 +139,10 @@ impl GameSaveState {
       name: name.to_string(),
       level_clears: Default::default(),
     }
+  }
+
+  pub fn num_cleared_exits(&self) -> usize {
+    self.level_clears.values().into_iter().fold(0, |acc, x| acc + x.exits_cleared().iter().filter(|&&x| x).count())
   }
 }
 
@@ -243,7 +261,21 @@ mod tests {
   fn test_temple_state() {
     let main_menu = TempleState::default();
     assert_eq!(GameMode::MainMenu, main_menu.game_mode);
-    let temple_state = TempleState::edit_mode();
+    let mut temple_state = TempleState::edit_mode();
     assert!(temple_state.in_edit_mode());
+    assert!(!temple_state.in_game());
+    temple_state.game_mode = GameMode::InLevel(0);
+    assert!(temple_state.in_game());
+    temple_state.game_mode = GameMode::Overworld;
+    assert!(temple_state.in_game());
+  }
+
+  #[test]
+  fn test_game_save_state() {
+    let mut game = GameSaveState::new("test");
+    game.level_clears.insert(GameSaveState::key(0), LevelSaveState::new_with_checkpoint((0, 5.0, 10.0)));
+    game.level_clears.get_mut(&GameSaveState::key(0)).unwrap().clear_exit(0);
+    game.level_clears.get_mut(&GameSaveState::key(0)).unwrap().clear_exit(5);
+    assert_eq!(2, game.num_cleared_exits());
   }
 }
