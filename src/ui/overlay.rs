@@ -1,3 +1,8 @@
+//! Overlay System
+//! [OverlayCommands] is a resource that handles a queue of effects for fading in and out the game.
+//! Queue [OverlayCommand]s to manage the effect.
+//! Effect`In` is the overlay becoming more opaque, Effect`Out` is the overlay becoming more transparent.
+
 use std::collections::VecDeque;
 
 use bevy::prelude::*;
