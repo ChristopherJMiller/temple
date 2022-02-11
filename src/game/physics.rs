@@ -80,3 +80,49 @@ impl Plugin for ModifyPhysicsPlugin {
       .add_system(handle_physics_commands);
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use bevy::prelude::*;
+  use bevy_rapier2d::prelude::*;
+  use super::*;
+
+  #[test]
+  fn test_physics_commands() {
+    let mut world = World::default();
+    let mut update_stage = SystemStage::parallel();
+
+    // Setup Systems and Res
+    world.insert_resource(PhysicsCommands::default());
+    world.insert_resource(RapierConfiguration::default());
+    update_stage.add_system(handle_physics_commands);
+
+    update_stage.run(&mut world);
+
+    // Asset Default State
+
+    assert!(world.get_resource::<RapierConfiguration>().unwrap().physics_pipeline_active);
+    assert!(world.get_resource::<RapierConfiguration>().unwrap().query_pipeline_active);
+    assert!(!world.get_resource::<PhysicsCommands>().unwrap().paused());
+
+    // Pause
+
+    world.get_resource_mut::<PhysicsCommands>().unwrap().pause();
+
+    update_stage.run(&mut world);
+
+    assert!(!world.get_resource::<RapierConfiguration>().unwrap().physics_pipeline_active);
+    assert!(!world.get_resource::<RapierConfiguration>().unwrap().query_pipeline_active);
+    assert!(world.get_resource::<PhysicsCommands>().unwrap().paused());
+
+    // Resume
+
+    world.get_resource_mut::<PhysicsCommands>().unwrap().resume();
+
+    update_stage.run(&mut world);
+
+    assert!(world.get_resource::<RapierConfiguration>().unwrap().physics_pipeline_active);
+    assert!(world.get_resource::<RapierConfiguration>().unwrap().query_pipeline_active);
+    assert!(!world.get_resource::<PhysicsCommands>().unwrap().paused());
+  }
+}

@@ -370,3 +370,34 @@ impl Plugin for PlayerPlugin {
       .add_system(handle_player_input_commands);
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use bevy::prelude::*;
+  use super::*;
+
+  #[test]
+  fn test_player_input_commands() {
+    let mut world = World::default();
+    let mut update_stage = SystemStage::parallel();
+
+    // Setup Systems and Res
+    world.insert_resource(PlayerInputCommands::default());
+    update_stage.add_system(handle_player_input_commands);
+
+    update_stage.run(&mut world);
+
+    // Asset Default State
+    assert!(world.get_resource::<PlayerInputCommands>().unwrap().player_has_input());
+
+    // Revoke
+    world.get_resource_mut::<PlayerInputCommands>().unwrap().revoke_input();
+    update_stage.run(&mut world);
+    assert!(!world.get_resource::<PlayerInputCommands>().unwrap().player_has_input());
+
+    // Grant
+    world.get_resource_mut::<PlayerInputCommands>().unwrap().grant_input();
+    update_stage.run(&mut world);
+    assert!(world.get_resource::<PlayerInputCommands>().unwrap().player_has_input());
+  }
+}
