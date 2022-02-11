@@ -3,6 +3,8 @@
 //! TODO: This plugin should be moved into the same file as the [Player]
 //! attribute.
 
+use std::collections::VecDeque;
+
 use bevy::prelude::*;
 use bevy_kira_audio::Audio;
 use bevy_rapier2d::na::Vector2;
@@ -21,7 +23,11 @@ const PLAYER_MOVE_SPEED: i32 = 15;
 const PLAYER_JUMP_FORCE: u32 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
-fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut RigidBodyForcesComponent, With<Player>>) {
+fn handle_player_movement(input: Res<Kurinji>, player_input_commands: Res<PlayerInputCommands>, mut player_force: Query<&mut RigidBodyForcesComponent, With<Player>>) {
+  if !player_input_commands.player_has_input() {
+    return;
+  }
+
   if let Some(mut forces) = player_force.iter_mut().next() {
     let x = if input.is_action_active(RIGHT) {
       PLAYER_MOVE_SPEED as f32
@@ -37,7 +43,11 @@ fn handle_player_movement(input: Res<Kurinji>, mut player_force: Query<&mut Rigi
 }
 
 /// Consumes [Kurinji] inputs for player hover height adjustments.
-fn handle_height_adjust(input: Res<Kurinji>, mut player: Query<&mut Player>, dashing: Query<&Dash>) {
+fn handle_height_adjust(input: Res<Kurinji>, player_input_commands: Res<PlayerInputCommands>, mut player: Query<&mut Player>, dashing: Query<&Dash>) {
+  if !player_input_commands.player_has_input() {
+    return;
+  }
+
   if let Ok(dashing) = dashing.get_single() {
     if dashing.holding() {
       return;
@@ -161,9 +171,14 @@ fn handle_player_jump(
   time: Res<Time>,
   mut player: Query<(&mut Player, &mut RigidBodyVelocityComponent)>,
   audio: Res<Audio>,
+  player_input_commands: Res<PlayerInputCommands>,
   sfx_handles: Res<SfxHandles>,
   channels: Res<AudioChannels>,
 ) {
+  if !player_input_commands.player_has_input() {
+    return;
+  }
+
   if let Ok((mut player_c, mut vel)) = player.get_single_mut() {
     // Start Jump
     if input.is_action_active(JUMP) && !player_c.jump_in_progress && player_c.grounded {
@@ -192,9 +207,14 @@ fn handle_dash(
   input: Res<Kurinji>,
   time: Res<Time>,
   mut player: Query<(&Player, &mut RigidBodyVelocityComponent, &mut Dash)>,
+  player_input_commands: Res<PlayerInputCommands>,
   crosshair_spawned: Query<Entity, With<DashCrosshair>>,
   asset_server: Res<AssetServer>,
 ) {
+  if !player_input_commands.player_has_input() {
+    return;
+  }
+
   if let Ok((player, mut vel, mut dash)) = player.get_single_mut() {
     if player.grounded {
       dash.reset_charges();
@@ -283,12 +303,62 @@ fn handle_dash_indictors(
   }
 }
 
+enum PlayerInputCommand {
+  /// Revokes input from the player
+  RevokeInput,
+  /// Grants input to the player
+  GrantInput,
+  // OverrideInput(Input, Time) (for use in cutscenes)
+}
+
+/// A command queue to handle the revoking, granting, and override of player inputs.
+/// Handled as a queue for the later usage of override input, which may require the chaining of override input commands for a cutscene.
+pub struct PlayerInputCommands {
+  queue: VecDeque<PlayerInputCommand>,
+  player_has_input: bool,
+}
+
+impl PlayerInputCommands {
+  pub fn revoke_input(&mut self) {
+    self.queue.push_back(PlayerInputCommand::RevokeInput);
+  }
+
+  pub fn grant_input(&mut self) {
+    self.queue.push_back(PlayerInputCommand::GrantInput);
+  }
+
+  pub fn tick(&mut self) {
+    if let Some(command) = self.queue.pop_front() {
+      match command {
+        PlayerInputCommand::RevokeInput => self.player_has_input = false,
+        PlayerInputCommand::GrantInput => self.player_has_input = true,
+      }
+    }
+  }
+
+  pub fn player_has_input(&self) -> bool {
+    self.player_has_input
+  }
+}
+
+impl Default for PlayerInputCommands {
+  fn default() -> Self {
+    Self { 
+      queue: Default::default(),
+      player_has_input: true,
+    }
+  }
+}
+
+pub fn handle_player_input_commands(mut commands: ResMut<PlayerInputCommands>) { commands.tick(); }
+
 /// [Plugin] for player systems.
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
   fn build(&self, app: &mut App) {
     app
+      .init_resource::<PlayerInputCommands>()
       .add_system(handle_player_movement.label(PlayerSimulationSteps::ApplyMoving))
       .add_system(handle_player_hover.before(PlayerSimulationSteps::ApplyJumping))
       .add_system(handle_height_adjust)
@@ -296,6 +366,7 @@ impl Plugin for PlayerPlugin {
       .add_system(handle_player_jump.label(PlayerSimulationSteps::ApplyJumping))
       .add_system(handle_dash)
       .add_system(handle_dash_crosshair)
-      .add_system(handle_dash_indictors);
+      .add_system(handle_dash_indictors)
+      .add_system(handle_player_input_commands);
   }
 }

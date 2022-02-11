@@ -1,5 +1,7 @@
 //! Contains Plugins for modifying aspects of the rapier physics pipeline
 
+use std::collections::VecDeque;
+
 use bevy::prelude::*;
 use bevy_rapier2d::physics::TimestepMode;
 use bevy_rapier2d::prelude::*;
@@ -15,6 +17,52 @@ pub enum PlayerSimulationSteps {
   ApplyJumping,
 }
 
+pub enum PhysicsCommand {
+  PausePhysics,
+  ResumePhysics,
+}
+
+#[derive(Default)]
+pub struct PhysicsCommands {
+  queue: VecDeque<PhysicsCommand>,
+  paused: bool,
+}
+
+impl PhysicsCommands {
+  pub fn pause(&mut self) {
+    self.queue.push_back(PhysicsCommand::PausePhysics);
+  }
+
+  pub fn resume(&mut self) {
+    self.queue.push_back(PhysicsCommand::ResumePhysics);
+  }
+
+  pub fn pop(&mut self) -> Option<PhysicsCommand> {
+    self.queue.pop_front()
+  }
+
+  pub fn paused(&self) -> bool {
+    self.paused
+  }
+}
+
+pub fn handle_physics_commands(mut commands: ResMut<PhysicsCommands>, mut rapier_config: ResMut<RapierConfiguration>) {
+  if let Some(command) = commands.pop() {
+    match command {
+      PhysicsCommand::PausePhysics => {
+        rapier_config.physics_pipeline_active = false;
+        rapier_config.query_pipeline_active = false;
+        commands.paused = true;
+      },
+      PhysicsCommand::ResumePhysics => {
+        rapier_config.physics_pipeline_active = true;
+        rapier_config.query_pipeline_active = true;
+        commands.paused = false;
+      },
+    }
+  }
+}
+
 /// Startup system to configure rapier physics for sprites
 pub fn configure_rapier(mut rapier_config: ResMut<RapierConfiguration>) {
   rapier_config.timestep_mode = TimestepMode::InterpolatedTimestep;
@@ -26,6 +74,9 @@ pub struct ModifyPhysicsPlugin;
 
 impl Plugin for ModifyPhysicsPlugin {
   fn build(&self, app: &mut App) {
-    app.add_startup_system(configure_rapier);
+    app
+      .init_resource::<PhysicsCommands>()
+      .add_startup_system(configure_rapier)
+      .add_system(handle_physics_commands);
   }
 }

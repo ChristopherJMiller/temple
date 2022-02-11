@@ -20,6 +20,7 @@ use crate::editor::camera::EditorCamera;
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
 use crate::game::sfx::AudioChannels;
+use crate::input::CursorCommands;
 use crate::level::config::SPRITE_SIZE;
 use crate::level::util::get_texture_path;
 use crate::state::game_state::{ActiveSave, GameMode, TempleState};
@@ -140,6 +141,7 @@ pub fn load_level(
   audio: Res<Audio>,
   channels: Res<AudioChannels>,
   mut overlay_commands: ResMut<OverlayCommands>,
+  mut cursor_commands: ResMut<CursorCommands>,
 ) {
   query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
@@ -227,6 +229,7 @@ pub fn load_level(
     }
 
     info!(target: "load_level", "Loaded Level {}", level_id);
+    cursor_commands.lock_cursor();
     commands.entity(e).insert(LevelLoadComplete);
     overlay_commands.command(OverlayCommand::FadeOut(1.0));
   });

@@ -15,6 +15,7 @@ use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::{Attribute, Player};
+use crate::game::physics::PhysicsCommands;
 use crate::level::LevelId;
 
 /// Direction of sprite movement.
@@ -169,7 +170,11 @@ pub enum MovingAttributeSystemSteps {
 }
 
 /// System to move all moving sprites per change in [Time].
-pub fn moving_system(time: Res<Time>, mut moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>) {
+pub fn moving_system(time: Res<Time>, physics_commands: Res<PhysicsCommands>, mut moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>) {
+  if physics_commands.paused() {
+    return;
+  }
+
   moving_sprite.for_each_mut(|(mut moving, mut collider_position)| {
     moving.increment_time(time.delta().as_secs_f32());
     collider_position.0 = moving.get_position().into();
