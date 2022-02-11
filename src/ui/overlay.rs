@@ -89,14 +89,14 @@ impl OverlayCommands {
   }
 }
 
-pub fn handle_overlay(mut overlay: ResMut<OverlayCommands>, egui_ctx: Res<EguiContext>, time: Res<Time>, temple_state: Res<TempleState>) {
+pub fn handle_overlay(mut overlay: ResMut<OverlayCommands>, mut egui_ctx: ResMut<EguiContext>, time: Res<Time>, temple_state: Res<TempleState>) {
   let color = overlay.get_color(time.delta_seconds());
 
   if temple_state.in_game() {
     egui::CentralPanel::default().frame(Frame {
       fill: color.into(),
       ..Default::default()
-    }).show(egui_ctx.ctx(), |_| {});
+    }).show(egui_ctx.ctx_mut(), |_| {});
   }
 }
 

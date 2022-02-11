@@ -62,10 +62,10 @@ impl EditorState {
 }
 
 /// Toolbar UI
-pub fn toolbar(egui_context: Res<EguiContext>, mut toolbar_state: ResMut<EditorState>) {
+pub fn toolbar(mut egui_context: ResMut<EguiContext>, mut toolbar_state: ResMut<EditorState>) {
   egui::Area::new("Toolbar")
     .fixed_pos(egui::pos2(10.0, 10.0))
-    .show(egui_context.ctx(), |ui| {
+    .show(egui_context.ctx_mut(), |ui| {
       ui.horizontal(|ui| {
         if ui.button("File").clicked() {
           toolbar_state.show_file_menu = !toolbar_state.show_file_menu;
@@ -78,13 +78,13 @@ pub fn toolbar(egui_context: Res<EguiContext>, mut toolbar_state: ResMut<EditorS
 pub fn editor_file_menu(
   mut commands: Commands,
   loaded_level_query: Query<Entity, (With<LoadLevel>, With<PreparedLevel>, With<LevelLoadComplete>)>,
-  egui_context: Res<EguiContext>,
+  mut egui_context: ResMut<EguiContext>,
   mut toolbar_state: ResMut<EditorState>,
 ) {
   if toolbar_state.show_file_menu {
     egui::Area::new("File")
       .fixed_pos(egui::pos2(10.0, 50.0))
-      .show(egui_context.ctx(), |ui| {
+      .show(egui_context.ctx_mut(), |ui| {
         if ui.button("Open").clicked() {
           toolbar_state.show_file_menu = false;
           toolbar_state.level_items = get_level_menu_items();
@@ -106,13 +106,13 @@ pub fn editor_file_menu(
 /// Open Level Dialog
 pub fn editor_open_menu(
   mut commands: Commands,
-  egui_context: Res<EguiContext>,
+  mut egui_context: ResMut<EguiContext>,
   mut toolbar_state: ResMut<EditorState>,
 ) {
   if toolbar_state.show_open_levels_menu {
     egui::Area::new("Open Level")
       .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-      .show(egui_context.ctx(), |ui| {
+      .show(egui_context.ctx_mut(), |ui| {
         ui.label("Load Level");
         egui::ScrollArea::new([false, true]).max_height(100.0).show(ui, |ui| {
           let items: Vec<_> = toolbar_state
@@ -149,7 +149,7 @@ pub const EDITOR_ERASER_NAME: &str = "__EDITOR_ERASER";
 /// Sidebar to select sprites and configure manifest while editing a level.
 pub fn sidebar(
   mut selected_sprite: ResMut<SelectedSprite>,
-  egui_context: Res<EguiContext>,
+  mut egui_context: ResMut<EguiContext>,
   mut toolbar_state: ResMut<EditorState>,
   mut loaded_level: Query<&mut PreparedLevel, With<LevelLoadComplete>>,
 ) {
@@ -160,7 +160,7 @@ pub fn sidebar(
   if let Ok(mut prepared_level) = loaded_level.get_single_mut() {
     egui::SidePanel::right("Sidebar")
       .resizable(false)
-      .show(egui_context.ctx(), |ui| {
+      .show(egui_context.ctx_mut(), |ui| {
         // Level Title
         ui.horizontal(|ui| {
           ui.label("Title: ");
@@ -206,7 +206,7 @@ pub fn sidebar(
 
 /// Music Selection Menu
 pub fn show_music_menu(
-  egui_context: Res<EguiContext>,
+  mut egui_context: ResMut<EguiContext>,
   mut toolbar_state: ResMut<EditorState>,
   mut loaded_level: Query<&mut PreparedLevel, With<LevelLoadComplete>>,
 ) {
@@ -217,7 +217,7 @@ pub fn show_music_menu(
   if toolbar_state.show_music_menu {
     egui::Area::new("Select Music")
       .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-      .show(egui_context.ctx(), |ui| {
+      .show(egui_context.ctx_mut(), |ui| {
         ui.label("Select Background Music");
         egui::ScrollArea::new([false, true]).max_height(100.0).show(ui, |ui| {
           let items: Vec<_> = toolbar_state
@@ -238,7 +238,7 @@ pub fn show_music_menu(
   }
 }
 
-pub fn show_add_sprite_menu(egui_context: Res<EguiContext>, mut toolbar_state: ResMut<EditorState>) {
+pub fn show_add_sprite_menu(mut egui_context: ResMut<EguiContext>, mut toolbar_state: ResMut<EditorState>) {
   if !toolbar_state.level_loaded {
     return;
   }
@@ -246,7 +246,7 @@ pub fn show_add_sprite_menu(egui_context: Res<EguiContext>, mut toolbar_state: R
   if toolbar_state.show_add_sprite_menu {
     egui::Area::new("New Sprite")
       .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-      .show(egui_context.ctx(), |ui| {
+      .show(egui_context.ctx_mut(), |ui| {
         ui.horizontal(|ui| {
           ui.vertical(|ui| {
             ui.label("Create a new Level Sprite");

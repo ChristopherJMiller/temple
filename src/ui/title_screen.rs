@@ -144,7 +144,7 @@ pub fn delete_title_screen(
 /// EGui Coroutine for title screen
 pub fn title_menu_buttons(
   mut commands: Commands,
-  egui_ctx: Res<EguiContext>,
+  mut egui_ctx: ResMut<EguiContext>,
   window_desc: Res<WindowDescriptor>,
   mut title_menu_state: ResMut<TitleMenuState>,
   mut saves: ResMut<AvaliableSaves>,
@@ -160,7 +160,7 @@ pub fn title_menu_buttons(
     TitleMenuStates::MainButtons => {
       egui::Area::new("Menu")
         .fixed_pos(egui::pos2((window_desc.width / 2.0) - 100.0, window_desc.height / 2.0))
-        .show(egui_ctx.ctx(), |ui| {
+        .show(egui_ctx.ctx_mut(), |ui| {
           ui.vertical(|ui| {
             if ui.add_sized([200.0, 50.0], egui::Button::new("Play")).clicked() {
               title_menu_state.state = TitleMenuStates::SelectSaves;
@@ -171,7 +171,7 @@ pub fn title_menu_buttons(
     TitleMenuStates::SelectSaves => {
       egui::Area::new("Saves")
         .fixed_pos(egui::pos2((window_desc.width / 2.0) - 200.0, window_desc.height / 2.0))
-        .show(egui_ctx.ctx(), |ui| {
+        .show(egui_ctx.ctx_mut(), |ui| {
           ScrollArea::new([false; 2]).show(ui, |ui| {
             if ui.add_sized([400.0, 35.0], egui::Button::new("New Save")).clicked() {
               title_menu_state.state = TitleMenuStates::NewSavePrompt;
@@ -197,7 +197,7 @@ pub fn title_menu_buttons(
     TitleMenuStates::NewSavePrompt => {
       egui::Area::new("NewSave")
         .fixed_pos(egui::pos2((window_desc.width / 2.0) - 100.0, window_desc.height / 2.0))
-        .show(egui_ctx.ctx(), |ui| {
+        .show(egui_ctx.ctx_mut(), |ui| {
           ui.vertical(|ui| {
             ui.label("Create a New Save");
             ui.add(egui::TextEdit::singleline(&mut title_menu_state.save_name_input));

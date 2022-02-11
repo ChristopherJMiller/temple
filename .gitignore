@@ -4,6 +4,7 @@ windows/
 windows*.zip
 saves/
 test/
+settings.toml
 
 *.profraw
 *.info

@@ -112,7 +112,7 @@ pub fn load_credits(
 }
 
 pub fn run_credits(
-  egui_context: Res<EguiContext>,
+  mut egui_context: ResMut<EguiContext>,
   mut credits: ResMut<CreditsData>,
   time: Res<Time>,
   window_desc: Res<WindowDescriptor>,
@@ -120,7 +120,7 @@ pub fn run_credits(
   if credits.run_credits {
     egui::Area::new("Credits")
       .anchor(egui::Align2::CENTER_BOTTOM, [0.0, credits.y_offset.round()])
-      .show(egui_context.ctx(), |ui| {
+      .show(egui_context.ctx_mut(), |ui| {
         ui.set_width(window_desc.width * 0.66);
         ui.vertical_centered(|ui| {
           for element in credits.credits_data.iter() {

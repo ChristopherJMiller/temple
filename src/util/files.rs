@@ -43,6 +43,8 @@ pub const SPRITE_TEXTURE_DIR_PATH: &str = concatcp!(TEXTURE_DIR_PATH, "sprites/"
 /// `/audio/music` location
 pub const MUSIC_DIR_PATH: &str = concatcp!(ASSET_PATH, "audio/music/");
 
+pub const SETTINGS_PATH: &str = "settings.toml";
+
 pub fn from_game_root<T: AsRef<Path>>(path: T) -> PathBuf {
   let mut base = current_exe().unwrap();
   base.pop();

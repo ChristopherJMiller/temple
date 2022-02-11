@@ -8,7 +8,7 @@ edition = "2021"
 bevy = { version = "0.6.0", default-features = false, features = ["bevy_dynamic_plugin", "bevy_gilrs", "bevy_winit", "render", "png", "hdr", "x11"] }
 bevy_rapier2d = { git = "https://github.com/dimforge/bevy_rapier", rev = "11605d04", features = ["simd-stable"] }
 kurinji = { git = "https://github.com/ChristopherJMiller/kurinji" }
-bevy_egui = "^0.10"
+bevy_egui = "^0.11"
 bevy_kira_audio = { version = "0.8", features = ["wav"] }
 toml = "^0.5"
 serde = "^1.0"

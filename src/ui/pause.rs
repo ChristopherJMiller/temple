@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use kurinji::Kurinji;
 
-use crate::{input::{MENU, CursorCommands}, state::game_state::{TempleState, GameMode}, game::{player::PlayerInputCommands, physics::PhysicsCommands}};
+use crate::{input::{MENU, CursorCommands}, state::{game_state::TempleState, settings::Settings}, game::{player::PlayerInputCommands, physics::PhysicsCommands, sfx::AudioChannels}};
 
 #[derive(Default)]
 pub struct PauseMenuState {
@@ -13,12 +13,14 @@ pub struct PauseMenuState {
 pub fn pause_menu_buttons(
   //mut commands: Commands,
   input: Res<Kurinji>,
-  //egui_ctx: Res<EguiContext>,
+  mut egui_ctx: ResMut<EguiContext>,
   //window_desc: Res<WindowDescriptor>,
   mut state: Local<PauseMenuState>,
   mut cursor_commands: ResMut<CursorCommands>,
   mut player_input_commands: ResMut<PlayerInputCommands>,
   mut physics_commands: ResMut<PhysicsCommands>,
+  mut channels: ResMut<AudioChannels>,
+  mut settings: ResMut<Settings>,
   temple_state: Res<TempleState>,
 ) {
   if !temple_state.in_game() {
@@ -37,6 +39,7 @@ pub fn pause_menu_buttons(
     physics_commands.resume();
     state.action_held_down = true;
     state.menu_active = false;
+    settings.update_from_audio_channels(&channels);
   } else if !input.is_action_active(MENU) {
     state.action_held_down = false;
   }
@@ -45,9 +48,13 @@ pub fn pause_menu_buttons(
     return;
   }
 
-  //egui::Area::new("Pause")
-  //.anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-  //.show(egui_ctx.ctx(), |ui| {
-  //  ui.label("Pause");
-  //});
+  egui::Window::new("Pause")
+  .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+  .resizable(false)
+  .collapsible(false)
+  .show(egui_ctx.ctx_mut(), |ui| {
+    ui.add(egui::Slider::new(&mut channels.main_volume, 0.0..=2.0).text("Main Volume"));
+    ui.add(egui::Slider::new(&mut channels.music.1, 0.0..=2.0).text("Music Volume"));
+    ui.add(egui::Slider::new(&mut channels.sfx.1, 0.0..=2.0).text("SFX Volume"));
+  });
 }

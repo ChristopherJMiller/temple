@@ -6,8 +6,8 @@ use bevy_egui::EguiContext;
 
 use crate::util::files::from_game_root;
 
-pub fn setup_egui_font(egui_ctx: ResMut<EguiContext>) {
-  let ctx = &mut egui_ctx.ctx();
+pub fn setup_egui_font(mut egui_ctx: ResMut<EguiContext>) {
+  let ctx = &mut egui_ctx.ctx_mut();
 
   let mut fonts = FontDefinitions::default();
 

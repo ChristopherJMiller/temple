@@ -16,6 +16,6 @@ impl Plugin for StatePlugin {
     app
       .insert_resource(AvaliableSaves(saves))
       .init_resource::<ActiveSave>()
-      .init_resource::<Settings>();
+      .insert_resource(Settings::from_file());
   }
 }
