@@ -2,6 +2,7 @@
 install/
 windows/
 windows*.zip
+linux/
 saves/
 test/
 settings.toml
