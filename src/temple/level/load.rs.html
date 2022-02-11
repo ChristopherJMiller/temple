@@ -318,6 +318,9 @@
 <span id="317">317</span>
 <span id="318">318</span>
 <span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -340,6 +343,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::camera::MainCamera</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx::AudioChannels</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input::CursorCommands</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::util::get_texture_path</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">GameMode</span>, <span class="ident">TempleState</span>};
@@ -460,6 +464,7 @@
   <span class="ident">audio</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Audio</span><span class="op">&gt;</span>,
   <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">overlay_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">OverlayCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">cursor_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CursorCommands</span><span class="op">&gt;</span>,
 ) {
   <span class="ident">query</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="ident">load_level</span>, <span class="ident">prepared_level</span>)<span class="op">|</span> {
     <span class="kw">let</span> <span class="ident">level_id</span> <span class="op">=</span> <span class="ident">load_level</span>.<span class="number">0</span>;
@@ -547,6 +552,7 @@
     }
 
     <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;load_level&quot;</span>, <span class="string">&quot;Loaded Level {}&quot;</span>, <span class="ident">level_id</span>);
+    <span class="ident">cursor_commands</span>.<span class="ident">lock_cursor</span>();
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">e</span>).<span class="ident">insert</span>(<span class="ident">LevelLoadComplete</span>);
     <span class="ident">overlay_commands</span>.<span class="ident">command</span>(<span class="ident">OverlayCommand::FadeOut</span>(<span class="number">1.0</span>));
   });

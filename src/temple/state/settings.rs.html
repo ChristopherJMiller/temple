@@ -9,15 +9,107 @@
 <span id="8"> 8</span>
 <span id="9"> 9</span>
 <span id="10">10</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fs</span>;
+
+<span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">game::sfx::AudioChannels</span>, <span class="ident">util::files</span>::{<span class="ident">from_game_root</span>, <span class="ident">SETTINGS_PATH</span>}};
 
 <span class="doccomment">/// Settings entries</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Default</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Settings</span> {
   <span class="comment">// Volume Settings</span>
-  <span class="ident">main_mixer</span>: <span class="ident">f32</span>,
-  <span class="ident">music_volume</span>: <span class="ident">f32</span>,
-  <span class="ident">sfx_volume</span>: <span class="ident">f32</span>,
+  <span class="kw">pub</span> <span class="ident">main_mixer</span>: <span class="ident">f32</span>,
+  <span class="kw">pub</span> <span class="ident">music_volume</span>: <span class="ident">f32</span>,
+  <span class="kw">pub</span> <span class="ident">sfx_volume</span>: <span class="ident">f32</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Settings</span> {
+  <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
+    <span class="self">Self</span> { 
+      <span class="ident">main_mixer</span>: <span class="number">1.0</span>, 
+      <span class="ident">music_volume</span>: <span class="number">0.7</span>, 
+      <span class="ident">sfx_volume</span>: <span class="number">0.7</span> 
+    }
+  }
+}
+
+<span class="kw">impl</span> <span class="ident">Settings</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_file</span>() -&gt; <span class="self">Self</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">fs::read</span>(<span class="ident">from_game_root</span>(<span class="ident">SETTINGS_PATH</span>)) {
+      <span class="ident">toml::from_slice</span>::<span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">file</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to parse settings file!&quot;</span>)
+    } <span class="kw">else</span> {
+      <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;Settings::from_file&quot;</span>, <span class="string">&quot;Could not load settings file. Generating a new one...&quot;</span>);
+      <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="ident">Settings::default</span>();
+      <span class="ident">settings</span>.<span class="ident">save</span>();
+      <span class="ident">settings</span>
+    }
+  }
+
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">save</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+    <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">toml::to_string_pretty</span>(<span class="self">self</span>);
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">file</span>) <span class="op">=</span> <span class="ident">file</span> {
+      <span class="kw">if</span> <span class="ident">fs::write</span>(<span class="ident">from_game_root</span>(<span class="ident">SETTINGS_PATH</span>), <span class="ident">file</span>).<span class="ident">is_err</span>() {
+        <span class="macro">warn!</span>(<span class="ident">target</span>: <span class="string">&quot;Settings::save&quot;</span>, <span class="string">&quot;Failed to write settings file to disk!&quot;</span>);
+      }
+    } <span class="kw">else</span> {
+      <span class="macro">warn!</span>(<span class="ident">target</span>: <span class="string">&quot;Settings::save&quot;</span>, <span class="string">&quot;Failed to serialize settings file!&quot;</span>);
+    }
+  }
+
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update_from_audio_channels</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">channels</span>: <span class="kw-2">&amp;</span><span class="ident">AudioChannels</span>) {
+    <span class="self">self</span>.<span class="ident">main_mixer</span> <span class="op">=</span> <span class="ident">channels</span>.<span class="ident">main_volume</span>;
+    <span class="self">self</span>.<span class="ident">music_volume</span> <span class="op">=</span> <span class="ident">channels</span>.<span class="ident">music</span>.<span class="number">1</span>;
+    <span class="self">self</span>.<span class="ident">sfx_volume</span> <span class="op">=</span> <span class="ident">channels</span>.<span class="ident">sfx</span>.<span class="number">1</span>;
+    <span class="self">self</span>.<span class="ident">save</span>();
+  }
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="temple" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>

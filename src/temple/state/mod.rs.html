@@ -38,7 +38,7 @@
     <span class="ident">app</span>
       .<span class="ident">insert_resource</span>(<span class="ident">AvaliableSaves</span>(<span class="ident">saves</span>))
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>()
-      .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span>();
+      .<span class="ident">insert_resource</span>(<span class="ident">Settings::from_file</span>());
   }
 }
 </code></pre></div>

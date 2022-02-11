@@ -46,11 +46,24 @@
 <span id="45">45</span>
 <span id="46">46</span>
 <span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_egui</span>::{<span class="ident">egui</span>, <span class="ident">EguiContext</span>};
 <span class="kw">use</span> <span class="ident">kurinji::Kurinji</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">input</span>::{<span class="ident">MENU</span>, <span class="ident">CursorCommands</span>}, <span class="ident">state::game_state</span>::{<span class="ident">TempleState</span>, <span class="ident">GameMode</span>}};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">input</span>::{<span class="ident">MENU</span>, <span class="ident">CursorCommands</span>}, <span class="ident">state</span>::{<span class="ident">game_state::TempleState</span>, <span class="ident">settings::Settings</span>}, <span class="ident">game</span>::{<span class="ident">player::PlayerInputCommands</span>, <span class="ident">physics::PhysicsCommands</span>, <span class="ident">sfx::AudioChannels</span>}};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PauseMenuState</span> {
@@ -61,10 +74,14 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pause_menu_buttons</span>(
   <span class="comment">//mut commands: Commands,</span>
   <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
-  <span class="comment">//egui_ctx: Res&lt;EguiContext&gt;,</span>
+  <span class="kw-2">mut</span> <span class="ident">egui_ctx</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
   <span class="comment">//window_desc: Res&lt;WindowDescriptor&gt;,</span>
   <span class="kw-2">mut</span> <span class="ident">state</span>: <span class="ident">Local</span><span class="op">&lt;</span><span class="ident">PauseMenuState</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">cursor_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CursorCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">player_input_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">physics_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PhysicsCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">channels</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">settings</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span>,
   <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="op">!</span><span class="ident">temple_state</span>.<span class="ident">in_game</span>() {
@@ -75,10 +92,15 @@
     <span class="ident">state</span>.<span class="ident">action_held_down</span> <span class="op">=</span> <span class="bool-val">true</span>;
     <span class="ident">state</span>.<span class="ident">menu_active</span> <span class="op">=</span> <span class="bool-val">true</span>;
     <span class="ident">cursor_commands</span>.<span class="ident">unlock_cursor</span>();
+    <span class="ident">player_input_commands</span>.<span class="ident">revoke_input</span>();
+    <span class="ident">physics_commands</span>.<span class="ident">pause</span>();
   } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">MENU</span>) <span class="op">&amp;&amp;</span> <span class="ident">state</span>.<span class="ident">menu_active</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">state</span>.<span class="ident">action_held_down</span> {
     <span class="ident">cursor_commands</span>.<span class="ident">lock_cursor</span>();
+    <span class="ident">player_input_commands</span>.<span class="ident">grant_input</span>();
+    <span class="ident">physics_commands</span>.<span class="ident">resume</span>();
     <span class="ident">state</span>.<span class="ident">action_held_down</span> <span class="op">=</span> <span class="bool-val">true</span>;
     <span class="ident">state</span>.<span class="ident">menu_active</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="ident">settings</span>.<span class="ident">update_from_audio_channels</span>(<span class="kw-2">&amp;</span><span class="ident">channels</span>);
   } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">MENU</span>) {
     <span class="ident">state</span>.<span class="ident">action_held_down</span> <span class="op">=</span> <span class="bool-val">false</span>;
   }
@@ -87,11 +109,15 @@
     <span class="kw">return</span>;
   }
 
-  <span class="comment">//egui::Area::new(&quot;Pause&quot;)</span>
-  <span class="comment">//.anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])</span>
-  <span class="comment">//.show(egui_ctx.ctx(), |ui| {</span>
-  <span class="comment">//  ui.label(&quot;Pause&quot;);</span>
-  <span class="comment">//});</span>
+  <span class="ident">egui::Window::new</span>(<span class="string">&quot;Pause&quot;</span>)
+  .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
+  .<span class="ident">resizable</span>(<span class="bool-val">false</span>)
+  .<span class="ident">collapsible</span>(<span class="bool-val">false</span>)
+  .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+    <span class="ident">ui</span>.<span class="ident">add</span>(<span class="ident">egui::Slider::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">channels</span>.<span class="ident">main_volume</span>, <span class="number">0.0</span>..<span class="op">=</span><span class="number">2.0</span>).<span class="ident">text</span>(<span class="string">&quot;Main Volume&quot;</span>));
+    <span class="ident">ui</span>.<span class="ident">add</span>(<span class="ident">egui::Slider::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">channels</span>.<span class="ident">music</span>.<span class="number">1</span>, <span class="number">0.0</span>..<span class="op">=</span><span class="number">2.0</span>).<span class="ident">text</span>(<span class="string">&quot;Music Volume&quot;</span>));
+    <span class="ident">ui</span>.<span class="ident">add</span>(<span class="ident">egui::Slider::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">channels</span>.<span class="ident">sfx</span>.<span class="number">1</span>, <span class="number">0.0</span>..<span class="op">=</span><span class="number">2.0</span>).<span class="ident">text</span>(<span class="string">&quot;SFX Volume&quot;</span>));
+  });
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="temple" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>

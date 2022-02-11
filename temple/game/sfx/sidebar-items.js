@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["CHECKPOINT_SFX",""],["JUMP_SFX","Jump sound fx path"]],"fn":[["init_channel_volume",""],["load_sfx",""]],"struct":[["AudioChannels",""],["ChannelState",""],["SfxHandles",""],["SfxPlugin","[Plugin] for sfx startup."]]});
+initSidebarItems({"constant":[["CHECKPOINT_SFX",""],["JUMP_SFX","Jump sound fx path"]],"fn":[["init_channel_volume",""],["load_sfx",""],["update_volumes",""]],"struct":[["AudioChannels",""],["ChannelState",""],["SfxHandles",""],["SfxPlugin","[Plugin] for sfx startup."]]});

@@ -425,10 +425,10 @@
 }
 
 <span class="doccomment">/// Toolbar UI</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toolbar</span>(<span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">toolbar</span>(<span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>) {
   <span class="ident">egui::Area::new</span>(<span class="string">&quot;Toolbar&quot;</span>)
     .<span class="ident">fixed_pos</span>(<span class="ident">egui::pos2</span>(<span class="number">10.0</span>, <span class="number">10.0</span>))
-    .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+    .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
       <span class="ident">ui</span>.<span class="ident">horizontal</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="string">&quot;File&quot;</span>).<span class="ident">clicked</span>() {
           <span class="ident">toolbar_state</span>.<span class="ident">show_file_menu</span> <span class="op">=</span> <span class="op">!</span><span class="ident">toolbar_state</span>.<span class="ident">show_file_menu</span>;
@@ -441,13 +441,13 @@
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">editor_file_menu</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="ident">loaded_level_query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LoadLevel</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">PreparedLevel</span><span class="op">&gt;</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
-  <span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="ident">toolbar_state</span>.<span class="ident">show_file_menu</span> {
     <span class="ident">egui::Area::new</span>(<span class="string">&quot;File&quot;</span>)
       .<span class="ident">fixed_pos</span>(<span class="ident">egui::pos2</span>(<span class="number">10.0</span>, <span class="number">50.0</span>))
-      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="string">&quot;Open&quot;</span>).<span class="ident">clicked</span>() {
           <span class="ident">toolbar_state</span>.<span class="ident">show_file_menu</span> <span class="op">=</span> <span class="bool-val">false</span>;
           <span class="ident">toolbar_state</span>.<span class="ident">level_items</span> <span class="op">=</span> <span class="ident">get_level_menu_items</span>();
@@ -469,13 +469,13 @@
 <span class="doccomment">/// Open Level Dialog</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">editor_open_menu</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
-  <span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="ident">toolbar_state</span>.<span class="ident">show_open_levels_menu</span> {
     <span class="ident">egui::Area::new</span>(<span class="string">&quot;Open Level&quot;</span>)
       .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
-      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="ident">ui</span>.<span class="ident">label</span>(<span class="string">&quot;Load Level&quot;</span>);
         <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>, <span class="bool-val">true</span>]).<span class="ident">max_height</span>(<span class="number">100.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="kw">let</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">toolbar_state</span>
@@ -512,7 +512,7 @@
 <span class="doccomment">/// Sidebar to select sprites and configure manifest while editing a level.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sidebar</span>(
   <span class="kw-2">mut</span> <span class="ident">selected_sprite</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">SelectedSprite</span><span class="op">&gt;</span>,
-  <span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PreparedLevel</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 ) {
@@ -523,7 +523,7 @@
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">prepared_level</span>) <span class="op">=</span> <span class="ident">loaded_level</span>.<span class="ident">get_single_mut</span>() {
     <span class="ident">egui::SidePanel::right</span>(<span class="string">&quot;Sidebar&quot;</span>)
       .<span class="ident">resizable</span>(<span class="bool-val">false</span>)
-      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="comment">// Level Title</span>
         <span class="ident">ui</span>.<span class="ident">horizontal</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="ident">ui</span>.<span class="ident">label</span>(<span class="string">&quot;Title: &quot;</span>);
@@ -569,7 +569,7 @@
 
 <span class="doccomment">/// Music Selection Menu</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">show_music_menu</span>(
-  <span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">loaded_level</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">PreparedLevel</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 ) {
@@ -580,7 +580,7 @@
   <span class="kw">if</span> <span class="ident">toolbar_state</span>.<span class="ident">show_music_menu</span> {
     <span class="ident">egui::Area::new</span>(<span class="string">&quot;Select Music&quot;</span>)
       .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
-      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="ident">ui</span>.<span class="ident">label</span>(<span class="string">&quot;Select Background Music&quot;</span>);
         <span class="ident">egui::ScrollArea::new</span>([<span class="bool-val">false</span>, <span class="bool-val">true</span>]).<span class="ident">max_height</span>(<span class="number">100.0</span>).<span class="ident">show</span>(<span class="ident">ui</span>, <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="kw">let</span> <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">toolbar_state</span>
@@ -601,7 +601,7 @@
   }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">show_add_sprite_menu</span>(<span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">show_add_sprite_menu</span>(<span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">toolbar_state</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EditorState</span><span class="op">&gt;</span>) {
   <span class="kw">if</span> <span class="op">!</span><span class="ident">toolbar_state</span>.<span class="ident">level_loaded</span> {
     <span class="kw">return</span>;
   }
@@ -609,7 +609,7 @@
   <span class="kw">if</span> <span class="ident">toolbar_state</span>.<span class="ident">show_add_sprite_menu</span> {
     <span class="ident">egui::Area::new</span>(<span class="string">&quot;New Sprite&quot;</span>)
       .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
-      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="ident">ui</span>.<span class="ident">horizontal</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="ident">ui</span>.<span class="ident">vertical</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
             <span class="ident">ui</span>.<span class="ident">label</span>(<span class="string">&quot;Create a new Level Sprite&quot;</span>);

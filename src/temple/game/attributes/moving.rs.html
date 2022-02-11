@@ -193,6 +193,11 @@
 <span id="192">192</span>
 <span id="193">193</span>
 <span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!</span>
@@ -210,6 +215,7 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Player</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::physics::PhysicsCommands</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
 <span class="doccomment">/// Direction of sprite movement.</span>
@@ -364,7 +370,11 @@
 }
 
 <span class="doccomment">/// System to move all moving sprites per change in [Time].</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">moving_system</span>(<span class="ident">time</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ColliderPositionComponent</span>)<span class="op">&gt;</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">moving_system</span>(<span class="ident">time</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>, <span class="ident">physics_commands</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">PhysicsCommands</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">moving_sprite</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">MovingSprite</span>, <span class="kw-2">&amp;mut</span> <span class="ident">ColliderPositionComponent</span>)<span class="op">&gt;</span>) {
+  <span class="kw">if</span> <span class="ident">physics_commands</span>.<span class="ident">paused</span>() {
+    <span class="kw">return</span>;
+  }
+
   <span class="ident">moving_sprite</span>.<span class="ident">for_each_mut</span>(<span class="op">|</span>(<span class="kw-2">mut</span> <span class="ident">moving</span>, <span class="kw-2">mut</span> <span class="ident">collider_position</span>)<span class="op">|</span> {
     <span class="ident">moving</span>.<span class="ident">increment_time</span>(<span class="ident">time</span>.<span class="ident">delta</span>().<span class="ident">as_secs_f32</span>());
     <span class="ident">collider_position</span>.<span class="number">0</span> <span class="op">=</span> <span class="ident">moving</span>.<span class="ident">get_position</span>().<span class="ident">into</span>();

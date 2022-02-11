@@ -275,7 +275,7 @@
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">run_credits</span>(
-  <span class="ident">egui_context</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">egui_context</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">credits</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CreditsData</span><span class="op">&gt;</span>,
   <span class="ident">time</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>,
   <span class="ident">window_desc</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">WindowDescriptor</span><span class="op">&gt;</span>,
@@ -283,7 +283,7 @@
   <span class="kw">if</span> <span class="ident">credits</span>.<span class="ident">run_credits</span> {
     <span class="ident">egui::Area::new</span>(<span class="string">&quot;Credits&quot;</span>)
       .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_BOTTOM</span>, [<span class="number">0.0</span>, <span class="ident">credits</span>.<span class="ident">y_offset</span>.<span class="ident">round</span>()])
-      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      .<span class="ident">show</span>(<span class="ident">egui_context</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
         <span class="ident">ui</span>.<span class="ident">set_width</span>(<span class="ident">window_desc</span>.<span class="ident">width</span> <span class="op">*</span> <span class="number">0.66</span>);
         <span class="ident">ui</span>.<span class="ident">vertical_centered</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
           <span class="kw">for</span> <span class="ident">element</span> <span class="kw">in</span> <span class="ident">credits</span>.<span class="ident">credits_data</span>.<span class="ident">iter</span>() {

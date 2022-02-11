@@ -47,8 +47,8 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files::from_game_root</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">setup_egui_font</span>(<span class="ident">egui_ctx</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>) {
-  <span class="kw">let</span> <span class="ident">ctx</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">egui_ctx</span>.<span class="ident">ctx</span>();
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">setup_egui_font</span>(<span class="kw-2">mut</span> <span class="ident">egui_ctx</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>) {
+  <span class="kw">let</span> <span class="ident">ctx</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">egui_ctx</span>.<span class="ident">ctx_mut</span>();
 
   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fonts</span> <span class="op">=</span> <span class="ident">FontDefinitions::default</span>();
 
