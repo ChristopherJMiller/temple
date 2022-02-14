@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Settings","Settings entries"]]});
+initSidebarItems({"enum":[["WindowSize",""]],"struct":[["Settings","Settings entries"]]});

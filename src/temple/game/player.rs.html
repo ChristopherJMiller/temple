@@ -402,6 +402,17 @@
 <span id="401">401</span>
 <span id="402">402</span>
 <span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
 </pre><pre class="rust"><code><span class="doccomment">//! [Player] attribute systems</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! TODO: This plugin should be moved into the same file as the [Player]</span>
@@ -427,7 +438,11 @@
 <span class="kw">const</span> <span class="ident">PLAYER_JUMP_FORCE</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">10</span>;
 
 <span class="doccomment">/// Consumes [Kurinji] inputs for player horizontal movement.</span>
-<span class="kw">fn</span> <span class="ident">handle_player_movement</span>(<span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>, <span class="ident">player_input_commands</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">player_force</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">RigidBodyForcesComponent</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span><span class="op">&gt;</span>) {
+<span class="kw">fn</span> <span class="ident">handle_player_movement</span>(
+  <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
+  <span class="ident">player_input_commands</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">player_force</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">RigidBodyForcesComponent</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+) {
   <span class="kw">if</span> <span class="op">!</span><span class="ident">player_input_commands</span>.<span class="ident">player_has_input</span>() {
     <span class="kw">return</span>;
   }
@@ -447,7 +462,12 @@
 }
 
 <span class="doccomment">/// Consumes [Kurinji] inputs for player hover height adjustments.</span>
-<span class="kw">fn</span> <span class="ident">handle_height_adjust</span>(<span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>, <span class="ident">player_input_commands</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>, <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">Player</span><span class="op">&gt;</span>, <span class="ident">dashing</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Dash</span><span class="op">&gt;</span>) {
+<span class="kw">fn</span> <span class="ident">handle_height_adjust</span>(
+  <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
+  <span class="ident">player_input_commands</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">Player</span><span class="op">&gt;</span>,
+  <span class="ident">dashing</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Dash</span><span class="op">&gt;</span>,
+) {
   <span class="kw">if</span> <span class="op">!</span><span class="ident">player_input_commands</span>.<span class="ident">player_has_input</span>() {
     <span class="kw">return</span>;
   }
@@ -533,8 +553,6 @@
             {
               <span class="ident">player_c</span>.<span class="ident">on_moving_entity</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">collided_handle</span>.<span class="ident">entity</span>());
             }
-          } <span class="kw">else</span> {
-            <span class="ident">player_c</span>.<span class="ident">on_moving_entity</span> <span class="op">=</span> <span class="prelude-val">None</span>;
           }
         } <span class="kw">else</span> {
           <span class="ident">player_c</span>.<span class="ident">on_moving_entity</span> <span class="op">=</span> <span class="prelude-val">None</span>;
@@ -715,8 +733,9 @@
   <span class="comment">// OverrideInput(Input, Time) (for use in cutscenes)</span>
 }
 
-<span class="doccomment">/// A command queue to handle the revoking, granting, and override of player inputs.</span>
-<span class="doccomment">/// Handled as a queue for the later usage of override input, which may require the chaining of override input commands for a cutscene.</span>
+<span class="doccomment">/// A command queue to handle the revoking, granting, and override of player</span>
+<span class="doccomment">/// inputs. Handled as a queue for the later usage of override input, which may</span>
+<span class="doccomment">/// require the chaining of override input commands for a cutscene.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerInputCommands</span> {
   <span class="ident">queue</span>: <span class="ident">VecDeque</span><span class="op">&lt;</span><span class="ident">PlayerInputCommand</span><span class="op">&gt;</span>,
   <span class="ident">player_has_input</span>: <span class="ident">bool</span>,
@@ -747,14 +766,16 @@
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">PlayerInputCommands</span> {
   <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-    <span class="self">Self</span> { 
+    <span class="self">Self</span> {
       <span class="ident">queue</span>: <span class="ident">Default::default</span>(),
       <span class="ident">player_has_input</span>: <span class="bool-val">true</span>,
     }
   }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_player_input_commands</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>) { <span class="ident">commands</span>.<span class="ident">tick</span>(); }
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">handle_player_input_commands</span>(<span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>) {
+  <span class="ident">commands</span>.<span class="ident">tick</span>();
+}
 
 <span class="doccomment">/// [Plugin] for player systems.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayerPlugin</span>;
@@ -778,6 +799,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
   <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
+
   <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
   <span class="attribute">#[<span class="ident">test</span>]</span>

@@ -58,17 +58,18 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Level config management and level loading.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">prepare_level</span>, <span class="ident">transition_level</span>, <span class="ident">unload_level</span>};
 <span class="kw">use</span> <span class="ident">verify::verify_level_files</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::{<span class="ident">Goal</span>, <span class="ident">Attribute</span>};
-
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::load::wait_until_unloaded</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::next::auto_next_level</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::util::get_level_manifests</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::{<span class="ident">Attribute</span>, <span class="ident">Goal</span>};
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">config</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">load</span>;
@@ -104,13 +105,16 @@
 <span class="kw">fn</span> <span class="ident">count_exits</span>(<span class="kw-2">mut</span> <span class="ident">exits</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">TotalExits</span><span class="op">&gt;</span>) {
   <span class="kw">let</span> <span class="ident">levels</span> <span class="op">=</span> <span class="ident">get_level_manifests</span>();
   <span class="kw">let</span> <span class="ident">exit_count</span> <span class="op">=</span> <span class="ident">levels</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, (<span class="kw">_</span>, <span class="ident">manifest</span>)<span class="op">|</span> {
-    <span class="kw">let</span> <span class="ident">level_exit_count</span> <span class="op">=</span> <span class="ident">manifest</span>.<span class="ident">sprites</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="ident">item</span><span class="op">|</span> {
-      <span class="kw">if</span> <span class="ident">item</span>.<span class="ident">name</span>.<span class="ident">as_str</span>() <span class="op">==</span> <span class="ident">Goal::KEY</span> {
-        <span class="ident">acc</span> <span class="op">+</span> <span class="number">1</span>
-      } <span class="kw">else</span> {
-        <span class="ident">acc</span>
-      }
-    });
+    <span class="kw">let</span> <span class="ident">level_exit_count</span> <span class="op">=</span> <span class="ident">manifest</span>.<span class="ident">sprites</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(
+      <span class="number">0</span>,
+      <span class="op">|</span><span class="ident">acc</span>, <span class="ident">item</span><span class="op">|</span> {
+        <span class="kw">if</span> <span class="ident">item</span>.<span class="ident">name</span>.<span class="ident">as_str</span>() <span class="op">==</span> <span class="ident">Goal::KEY</span> {
+          <span class="ident">acc</span> <span class="op">+</span> <span class="number">1</span>
+        } <span class="kw">else</span> {
+          <span class="ident">acc</span>
+        }
+      },
+    );
 
     <span class="ident">acc</span> <span class="op">+</span> <span class="ident">level_exit_count</span>
   });

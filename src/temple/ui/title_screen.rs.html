@@ -218,6 +218,28 @@
 <span id="217">217</span>
 <span id="218">218</span>
 <span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles all title screen ui elements and state.</span>
 
 <span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
@@ -226,9 +248,12 @@
 <span class="kw">use</span> <span class="ident">bevy_egui::egui::ScrollArea</span>;
 <span class="kw">use</span> <span class="ident">bevy_egui</span>::{<span class="ident">egui</span>, <span class="ident">EguiContext</span>};
 
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::settings::render_settings_menu</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx::AudioChannels</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::BeginGame</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::TotalExits</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">write_saves</span>, <span class="ident">ActiveSave</span>, <span class="ident">AvaliableSaves</span>, <span class="ident">GameSaveState</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::settings::Settings</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::files::from_game_root</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::VERSION</span>;
 
@@ -248,6 +273,7 @@
   <span class="ident">MainButtons</span>,
   <span class="ident">SelectSaves</span>,
   <span class="ident">NewSavePrompt</span>,
+  <span class="ident">Settings</span>,
 }
 
 <span class="doccomment">/// State for manging EGui Drawing</span>
@@ -268,7 +294,7 @@
 }
 
 <span class="doccomment">/// Spawns the Bevy UI Elements for the Title Screen</span>
-<span class="kw">fn</span> <span class="ident">build_title_screen</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">asset_server</span>: <span class="kw-2">&amp;</span><span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>) {
+<span class="kw">fn</span> <span class="ident">build_title_screen</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">asset_server</span>: <span class="kw-2">&amp;</span><span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>, <span class="ident">settings</span>: <span class="kw-2">&amp;</span><span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span>) {
   <span class="comment">// Game Title</span>
   <span class="ident">commands</span>
     .<span class="ident">spawn_bundle</span>(<span class="ident">TextBundle</span> {
@@ -290,7 +316,7 @@
           <span class="ident">value</span>: <span class="string">&quot;Temple&quot;</span>.<span class="ident">to_string</span>(),
           <span class="ident">style</span>: <span class="ident">TextStyle</span> {
             <span class="ident">font</span>: <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/fonts/unifont.ttf&quot;</span>)),
-            <span class="ident">font_size</span>: <span class="number">256.0</span>,
+            <span class="ident">font_size</span>: <span class="number">256.0</span> <span class="op">*</span> <span class="ident">settings</span>.<span class="ident">scale</span>.<span class="ident">get_ui_scale</span>() <span class="kw">as</span> <span class="ident">f32</span>,
             <span class="ident">color</span>: <span class="ident">Color::WHITE</span>,
           },
         }],
@@ -315,7 +341,7 @@
           <span class="ident">value</span>: <span class="macro">format!</span>(<span class="string">&quot;Version {}&quot;</span>, <span class="ident">VERSION</span>),
           <span class="ident">style</span>: <span class="ident">TextStyle</span> {
             <span class="ident">font</span>: <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">from_game_root</span>(<span class="string">&quot;assets/fonts/unifont.ttf&quot;</span>)),
-            <span class="ident">font_size</span>: <span class="number">32.0</span>,
+            <span class="ident">font_size</span>: <span class="number">32.0</span> <span class="op">*</span> <span class="ident">settings</span>.<span class="ident">scale</span>.<span class="ident">get_ui_scale</span>() <span class="kw">as</span> <span class="ident">f32</span>,
             <span class="ident">color</span>: <span class="ident">Color::WHITE</span>,
           },
         }],
@@ -333,10 +359,11 @@
   <span class="ident">query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">LoadTitleScreen</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">ensure_not_loaded_query</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="ident">Entity</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">TitleScreen</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>,
+  <span class="ident">settings</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ent</span>) <span class="op">=</span> <span class="ident">query</span>.<span class="ident">get_single</span>() {
     <span class="kw">if</span> <span class="ident">ensure_not_loaded_query</span>.<span class="ident">iter</span>().<span class="ident">next</span>().<span class="ident">is_none</span>() {
-      <span class="ident">build_title_screen</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="kw-2">&amp;</span><span class="ident">asset_server</span>);
+      <span class="ident">build_title_screen</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="kw-2">&amp;</span><span class="ident">asset_server</span>, <span class="kw-2">&amp;</span><span class="ident">settings</span>);
       <span class="ident">title_menu_state</span>.<span class="ident">show_title_menu_egui</span> <span class="op">=</span> <span class="bool-val">true</span>;
     }
 
@@ -371,6 +398,8 @@
   <span class="kw-2">mut</span> <span class="ident">active_save</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">exit_count_cache</span>: <span class="ident">Local</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="ident">total_exits</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TotalExits</span><span class="op">&gt;</span>,
+  <span class="ident">channels</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
+  <span class="ident">settings</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">Settings</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="op">!</span><span class="ident">title_menu_state</span>.<span class="ident">show_title_menu_egui</span> {
     <span class="kw">return</span>;
@@ -384,6 +413,9 @@
           <span class="ident">ui</span>.<span class="ident">vertical</span>(<span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
             <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">add_sized</span>([<span class="number">200.0</span>, <span class="number">50.0</span>], <span class="ident">egui::Button::new</span>(<span class="string">&quot;Play&quot;</span>)).<span class="ident">clicked</span>() {
               <span class="ident">title_menu_state</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">TitleMenuStates::SelectSaves</span>;
+            }
+            <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">add_sized</span>([<span class="number">200.0</span>, <span class="number">50.0</span>], <span class="ident">egui::Button::new</span>(<span class="string">&quot;Settings&quot;</span>)).<span class="ident">clicked</span>() {
+              <span class="ident">title_menu_state</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">TitleMenuStates::Settings</span>;
             }
           });
         });
@@ -402,7 +434,7 @@
               <span class="kw">if</span> <span class="op">!</span><span class="ident">exit_count_cache</span>.<span class="ident">contains_key</span>(<span class="ident">name</span>) {
                 <span class="ident">exit_count_cache</span>.<span class="ident">insert</span>(<span class="ident">name</span>.<span class="ident">to_string</span>(), <span class="ident">save</span>.<span class="ident">num_cleared_exits</span>());
               }
-              
+
               <span class="kw">let</span> <span class="ident">file_fmt</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{} {}/{}&quot;</span>, <span class="ident">name</span>, <span class="ident">exit_count_cache</span>[<span class="ident">name</span>], <span class="ident">total_exits</span>.<span class="number">0</span>);
 
               <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">add_sized</span>([<span class="number">400.0</span>, <span class="number">35.0</span>], <span class="ident">egui::Button::new</span>(<span class="ident">file_fmt</span>)).<span class="ident">clicked</span>() {
@@ -433,6 +465,18 @@
               <span class="ident">title_menu_state</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">TitleMenuStates::SelectSaves</span>;
             }
           });
+        });
+    },
+    <span class="ident">TitleMenuStates::Settings</span> =&gt; {
+      <span class="ident">egui::Window::new</span>(<span class="string">&quot;Settings&quot;</span>)
+        .<span class="ident">anchor</span>(<span class="ident">egui::Align2::CENTER_CENTER</span>, [<span class="number">0.0</span>, <span class="number">0.0</span>])
+        .<span class="ident">resizable</span>(<span class="bool-val">false</span>)
+        .<span class="ident">collapsible</span>(<span class="bool-val">false</span>)
+        .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+          <span class="ident">render_settings_menu</span>(<span class="ident">ui</span>, <span class="ident">channels</span>, <span class="ident">settings</span>);
+          <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="string">&quot;Back&quot;</span>).<span class="ident">clicked</span>() {
+            <span class="ident">title_menu_state</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">TitleMenuStates::MainButtons</span>;
+          }
         });
     },
   }
