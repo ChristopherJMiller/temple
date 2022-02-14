@@ -59,6 +59,7 @@ impl Default for GameFile {
 }
 
 /// Loads `game.toml`.
+/// TODO: Should be moved to a `GameFile::from_file()` paradigm
 pub fn get_game_file() -> GameFile {
   if let Ok(file) = fs::read_to_string(from_game_root(GAME_SETTING_PATH)) {
     match toml::from_str::<GameFile>(file.as_str()) {

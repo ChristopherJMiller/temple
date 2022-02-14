@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 use game_state::{bootstrap_and_get_saves, ActiveSave, AvaliableSaves};
 
-use self::settings::Settings;
-
 pub mod game_state;
 pub mod settings;
 
@@ -15,7 +13,6 @@ impl Plugin for StatePlugin {
 
     app
       .insert_resource(AvaliableSaves(saves))
-      .init_resource::<ActiveSave>()
-      .insert_resource(Settings::from_file());
+      .init_resource::<ActiveSave>();
   }
 }

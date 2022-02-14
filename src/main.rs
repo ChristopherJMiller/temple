@@ -16,6 +16,7 @@ use level::save::LevelSavePlugin;
 use level::LevelPlugin;
 use state::game_state::TempleState;
 use state::StatePlugin;
+use state::settings::Settings;
 use ui::UiPlugin;
 use util::cli::{get_cli_args, handle_cli_args, CliArgs};
 use util::files::verify_files;
@@ -42,26 +43,32 @@ fn main() {
   // cli args
   let game_file = get_game_file();
   let cli_args = get_cli_args(version.clone(), &game_file);
+  let settings = Settings::from_file();
 
   if cli_args.edit_mode {
-    start_editor(game_file, cli_args);
+    start_editor(game_file, cli_args, settings);
   } else {
-    start_game(game_file, cli_args);
+    start_game(game_file, cli_args, settings);
   }
 }
 
-fn build_base_app(app: &mut App, game_file: GameFile, cli_args: CliArgs) {
+fn build_base_app(app: &mut App, game_file: GameFile, cli_args: CliArgs, settings: Settings) {
+  let (width, height) = settings.scale.into();
+
   app
     .insert_resource(WindowDescriptor {
       title: game_file.title.clone(),
-      width: 1170.,
-      height: 1024.,
+      width: width as f32,
+      height: height as f32,
+      scale_factor_override: Some(settings.scale.get_ui_scale()),
       vsync: true,
+      resizable: false,
       ..Default::default()
     })
     .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
     .insert_resource(game_file)
     .insert_resource(cli_args)
+    .insert_resource(settings)
 
     // 3rd Party Plugins
     .add_plugins(DefaultPlugins)
@@ -78,9 +85,9 @@ fn build_base_app(app: &mut App, game_file: GameFile, cli_args: CliArgs) {
 }
 
 /// Start Game
-fn start_game(game_file: GameFile, cli_args: CliArgs) {
+fn start_game(game_file: GameFile, cli_args: CliArgs, settings: Settings) {
   let mut app = App::new();
-  build_base_app(&mut app, game_file, cli_args);
+  build_base_app(&mut app, game_file, cli_args, settings);
 
   app
     // 3rd Party Plugins
@@ -94,9 +101,9 @@ fn start_game(game_file: GameFile, cli_args: CliArgs) {
     .run();
 }
 
-fn start_editor(game_file: GameFile, cli_args: CliArgs) {
+fn start_editor(game_file: GameFile, cli_args: CliArgs, settings: Settings) {
   let mut app = App::new();
-  build_base_app(&mut app, game_file, cli_args);
+  build_base_app(&mut app, game_file, cli_args, settings);
 
   app
     // Add required resource plugins

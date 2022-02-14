@@ -2,7 +2,9 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use kurinji::Kurinji;
 
-use crate::{input::{MENU, CursorCommands}, state::{game_state::TempleState, settings::Settings}, game::{player::PlayerInputCommands, physics::PhysicsCommands, sfx::AudioChannels}};
+use crate::{input::{MENU, CursorCommands}, state::{game_state::TempleState, settings::{Settings, WindowSize}}, game::{player::PlayerInputCommands, physics::PhysicsCommands, sfx::AudioChannels}};
+
+use super::settings::render_settings_menu;
 
 #[derive(Default)]
 pub struct PauseMenuState {
@@ -53,8 +55,6 @@ pub fn pause_menu_buttons(
   .resizable(false)
   .collapsible(false)
   .show(egui_ctx.ctx_mut(), |ui| {
-    ui.add(egui::Slider::new(&mut channels.main_volume, 0.0..=2.0).text("Main Volume"));
-    ui.add(egui::Slider::new(&mut channels.music.1, 0.0..=2.0).text("Music Volume"));
-    ui.add(egui::Slider::new(&mut channels.sfx.1, 0.0..=2.0).text("SFX Volume"));
+    render_settings_menu(ui, channels, settings);
   });
 }

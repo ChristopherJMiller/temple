@@ -82,6 +82,7 @@ impl CliArgsBuilder {
 }
 
 /// Command line tool using [clap](https://docs.rs/clap/2.33.3/clap/)
+/// TODO: Should be moved to `CliArgs::build()`
 pub fn get_cli_args(version: String, game_file: &GameFile) -> CliArgs {
   let author_list = game_file
     .authors

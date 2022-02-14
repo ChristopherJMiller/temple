@@ -13,6 +13,7 @@ mod font;
 mod title_screen;
 mod pause;
 pub mod overlay;
+pub mod settings;
 
 // Spawns a [UiCameraBundle]
 fn setup_uicamera(mut commands: Commands) {

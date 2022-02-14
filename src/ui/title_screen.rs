@@ -7,10 +7,14 @@ use bevy_egui::egui::ScrollArea;
 use bevy_egui::{egui, EguiContext};
 
 use crate::game::BeginGame;
+use crate::game::sfx::AudioChannels;
 use crate::level::TotalExits;
 use crate::state::game_state::{write_saves, ActiveSave, AvaliableSaves, GameSaveState};
+use crate::state::settings::Settings;
 use crate::util::files::from_game_root;
 use crate::VERSION;
+
+use super::settings::render_settings_menu;
 
 /// Tag command to load the title screen.
 #[derive(Component)]
@@ -28,6 +32,7 @@ pub enum TitleMenuStates {
   MainButtons,
   SelectSaves,
   NewSavePrompt,
+  Settings,
 }
 
 /// State for manging EGui Drawing
@@ -48,7 +53,7 @@ impl Default for TitleMenuState {
 }
 
 /// Spawns the Bevy UI Elements for the Title Screen
-fn build_title_screen(commands: &mut Commands, asset_server: &Res<AssetServer>) {
+fn build_title_screen(commands: &mut Commands, asset_server: &Res<AssetServer>, settings: &Res<Settings>) {
   // Game Title
   commands
     .spawn_bundle(TextBundle {
@@ -70,7 +75,7 @@ fn build_title_screen(commands: &mut Commands, asset_server: &Res<AssetServer>) 
           value: "Temple".to_string(),
           style: TextStyle {
             font: asset_server.load(from_game_root("assets/fonts/unifont.ttf")),
-            font_size: 256.0,
+            font_size: 256.0 * settings.scale.get_ui_scale() as f32,
             color: Color::WHITE,
           },
         }],
@@ -95,7 +100,7 @@ fn build_title_screen(commands: &mut Commands, asset_server: &Res<AssetServer>) 
           value: format!("Version {}", VERSION),
           style: TextStyle {
             font: asset_server.load(from_game_root("assets/fonts/unifont.ttf")),
-            font_size: 32.0,
+            font_size: 32.0 * settings.scale.get_ui_scale() as f32,
             color: Color::WHITE,
           },
         }],
@@ -113,10 +118,11 @@ pub fn setup_title_screen(
   query: Query<Entity, With<LoadTitleScreen>>,
   ensure_not_loaded_query: Query<Entity, With<TitleScreen>>,
   asset_server: Res<AssetServer>,
+  settings: Res<Settings>,
 ) {
   if let Ok(ent) = query.get_single() {
     if ensure_not_loaded_query.iter().next().is_none() {
-      build_title_screen(&mut commands, &asset_server);
+      build_title_screen(&mut commands, &asset_server, &settings);
       title_menu_state.show_title_menu_egui = true;
     }
 
@@ -151,6 +157,8 @@ pub fn title_menu_buttons(
   mut active_save: ResMut<ActiveSave>,
   mut exit_count_cache: Local<HashMap<String, usize>>,
   total_exits: Res<TotalExits>,
+  channels: ResMut<AudioChannels>,
+  settings: ResMut<Settings>,
 ) {
   if !title_menu_state.show_title_menu_egui {
     return;
@@ -164,6 +172,9 @@ pub fn title_menu_buttons(
           ui.vertical(|ui| {
             if ui.add_sized([200.0, 50.0], egui::Button::new("Play")).clicked() {
               title_menu_state.state = TitleMenuStates::SelectSaves;
+            }
+            if ui.add_sized([200.0, 50.0], egui::Button::new("Settings")).clicked() {
+              title_menu_state.state = TitleMenuStates::Settings;
             }
           });
         });
@@ -214,6 +225,18 @@ pub fn title_menu_buttons(
             }
           });
         });
+    },
+    TitleMenuStates::Settings => {
+      egui::Window::new("Settings")
+      .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+      .resizable(false)
+      .collapsible(false)
+      .show(egui_ctx.ctx_mut(), |ui| {
+        render_settings_menu(ui, channels, settings);
+        if ui.button("Back").clicked() {
+          title_menu_state.state = TitleMenuStates::MainButtons;
+        }
+      });
     },
   }
 }
