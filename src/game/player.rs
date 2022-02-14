@@ -23,7 +23,11 @@ const PLAYER_MOVE_SPEED: i32 = 15;
 const PLAYER_JUMP_FORCE: u32 = 10;
 
 /// Consumes [Kurinji] inputs for player horizontal movement.
-fn handle_player_movement(input: Res<Kurinji>, player_input_commands: Res<PlayerInputCommands>, mut player_force: Query<&mut RigidBodyForcesComponent, With<Player>>) {
+fn handle_player_movement(
+  input: Res<Kurinji>,
+  player_input_commands: Res<PlayerInputCommands>,
+  mut player_force: Query<&mut RigidBodyForcesComponent, With<Player>>,
+) {
   if !player_input_commands.player_has_input() {
     return;
   }
@@ -43,7 +47,12 @@ fn handle_player_movement(input: Res<Kurinji>, player_input_commands: Res<Player
 }
 
 /// Consumes [Kurinji] inputs for player hover height adjustments.
-fn handle_height_adjust(input: Res<Kurinji>, player_input_commands: Res<PlayerInputCommands>, mut player: Query<&mut Player>, dashing: Query<&Dash>) {
+fn handle_height_adjust(
+  input: Res<Kurinji>,
+  player_input_commands: Res<PlayerInputCommands>,
+  mut player: Query<&mut Player>,
+  dashing: Query<&Dash>,
+) {
   if !player_input_commands.player_has_input() {
     return;
   }
@@ -129,8 +138,6 @@ fn handle_player_hover(
             {
               player_c.on_moving_entity = Some(collided_handle.entity());
             }
-          } else {
-            player_c.on_moving_entity = None;
           }
         } else {
           player_c.on_moving_entity = None;
@@ -311,8 +318,9 @@ enum PlayerInputCommand {
   // OverrideInput(Input, Time) (for use in cutscenes)
 }
 
-/// A command queue to handle the revoking, granting, and override of player inputs.
-/// Handled as a queue for the later usage of override input, which may require the chaining of override input commands for a cutscene.
+/// A command queue to handle the revoking, granting, and override of player
+/// inputs. Handled as a queue for the later usage of override input, which may
+/// require the chaining of override input commands for a cutscene.
 pub struct PlayerInputCommands {
   queue: VecDeque<PlayerInputCommand>,
   player_has_input: bool,
@@ -343,14 +351,16 @@ impl PlayerInputCommands {
 
 impl Default for PlayerInputCommands {
   fn default() -> Self {
-    Self { 
+    Self {
       queue: Default::default(),
       player_has_input: true,
     }
   }
 }
 
-pub fn handle_player_input_commands(mut commands: ResMut<PlayerInputCommands>) { commands.tick(); }
+pub fn handle_player_input_commands(mut commands: ResMut<PlayerInputCommands>) {
+  commands.tick();
+}
 
 /// [Plugin] for player systems.
 pub struct PlayerPlugin;
@@ -374,6 +384,7 @@ impl Plugin for PlayerPlugin {
 #[cfg(test)]
 mod tests {
   use bevy::prelude::*;
+
   use super::*;
 
   #[test]

@@ -1,8 +1,8 @@
 use bevy::prelude::*;
+use bevy_egui::egui::{self, Ui};
 
-use bevy_egui::egui::{Ui, self};
-
-use crate::{game::sfx::AudioChannels, state::settings::{Settings, WindowSize}};
+use crate::game::sfx::AudioChannels;
+use crate::state::settings::{Settings, WindowSize};
 
 fn cycle_window_dimensions(window_size: WindowSize) -> WindowSize {
   match window_size {

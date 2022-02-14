@@ -12,7 +12,7 @@ use self::credits::CreditsPlugin;
 use self::sfx::SfxPlugin;
 use crate::level::load::LoadLevel;
 use crate::state::game_state::{ActiveSave, GameMode, GameSaveState, TempleState};
-use crate::ui::overlay::{OverlayCommands, OverlayCommand};
+use crate::ui::overlay::{OverlayCommand, OverlayCommands};
 use crate::util::settings::{GameFile, LevelTransistionType};
 
 pub mod attributes;

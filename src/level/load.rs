@@ -24,7 +24,7 @@ use crate::input::CursorCommands;
 use crate::level::config::SPRITE_SIZE;
 use crate::level::util::get_texture_path;
 use crate::state::game_state::{ActiveSave, GameMode, TempleState};
-use crate::ui::overlay::{OverlayCommands, OverlayCommand};
+use crate::ui::overlay::{OverlayCommand, OverlayCommands};
 use crate::util::files::{from_game_root, MUSIC_DIR_PATH};
 
 /// Instruction to load a new level

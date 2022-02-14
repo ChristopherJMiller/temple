@@ -11,11 +11,13 @@
 use std::f32::consts::PI;
 
 use bevy::prelude::*;
+use bevy_rapier2d::na::Translation2;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::{Attribute, Player};
 use crate::game::physics::PhysicsCommands;
+use crate::level::config::SPRITE_SIZE;
 use crate::level::LevelId;
 
 /// Direction of sprite movement.
@@ -66,6 +68,7 @@ pub struct MovingSprite {
   starting_position: Vec2,
   movement_vect: Vec2,
   current_time: f32,
+  player_delta: f32,
 }
 
 impl MovingSprite {
@@ -86,7 +89,13 @@ impl MovingSprite {
   /// Increments time and recalculates [Self::delta]
   pub fn increment_time(&mut self, delta_t: f32) {
     self.current_time += delta_t;
-    self.delta = 0.5 * (((2.0 * PI) / self.duration) * self.current_time + PI).cos() + 0.5;
+    let delta = 0.5 * (((2.0 * PI) / self.duration) * self.current_time + PI).cos() + 0.5;
+    self.player_delta = delta - self.delta;
+    self.delta = delta;
+  }
+
+  pub fn player_delta(&self) -> Vec2 {
+    self.player_delta * self.movement_vect
   }
 
   /// Returns the position of the sprite, per current time
@@ -96,14 +105,6 @@ impl MovingSprite {
 
   pub fn get_position_delta(&self) -> Vec2 {
     self.delta * self.movement_vect
-  }
-
-  /// Calculates a impulse that is applied to the player when on the sprite, to
-  /// keep them from falling off.
-  pub fn get_passenger_force(&self) -> Vec2 {
-    -((2.0 * PI) / self.duration)
-      * (((2.0 * PI) / self.duration) * self.current_time + PI + PI / 6.0).sin()
-      * self.vec_dir
   }
 }
 
@@ -118,6 +119,7 @@ impl Default for MovingSprite {
       movement_vect: Vec2::ZERO,
       current_time: 0.0,
       delta: 0.0,
+      player_delta: 0.0,
     }
   }
 }
@@ -170,7 +172,11 @@ pub enum MovingAttributeSystemSteps {
 }
 
 /// System to move all moving sprites per change in [Time].
-pub fn moving_system(time: Res<Time>, physics_commands: Res<PhysicsCommands>, mut moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>) {
+pub fn moving_system(
+  time: Res<Time>,
+  physics_commands: Res<PhysicsCommands>,
+  mut moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>,
+) {
   if physics_commands.paused() {
     return;
   }
@@ -182,17 +188,12 @@ pub fn moving_system(time: Res<Time>, physics_commands: Res<PhysicsCommands>, mu
 }
 
 /// Moves the [Player] if they are on top of a moving sprite.
-/// TODO: Make it move all entities with a Movable Attribute instead of just the
-/// player.
-pub fn move_player(
-  mut player: Query<(&mut RigidBodyForcesComponent, &mut Player)>,
-  moving_sprite: Query<(&mut MovingSprite, &mut ColliderPositionComponent)>,
-) {
-  if let Ok((mut forces, player_c)) = player.get_single_mut() {
+pub fn move_player(mut player: Query<(&mut RigidBodyPositionComponent, &Player)>, moving_sprite: Query<&MovingSprite>) {
+  if let Ok((mut player_pos, player_c)) = player.get_single_mut() {
     if let Some(entity) = player_c.on_moving_entity {
       if let Ok(moving) = moving_sprite.get_component::<MovingSprite>(entity) {
-        let force: Vector<Real> = (7.0 * moving.get_passenger_force()).into();
-        forces.force = force;
+        let delta = moving.player_delta();
+        player_pos.0.position.append_translation_mut(&[delta.x, delta.y].into());
       }
     }
   }

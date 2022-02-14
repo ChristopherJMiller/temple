@@ -85,6 +85,7 @@ impl Plugin for ModifyPhysicsPlugin {
 mod tests {
   use bevy::prelude::*;
   use bevy_rapier2d::prelude::*;
+
   use super::*;
 
   #[test]
@@ -101,8 +102,18 @@ mod tests {
 
     // Asset Default State
 
-    assert!(world.get_resource::<RapierConfiguration>().unwrap().physics_pipeline_active);
-    assert!(world.get_resource::<RapierConfiguration>().unwrap().query_pipeline_active);
+    assert!(
+      world
+        .get_resource::<RapierConfiguration>()
+        .unwrap()
+        .physics_pipeline_active
+    );
+    assert!(
+      world
+        .get_resource::<RapierConfiguration>()
+        .unwrap()
+        .query_pipeline_active
+    );
     assert!(!world.get_resource::<PhysicsCommands>().unwrap().paused());
 
     // Pause
@@ -111,8 +122,18 @@ mod tests {
 
     update_stage.run(&mut world);
 
-    assert!(!world.get_resource::<RapierConfiguration>().unwrap().physics_pipeline_active);
-    assert!(!world.get_resource::<RapierConfiguration>().unwrap().query_pipeline_active);
+    assert!(
+      !world
+        .get_resource::<RapierConfiguration>()
+        .unwrap()
+        .physics_pipeline_active
+    );
+    assert!(
+      !world
+        .get_resource::<RapierConfiguration>()
+        .unwrap()
+        .query_pipeline_active
+    );
     assert!(world.get_resource::<PhysicsCommands>().unwrap().paused());
 
     // Resume
@@ -121,8 +142,18 @@ mod tests {
 
     update_stage.run(&mut world);
 
-    assert!(world.get_resource::<RapierConfiguration>().unwrap().physics_pipeline_active);
-    assert!(world.get_resource::<RapierConfiguration>().unwrap().query_pipeline_active);
+    assert!(
+      world
+        .get_resource::<RapierConfiguration>()
+        .unwrap()
+        .physics_pipeline_active
+    );
+    assert!(
+      world
+        .get_resource::<RapierConfiguration>()
+        .unwrap()
+        .query_pipeline_active
+    );
     assert!(!world.get_resource::<PhysicsCommands>().unwrap().paused());
   }
 }

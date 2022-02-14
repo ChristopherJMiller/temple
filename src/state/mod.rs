@@ -11,8 +11,6 @@ impl Plugin for StatePlugin {
   fn build(&self, app: &mut App) {
     let saves = bootstrap_and_get_saves();
 
-    app
-      .insert_resource(AvaliableSaves(saves))
-      .init_resource::<ActiveSave>();
+    app.insert_resource(AvaliableSaves(saves)).init_resource::<ActiveSave>();
   }
 }

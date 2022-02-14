@@ -1,9 +1,11 @@
+use std::fmt::{Display, Formatter};
 use std::fs;
+
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::fmt::{Display, Formatter};
 
-use crate::{game::sfx::AudioChannels, util::files::{from_game_root, SETTINGS_PATH}};
+use crate::game::sfx::AudioChannels;
+use crate::util::files::{from_game_root, SETTINGS_PATH};
 
 #[derive(Serialize, Deserialize, Copy, Clone)]
 pub enum WindowSize {
@@ -55,11 +57,11 @@ pub struct Settings {
 
 impl Default for Settings {
   fn default() -> Self {
-    Self { 
-      main_mixer: 1.0, 
-      music_volume: 0.7, 
+    Self {
+      main_mixer: 1.0,
+      music_volume: 0.7,
       sfx_volume: 0.7,
-      scale: WindowSize::Dim1170x1024,
+      scale: WindowSize::Dim1028x900,
     }
   }
 }

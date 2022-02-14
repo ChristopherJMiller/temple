@@ -4,11 +4,10 @@ use bevy::prelude::*;
 use load::{apply_save_on_load, load_level, prepare_level, transition_level, unload_level};
 use verify::verify_level_files;
 
-use crate::game::attributes::{Goal, Attribute};
-
 use self::load::wait_until_unloaded;
 use self::next::auto_next_level;
 use self::util::get_level_manifests;
+use crate::game::attributes::{Attribute, Goal};
 
 pub mod config;
 pub mod load;
@@ -44,13 +43,16 @@ pub struct TotalExits(pub usize);
 fn count_exits(mut exits: ResMut<TotalExits>) {
   let levels = get_level_manifests();
   let exit_count = levels.iter().fold(0, |acc, (_, manifest)| {
-    let level_exit_count = manifest.sprites.iter().fold(0, |acc, item| {
-      if item.name.as_str() == Goal::KEY {
-        acc + 1
-      } else {
-        acc
-      }
-    });
+    let level_exit_count = manifest.sprites.iter().fold(
+      0,
+      |acc, item| {
+        if item.name.as_str() == Goal::KEY {
+          acc + 1
+        } else {
+          acc
+        }
+      },
+    );
 
     acc + level_exit_count
   });

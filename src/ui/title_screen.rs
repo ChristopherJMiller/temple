@@ -6,15 +6,14 @@ use bevy::prelude::*;
 use bevy_egui::egui::ScrollArea;
 use bevy_egui::{egui, EguiContext};
 
-use crate::game::BeginGame;
+use super::settings::render_settings_menu;
 use crate::game::sfx::AudioChannels;
+use crate::game::BeginGame;
 use crate::level::TotalExits;
 use crate::state::game_state::{write_saves, ActiveSave, AvaliableSaves, GameSaveState};
 use crate::state::settings::Settings;
 use crate::util::files::from_game_root;
 use crate::VERSION;
-
-use super::settings::render_settings_menu;
 
 /// Tag command to load the title screen.
 #[derive(Component)]
@@ -193,7 +192,7 @@ pub fn title_menu_buttons(
               if !exit_count_cache.contains_key(name) {
                 exit_count_cache.insert(name.to_string(), save.num_cleared_exits());
               }
-              
+
               let file_fmt = format!("{} {}/{}", name, exit_count_cache[name], total_exits.0);
 
               if ui.add_sized([400.0, 35.0], egui::Button::new(file_fmt)).clicked() {
@@ -228,15 +227,15 @@ pub fn title_menu_buttons(
     },
     TitleMenuStates::Settings => {
       egui::Window::new("Settings")
-      .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-      .resizable(false)
-      .collapsible(false)
-      .show(egui_ctx.ctx_mut(), |ui| {
-        render_settings_menu(ui, channels, settings);
-        if ui.button("Back").clicked() {
-          title_menu_state.state = TitleMenuStates::MainButtons;
-        }
-      });
+        .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+        .resizable(false)
+        .collapsible(false)
+        .show(egui_ctx.ctx_mut(), |ui| {
+          render_settings_menu(ui, channels, settings);
+          if ui.button("Back").clicked() {
+            title_menu_state.state = TitleMenuStates::MainButtons;
+          }
+        });
     },
   }
 }

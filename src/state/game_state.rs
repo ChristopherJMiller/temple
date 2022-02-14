@@ -142,7 +142,11 @@ impl GameSaveState {
   }
 
   pub fn num_cleared_exits(&self) -> usize {
-    self.level_clears.values().into_iter().fold(0, |acc, x| acc + x.exits_cleared().iter().filter(|&&x| x).count())
+    self
+      .level_clears
+      .values()
+      .into_iter()
+      .fold(0, |acc, x| acc + x.exits_cleared().iter().filter(|&&x| x).count())
   }
 }
 
@@ -273,7 +277,10 @@ mod tests {
   #[test]
   fn test_game_save_state() {
     let mut game = GameSaveState::new("test");
-    game.level_clears.insert(GameSaveState::key(0), LevelSaveState::new_with_checkpoint((0, 5.0, 10.0)));
+    game.level_clears.insert(
+      GameSaveState::key(0),
+      LevelSaveState::new_with_checkpoint((0, 5.0, 10.0)),
+    );
     game.level_clears.get_mut(&GameSaveState::key(0)).unwrap().clear_exit(0);
     game.level_clears.get_mut(&GameSaveState::key(0)).unwrap().clear_exit(5);
     assert_eq!(2, game.num_cleared_exits());

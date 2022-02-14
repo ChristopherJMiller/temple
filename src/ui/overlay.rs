@@ -1,16 +1,17 @@
 //! Overlay System
-//! 
-//! [OverlayCommands] is a resource that handles a queue of effects for fading in and out the game.
-//! Queue [OverlayCommand]s to manage the effect.
-//! Effect`In` is the overlay becoming more opaque, Effect`Out` is the overlay becoming more transparent.
+//!
+//! [OverlayCommands] is a resource that handles a queue of effects for fading
+//! in and out the game. Queue [OverlayCommand]s to manage the effect.
+//! Effect`In` is the overlay becoming more opaque, Effect`Out` is the overlay
+//! becoming more transparent.
 
 use std::collections::VecDeque;
 
 use bevy::prelude::*;
-use bevy_egui::{EguiContext, egui::{Rgba, self, Frame}};
+use bevy_egui::egui::{self, Frame, Rgba};
+use bevy_egui::EguiContext;
 
 use crate::state::game_state::TempleState;
-
 
 /// Commands that are queued using [OverlayCommands::command]
 #[derive(Debug)]
@@ -18,7 +19,7 @@ pub enum OverlayCommand {
   CutIn,
   CutOut,
   FadeIn(f32),
-  FadeOut(f32)
+  FadeOut(f32),
 }
 
 impl Default for OverlayCommand {
@@ -89,14 +90,21 @@ impl OverlayCommands {
   }
 }
 
-pub fn handle_overlay(mut overlay: ResMut<OverlayCommands>, mut egui_ctx: ResMut<EguiContext>, time: Res<Time>, temple_state: Res<TempleState>) {
+pub fn handle_overlay(
+  mut overlay: ResMut<OverlayCommands>,
+  mut egui_ctx: ResMut<EguiContext>,
+  time: Res<Time>,
+  temple_state: Res<TempleState>,
+) {
   let color = overlay.get_color(time.delta_seconds());
 
   if temple_state.in_game() {
-    egui::CentralPanel::default().frame(Frame {
-      fill: color.into(),
-      ..Default::default()
-    }).show(egui_ctx.ctx_mut(), |_| {});
+    egui::CentralPanel::default()
+      .frame(Frame {
+        fill: color.into(),
+        ..Default::default()
+      })
+      .show(egui_ctx.ctx_mut(), |_| {});
   }
 }
 

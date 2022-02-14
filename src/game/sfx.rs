@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioChannel, AudioSource};
 
-use crate::{util::files::from_game_root, state::settings::Settings};
+use crate::util::files::from_game_root;
 
 /// Jump sound fx path
 const JUMP_SFX: &str = "assets/audio/sfx/jump.wav";

@@ -6,14 +6,15 @@ use font::setup_egui_font;
 pub use title_screen::LoadTitleScreen;
 use title_screen::{delete_title_screen, setup_title_screen, title_menu_buttons, TitleMenuState};
 
-use self::{pause::pause_menu_buttons, overlay::{handle_overlay, OverlayCommands}};
+use self::overlay::{handle_overlay, OverlayCommands};
+use self::pause::pause_menu_buttons;
 
 mod diagnostic;
 mod font;
-mod title_screen;
-mod pause;
 pub mod overlay;
+mod pause;
 pub mod settings;
+mod title_screen;
 
 // Spawns a [UiCameraBundle]
 fn setup_uicamera(mut commands: Commands) {

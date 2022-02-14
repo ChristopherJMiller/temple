@@ -1,6 +1,7 @@
 //! Input config management and associated systems.
 
-use std::{fs, collections::VecDeque};
+use std::collections::VecDeque;
+use std::fs;
 
 use bevy::prelude::*;
 use kurinji::{Kurinji, KurinjiPlugin};

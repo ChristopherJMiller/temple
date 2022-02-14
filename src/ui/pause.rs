@@ -2,9 +2,13 @@ use bevy::prelude::*;
 use bevy_egui::{egui, EguiContext};
 use kurinji::Kurinji;
 
-use crate::{input::{MENU, CursorCommands}, state::{game_state::TempleState, settings::{Settings, WindowSize}}, game::{player::PlayerInputCommands, physics::PhysicsCommands, sfx::AudioChannels}};
-
 use super::settings::render_settings_menu;
+use crate::game::physics::PhysicsCommands;
+use crate::game::player::PlayerInputCommands;
+use crate::game::sfx::AudioChannels;
+use crate::input::{CursorCommands, MENU};
+use crate::state::game_state::TempleState;
+use crate::state::settings::Settings;
 
 #[derive(Default)]
 pub struct PauseMenuState {
@@ -21,7 +25,7 @@ pub fn pause_menu_buttons(
   mut cursor_commands: ResMut<CursorCommands>,
   mut player_input_commands: ResMut<PlayerInputCommands>,
   mut physics_commands: ResMut<PhysicsCommands>,
-  mut channels: ResMut<AudioChannels>,
+  channels: ResMut<AudioChannels>,
   mut settings: ResMut<Settings>,
   temple_state: Res<TempleState>,
 ) {
@@ -51,10 +55,10 @@ pub fn pause_menu_buttons(
   }
 
   egui::Window::new("Pause")
-  .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
-  .resizable(false)
-  .collapsible(false)
-  .show(egui_ctx.ctx_mut(), |ui| {
-    render_settings_menu(ui, channels, settings);
-  });
+    .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+    .resizable(false)
+    .collapsible(false)
+    .show(egui_ctx.ctx_mut(), |ui| {
+      render_settings_menu(ui, channels, settings);
+    });
 }
