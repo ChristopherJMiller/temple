@@ -62,6 +62,10 @@ pub struct WaitUntilUnloaded;
 #[derive(Component)]
 pub struct KeepMusic;
 
+/// Instruction to skip to next checkpoint
+#[derive(Component)]
+pub struct NextCheckpoint;
+
 pub fn wait_until_unloaded(
   mut commands: Commands,
   loaded_level: Query<(Entity, &LoadLevel), (With<LevelLoadComplete>, Without<WaitUntilUnloaded>)>,
@@ -229,9 +233,11 @@ pub fn load_level(
     }
 
     info!(target: "load_level", "Loaded Level {}", level_id);
-    cursor_commands.lock_cursor();
+    if !temple_state.in_edit_mode() {
+      cursor_commands.lock_cursor();
+      overlay_commands.command(OverlayCommand::FadeOut(1.0));
+    }
     commands.entity(e).insert(LevelLoadComplete);
-    overlay_commands.command(OverlayCommand::FadeOut(1.0));
   });
 }
 
@@ -319,4 +325,39 @@ pub fn transition_level(
 
     commands.entity(entity).despawn();
   }
+}
+
+/// Attempts to move player to the next checkpoint, if one exists in this level.
+pub fn next_checkpoint(
+  mut commands: Commands,
+  inst: Query<Entity, With<NextCheckpoint>>,
+  mut player: Query<(&Player, &mut RigidBodyPositionComponent)>,
+  loaded_level: Query<&LoadLevel, With<LevelLoadComplete>>,
+  checkpoints: Query<&Checkpoint>,
+) {
+  inst.for_each(|ent| {
+    if let Ok(level) = loaded_level.get_single() {
+      if let Ok((player, mut pos)) = player.get_single_mut() {
+        if player.respawn_level == level.0 {
+          // See if player is at checkpoint
+          let current_checkpoint = checkpoints.iter().find(|x| x.1 == player.respawn_pos);
+          // If so, set to next checkpoint
+          if let Some(checkpoint) = current_checkpoint {
+            let next_checkpoint = checkpoints.iter().find(|x| x.0 == checkpoint.0 + 1);
+            if let Some(new_checkpoint) = next_checkpoint {
+              pos.0.position = new_checkpoint.1.into();
+            }
+          } else {
+            // Otherwise, they probably don't have a checkpoint, so give them id 0
+            let next_checkpoint = checkpoints.iter().find(|x| x.0 == 0);
+            if let Some(new_checkpoint) = next_checkpoint {
+              pos.0.position = new_checkpoint.1.into();
+            }
+          }
+        }
+      }
+    }
+
+    commands.entity(ent).despawn();
+  });
 }

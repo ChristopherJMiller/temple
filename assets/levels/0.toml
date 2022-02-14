@@ -306,7 +306,7 @@ offset = [
     0,
 ]
 texture = 'checkpoint.png'
-attributes = ['checkpoint(0,0)']
+attributes = ['checkpoint(0,0,0)']
 
 [[sprites]]
 name = 'spikeup'

@@ -1,10 +1,10 @@
 //! Level config management and level loading.
 
 use bevy::prelude::*;
-use load::{apply_save_on_load, load_level, prepare_level, transition_level, unload_level};
+use load::*;
 use verify::verify_level_files;
 
-use self::load::wait_until_unloaded;
+use self::load::{next_checkpoint, wait_until_unloaded};
 use self::next::auto_next_level;
 use self::util::get_level_manifests;
 use crate::game::attributes::{Attribute, Goal};
@@ -33,7 +33,8 @@ impl Plugin for LevelPlugin {
       .add_system(unload_level)
       .add_system(apply_save_on_load)
       .add_system(transition_level)
-      .add_system(auto_next_level);
+      .add_system(auto_next_level)
+      .add_system(next_checkpoint);
   }
 }
 

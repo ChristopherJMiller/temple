@@ -9,6 +9,8 @@ use bevy_egui::EguiPlugin;
 use bevy_kira_audio::AudioPlugin;
 use bevy_rapier2d::prelude::*;
 use editor::EditorPlugins;
+use game::physics::PhysicsCommands;
+use game::player::PlayerInputCommands;
 use game::sfx::SfxPlugin;
 use game::GamePlugins;
 use input::InputPlugin;
@@ -106,6 +108,8 @@ fn start_editor(game_file: GameFile, cli_args: CliArgs, settings: Settings) {
   build_base_app(&mut app, game_file, cli_args, settings);
 
   app
+    .init_resource::<PlayerInputCommands>()
+    .init_resource::<PhysicsCommands>()
     // Add required resource plugins
     .add_plugin(SfxPlugin)
     // Editor plugins

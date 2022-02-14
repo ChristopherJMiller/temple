@@ -1,4 +1,4 @@
-//! Sets the players checkpoint. `checkpoint(optional x offset, optional y
+//! Sets the players checkpoint. `checkpoint(id, optional x offset, optional y
 //! offset)`
 
 use bevy::prelude::*;
@@ -16,15 +16,27 @@ use crate::level::LevelId;
 use crate::state::game_state::{write_save, ActiveSave, GameMode, GameSaveState, LevelSaveState, TempleState};
 
 #[derive(Component)]
-pub struct Checkpoint(pub Vec2);
+pub struct Checkpoint(pub u32, pub Vec2);
 
 impl Attribute for Checkpoint {
   const KEY: &'static str = "checkpoint";
 
   fn build(commands: &mut Commands, target: Entity, _: LevelId, position: Vec2, params: Vec<ParseArgumentItem>) {
+    let id_entry = params.get(0);
+
+    if id_entry.is_none() {
+      panic!("Attempted to construct a checkpoint without an id!");
+    }
+
+    let checkpoint_id = if let Some(ParseArgumentItem::Number(i)) = id_entry {
+      u32::try_from(*i).expect("Failed to parse number to id. Id's must be positive")
+    } else {
+      panic!("Checkpoint id is not a number!");
+    };
+
     let player_offset = if params.len() > 0 {
-      let x_offset = params.get(0);
-      let y_offset = params.get(1);
+      let x_offset = params.get(1);
+      let y_offset = params.get(2);
 
       if x_offset.is_none() || y_offset.is_none() {
         panic!("Attempted to construct a checkpoint with an offset, but provided too few arguments!");
@@ -59,7 +71,10 @@ impl Attribute for Checkpoint {
 
     commands
       .entity(target)
-      .insert(Checkpoint(position + (player_offset * SPRITE_SIZE as f32)))
+      .insert(Checkpoint(
+        checkpoint_id,
+        position + (player_offset * SPRITE_SIZE as f32),
+      ))
       .insert(ContactSubscription)
       .insert_bundle(collider)
       .insert(ColliderPositionSync::Discrete);
@@ -81,20 +96,20 @@ pub fn on_checkpoint_system(
 ) {
   if let Ok(mut player) = player.get_single_mut() {
     checkpoint_reached.for_each(|(ent, checkpoint)| {
-      if player.respawn_pos != checkpoint.0 {
+      if player.respawn_pos != checkpoint.1 {
         audio.play_in_channel(sfx_handles.checkpoint.clone(), &channels.sfx.0);
-        if let Some(save) = &mut active_save.0 {
-          if let Ok(level) = loaded_level.get_single() {
-            if let GameMode::InLevel(level_entry) = temple_state.game_mode {
-              player.respawn_level = level.0;
-              player.respawn_pos = checkpoint.0;
+        if let Ok(level) = loaded_level.get_single() {
+          if let GameMode::InLevel(level_entry) = temple_state.game_mode {
+            player.respawn_level = level.0;
+            player.respawn_pos = checkpoint.1;
+            if let Some(save) = &mut active_save.0 {
               let key = GameSaveState::key(level_entry);
               if let Some(save) = save.level_clears.get_mut(&key) {
-                save.set_checkpoint((level.0, checkpoint.0.x, checkpoint.0.y))
+                save.set_checkpoint((level.0, checkpoint.1.x, checkpoint.1.y))
               } else {
                 save.level_clears.insert(
                   GameSaveState::key(level_entry),
-                  LevelSaveState::new_with_checkpoint((level.0, checkpoint.0.x, checkpoint.0.y)),
+                  LevelSaveState::new_with_checkpoint((level.0, checkpoint.1.x, checkpoint.1.y)),
                 );
               }
 

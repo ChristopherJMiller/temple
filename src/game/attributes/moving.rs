@@ -11,13 +11,11 @@
 use std::f32::consts::PI;
 
 use bevy::prelude::*;
-use bevy_rapier2d::na::Translation2;
 use bevy_rapier2d::prelude::*;
 
 use super::lex::ParseArgumentItem;
 use super::{Attribute, Player};
 use crate::game::physics::PhysicsCommands;
-use crate::level::config::SPRITE_SIZE;
 use crate::level::LevelId;
 
 /// Direction of sprite movement.
@@ -64,7 +62,6 @@ pub struct MovingSprite {
   pub distance: f32,
 
   delta: f32,
-  vec_dir: Vec2,
   starting_position: Vec2,
   movement_vect: Vec2,
   current_time: f32,
@@ -80,7 +77,6 @@ impl MovingSprite {
       duration: duration as f32,
       distance: sprite_distance,
       starting_position: position,
-      vec_dir,
       movement_vect: (vec_dir * sprite_distance),
       ..MovingSprite::default()
     }
@@ -114,7 +110,6 @@ impl Default for MovingSprite {
       dir: MovingDirection::Right,
       duration: 0.0,
       distance: 0.0,
-      vec_dir: Vec2::ZERO,
       starting_position: Vec2::ZERO,
       movement_vect: Vec2::ZERO,
       current_time: 0.0,
