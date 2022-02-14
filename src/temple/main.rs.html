@@ -116,6 +116,10 @@
 <span id="115">115</span>
 <span id="116">116</span>
 <span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Temple is a platform built with the [Bevy Engine](https://docs.rs/bevy/) and has a focus on</span>
 <span class="doccomment">//! configurability.</span>
 <span class="doccomment">//!</span>
@@ -127,6 +131,8 @@
 <span class="kw">use</span> <span class="ident">bevy_kira_audio::AudioPlugin</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">editor::EditorPlugins</span>;
+<span class="kw">use</span> <span class="ident">game::physics::PhysicsCommands</span>;
+<span class="kw">use</span> <span class="ident">game::player::PlayerInputCommands</span>;
 <span class="kw">use</span> <span class="ident">game::sfx::SfxPlugin</span>;
 <span class="kw">use</span> <span class="ident">game::GamePlugins</span>;
 <span class="kw">use</span> <span class="ident">input::InputPlugin</span>;
@@ -224,6 +230,8 @@
   <span class="ident">build_base_app</span>(<span class="kw-2">&amp;mut</span> <span class="ident">app</span>, <span class="ident">game_file</span>, <span class="ident">cli_args</span>, <span class="ident">settings</span>);
 
   <span class="ident">app</span>
+    .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>()
+    .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">PhysicsCommands</span><span class="op">&gt;</span>()
     <span class="comment">// Add required resource plugins</span>
     .<span class="ident">add_plugin</span>(<span class="ident">SfxPlugin</span>)
     <span class="comment">// Editor plugins</span>

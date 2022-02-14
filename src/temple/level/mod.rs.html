@@ -60,13 +60,14 @@
 <span id="59">59</span>
 <span id="60">60</span>
 <span id="61">61</span>
+<span id="62">62</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Level config management and level loading.</span>
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">load</span>::{<span class="ident">apply_save_on_load</span>, <span class="ident">load_level</span>, <span class="ident">prepare_level</span>, <span class="ident">transition_level</span>, <span class="ident">unload_level</span>};
+<span class="kw">use</span> <span class="ident">load</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">verify::verify_level_files</span>;
 
-<span class="kw">use</span> <span class="ident"><span class="self">self</span>::load::wait_until_unloaded</span>;
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::load</span>::{<span class="ident">next_checkpoint</span>, <span class="ident">wait_until_unloaded</span>};
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::next::auto_next_level</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::util::get_level_manifests</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::{<span class="ident">Attribute</span>, <span class="ident">Goal</span>};
@@ -95,7 +96,8 @@
       .<span class="ident">add_system</span>(<span class="ident">unload_level</span>)
       .<span class="ident">add_system</span>(<span class="ident">apply_save_on_load</span>)
       .<span class="ident">add_system</span>(<span class="ident">transition_level</span>)
-      .<span class="ident">add_system</span>(<span class="ident">auto_next_level</span>);
+      .<span class="ident">add_system</span>(<span class="ident">auto_next_level</span>)
+      .<span class="ident">add_system</span>(<span class="ident">next_checkpoint</span>);
   }
 }
 

@@ -63,6 +63,15 @@
 <span id="62">62</span>
 <span id="63">63</span>
 <span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">bevy_egui</span>::{<span class="ident">egui</span>, <span class="ident">EguiContext</span>};
 <span class="kw">use</span> <span class="ident">kurinji::Kurinji</span>;
@@ -72,6 +81,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::player::PlayerInputCommands</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx::AudioChannels</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input</span>::{<span class="ident">CursorCommands</span>, <span class="ident">MENU</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::NextCheckpoint</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state::TempleState</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::settings::Settings</span>;
 
@@ -79,13 +89,13 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PauseMenuState</span> {
   <span class="kw">pub</span> <span class="ident">action_held_down</span>: <span class="ident">bool</span>,
   <span class="kw">pub</span> <span class="ident">menu_active</span>: <span class="ident">bool</span>,
+  <span class="kw">pub</span> <span class="ident">force_unpause</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pause_menu_buttons</span>(
-  <span class="comment">//mut commands: Commands,</span>
+  <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
   <span class="ident">input</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">Kurinji</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">egui_ctx</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">EguiContext</span><span class="op">&gt;</span>,
-  <span class="comment">//window_desc: Res&lt;WindowDescriptor&gt;,</span>
   <span class="kw-2">mut</span> <span class="ident">state</span>: <span class="ident">Local</span><span class="op">&lt;</span><span class="ident">PauseMenuState</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">cursor_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CursorCommands</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">player_input_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerInputCommands</span><span class="op">&gt;</span>,
@@ -104,12 +114,13 @@
     <span class="ident">cursor_commands</span>.<span class="ident">unlock_cursor</span>();
     <span class="ident">player_input_commands</span>.<span class="ident">revoke_input</span>();
     <span class="ident">physics_commands</span>.<span class="ident">pause</span>();
-  } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">MENU</span>) <span class="op">&amp;&amp;</span> <span class="ident">state</span>.<span class="ident">menu_active</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">state</span>.<span class="ident">action_held_down</span> {
+  } <span class="kw">else</span> <span class="kw">if</span> (<span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">MENU</span>) <span class="op">&amp;&amp;</span> <span class="ident">state</span>.<span class="ident">menu_active</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">state</span>.<span class="ident">action_held_down</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">state</span>.<span class="ident">force_unpause</span> {
     <span class="ident">cursor_commands</span>.<span class="ident">lock_cursor</span>();
     <span class="ident">player_input_commands</span>.<span class="ident">grant_input</span>();
     <span class="ident">physics_commands</span>.<span class="ident">resume</span>();
     <span class="ident">state</span>.<span class="ident">action_held_down</span> <span class="op">=</span> <span class="bool-val">true</span>;
     <span class="ident">state</span>.<span class="ident">menu_active</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="ident">state</span>.<span class="ident">force_unpause</span> <span class="op">=</span> <span class="bool-val">false</span>;
     <span class="ident">settings</span>.<span class="ident">update_from_audio_channels</span>(<span class="kw-2">&amp;</span><span class="ident">channels</span>);
   } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">MENU</span>) {
     <span class="ident">state</span>.<span class="ident">action_held_down</span> <span class="op">=</span> <span class="bool-val">false</span>;
@@ -124,7 +135,14 @@
     .<span class="ident">resizable</span>(<span class="bool-val">false</span>)
     .<span class="ident">collapsible</span>(<span class="bool-val">false</span>)
     .<span class="ident">show</span>(<span class="ident">egui_ctx</span>.<span class="ident">ctx_mut</span>(), <span class="op">|</span><span class="ident">ui</span><span class="op">|</span> {
+      <span class="comment">// Basic Settings</span>
       <span class="ident">render_settings_menu</span>(<span class="ident">ui</span>, <span class="ident">channels</span>, <span class="ident">settings</span>);
+
+      <span class="comment">// Accessibility</span>
+      <span class="kw">if</span> <span class="ident">ui</span>.<span class="ident">button</span>(<span class="string">&quot;Skip to Next Checkpoint&quot;</span>).<span class="ident">clicked</span>() {
+        <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">NextCheckpoint</span>);
+        <span class="ident">state</span>.<span class="ident">force_unpause</span> <span class="op">=</span> <span class="bool-val">true</span>;
+      }
     });
 }
 </code></pre></div>

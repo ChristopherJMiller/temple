@@ -194,11 +194,6 @@
 <span id="193">193</span>
 <span id="194">194</span>
 <span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Defines a cyclically moving sprite. `moving(dir, distance, time)`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!</span>
@@ -212,13 +207,11 @@
 <span class="kw">use</span> <span class="ident">std::f32::consts::PI</span>;
 
 <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">bevy_rapier2d::na::Translation2</span>;
 <span class="kw">use</span> <span class="ident">bevy_rapier2d::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::lex::ParseArgumentItem</span>;
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Attribute</span>, <span class="ident">Player</span>};
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::physics::PhysicsCommands</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::LevelId</span>;
 
 <span class="doccomment">/// Direction of sprite movement.</span>
@@ -265,7 +258,6 @@
   <span class="kw">pub</span> <span class="ident">distance</span>: <span class="ident">f32</span>,
 
   <span class="ident">delta</span>: <span class="ident">f32</span>,
-  <span class="ident">vec_dir</span>: <span class="ident">Vec2</span>,
   <span class="ident">starting_position</span>: <span class="ident">Vec2</span>,
   <span class="ident">movement_vect</span>: <span class="ident">Vec2</span>,
   <span class="ident">current_time</span>: <span class="ident">f32</span>,
@@ -281,7 +273,6 @@
       <span class="ident">duration</span>: <span class="ident">duration</span> <span class="kw">as</span> <span class="ident">f32</span>,
       <span class="ident">distance</span>: <span class="ident">sprite_distance</span>,
       <span class="ident">starting_position</span>: <span class="ident">position</span>,
-      <span class="ident">vec_dir</span>,
       <span class="ident">movement_vect</span>: (<span class="ident">vec_dir</span> <span class="op">*</span> <span class="ident">sprite_distance</span>),
       ..<span class="ident">MovingSprite::default</span>()
     }
@@ -315,7 +306,6 @@
       <span class="ident">dir</span>: <span class="ident">MovingDirection::Right</span>,
       <span class="ident">duration</span>: <span class="number">0.0</span>,
       <span class="ident">distance</span>: <span class="number">0.0</span>,
-      <span class="ident">vec_dir</span>: <span class="ident">Vec2::ZERO</span>,
       <span class="ident">starting_position</span>: <span class="ident">Vec2::ZERO</span>,
       <span class="ident">movement_vect</span>: <span class="ident">Vec2::ZERO</span>,
       <span class="ident">current_time</span>: <span class="number">0.0</span>,
