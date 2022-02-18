@@ -102,6 +102,9 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Game mechanisms and sprite attribute definitions.</span>
 
 <span class="kw">use</span> <span class="ident">attributes::AttributePlugin</span>;
@@ -113,6 +116,7 @@
 <span class="kw">use</span> <span class="ident">player::PlayerPlugin</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::credits::CreditsPlugin</span>;
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::orbs::PlayerOrbPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="self">self</span>::sfx::SfxPlugin</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::load::LoadLevel</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::state::game_state</span>::{<span class="ident">ActiveSave</span>, <span class="ident">GameMode</span>, <span class="ident">GameSaveState</span>, <span class="ident">TempleState</span>};
@@ -127,6 +131,7 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">physics</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">player</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">sfx</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">orbs</span>;
 
 <span class="doccomment">/// Command to begin the game</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
@@ -202,7 +207,8 @@
       .<span class="ident">add</span>(<span class="ident">ModifyPhysicsPlugin</span>)
       .<span class="ident">add</span>(<span class="ident">BootstrapPlugin</span>)
       .<span class="ident">add</span>(<span class="ident">SfxPlugin</span>)
-      .<span class="ident">add</span>(<span class="ident">CreditsPlugin</span>);
+      .<span class="ident">add</span>(<span class="ident">CreditsPlugin</span>)
+      .<span class="ident">add</span>(<span class="ident">PlayerOrbPlugin</span>);
   }
 }
 </code></pre></div>

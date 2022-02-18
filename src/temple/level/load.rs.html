@@ -362,6 +362,9 @@
 <span id="361">361</span>
 <span id="362">362</span>
 <span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -383,6 +386,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::editor::camera::EditorCamera</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::attributes</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::camera::MainCamera</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::orbs::PlayerOrbCommands</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::game::sfx::AudioChannels</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::input::CursorCommands</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::level::config::SPRITE_SIZE</span>;
@@ -510,6 +514,7 @@
   <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">overlay_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">OverlayCommands</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">cursor_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CursorCommands</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">orb_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>,
 ) {
   <span class="ident">query</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="ident">load_level</span>, <span class="ident">prepared_level</span>)<span class="op">|</span> {
     <span class="kw">let</span> <span class="ident">level_id</span> <span class="op">=</span> <span class="ident">load_level</span>.<span class="number">0</span>;
@@ -602,6 +607,7 @@
       <span class="ident">overlay_commands</span>.<span class="ident">command</span>(<span class="ident">OverlayCommand::FadeOut</span>(<span class="number">1.0</span>));
     }
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">e</span>).<span class="ident">insert</span>(<span class="ident">LevelLoadComplete</span>);
+    <span class="ident">orb_commands</span>.<span class="ident">set_orb_count</span>(<span class="number">24</span>);
   });
 }
 
