@@ -8,20 +8,19 @@
 
 use std::collections::VecDeque;
 
-use bevy::prelude::*;
+use bevy::{prelude::*, asset::AssetPath};
 use rand::Rng;
 
-use crate::level::util::get_texture_path;
+use crate::level::{util::get_texture_path, config::SPRITE_SIZE};
 
 use std::f32::consts::PI;
-use super::attributes::Player;
+use super::attributes::{Player, DashCrosshair};
 
-type DashId = u8;
+type DashId = usize;
 
 pub enum DashState {
   Counter,
-  CrossHair,
-  Cooldown
+  CrossHair
 }
 
 pub enum OrbState {
@@ -66,6 +65,44 @@ impl Default for PlayerOrb {
 }
 
 impl PlayerOrb {
+  pub fn from_state(state: OrbState) -> Self {
+    let mut this = Self::default();
+    this.state = state;
+    this
+  }
+
+  pub fn get_dash_id(&self) -> Option<DashId> {
+    if let OrbState::Dash(id, DashState::Counter) = self.state {
+      Some(id)
+    } else {
+      None
+    }
+  }
+
+  pub fn is_dash_counter(&self) -> bool {
+    if let OrbState::Dash(_, DashState::Counter) = self.state {
+      true
+    } else {
+      false
+    }
+  }
+
+  pub fn is_dash_crosshair(&self) -> bool {
+    if let OrbState::Dash(_, DashState::CrossHair) = self.state {
+      true
+    } else {
+      false
+    }
+  }
+
+  pub fn is_dash_orb(&self) -> bool {
+    if let OrbState::Dash(_, _) = self.state {
+      true
+    } else {
+      false
+    }
+  }
+
   pub fn avaliable(&self) -> bool {
     if let OrbState::FollowPlayer(_) = self.state {
       true
@@ -73,11 +110,20 @@ impl PlayerOrb {
       false
     }
   }
+
+  pub fn get_texture_path_by_state<'a>(&self) -> AssetPath<'a> {
+    match self.state {
+      OrbState::FollowPlayer(_) => get_texture_path(&"aspectorb.png".to_string()),
+      OrbState::Dash(_, _) => get_texture_path(&"dashorb.png".to_string()),
+    }
+  }
 }
 
 pub enum PlayerOrbCommand {
   SetOrbCount(usize),
   SetDashCount(usize),
+  UseDashCount,
+  AllocCrosshair,
 }
 
 #[derive(Default)]
@@ -94,18 +140,26 @@ impl PlayerOrbCommands {
     self.queue.push_back(PlayerOrbCommand::SetDashCount(count));
   }
 
+  pub fn use_dash_count(&mut self) {
+    self.queue.push_back(PlayerOrbCommand::UseDashCount);
+  }
+
+  pub fn alloc_crosshair(&mut self) {
+    self.queue.push_back(PlayerOrbCommand::AllocCrosshair);
+  }
+
   pub fn pop(&mut self) -> Option<PlayerOrbCommand> {
     self.queue.pop_front()
   }
 }
 
-fn build_orb(commands: &mut Commands, asset_server: &Res<AssetServer>, player_trans: &Transform) {
+fn build_orb(commands: &mut Commands, asset_server: &Res<AssetServer>, player_trans: &Transform, orb: PlayerOrb) {
   commands
     .spawn_bundle(SpriteBundle {
-      texture: asset_server.load(get_texture_path(&"aspectorb.png".to_string())),
+      texture: asset_server.load(orb.get_texture_path_by_state()),
       transform: player_trans.clone(),
       ..Default::default()
-    }).insert(PlayerOrb::default());
+    }).insert(orb);
 }
 
 fn handle_orb_command_queue(
@@ -113,7 +167,7 @@ fn handle_orb_command_queue(
   asset_server: Res<AssetServer>,
   player: Query<&Transform, With<Player>>,
   mut queue: ResMut<PlayerOrbCommands>,
-  mut active_orbs: Query<(Entity, &mut PlayerOrb)>,
+  mut active_orbs: Query<(Entity, &mut PlayerOrb, &mut Handle<Image>)>,
 ) {
   if let Ok(player) = player.get_single() {
     if let Some(command) = queue.pop() {
@@ -123,37 +177,96 @@ fn handle_orb_command_queue(
           if count > current_count {
             let diff = count - current_count;
             for _ in 0..diff {
-              build_orb(&mut commands, &asset_server, player);
+              build_orb(&mut commands, &asset_server, player, PlayerOrb::default());
             }
           } else if current_count > count {
             let diff = current_count - count;
-            active_orbs.iter().filter(|(_, orb)| orb.avaliable()).take(diff).for_each(|(ent, _)| commands.entity(ent).despawn());
+            active_orbs.iter().filter(|(_, orb, _)| orb.avaliable()).take(diff).for_each(|(ent, _, _)| commands.entity(ent).despawn());
           }
         },
         PlayerOrbCommand::SetDashCount(count) => {
-          
+          // Find current number of dash orbs
+          let active_dash_count = active_orbs.iter().filter(|(_, orb, _)| orb.is_dash_orb()).count();
+
+          // If more set, allocate more dash orbs
+          if count > active_dash_count {
+            let diff = count - active_dash_count;
+
+            // Ensure there is enough avaliable orbs
+            let avaliable_orbs = active_orbs.iter().filter(|(_, orb, _)| orb.avaliable()).count();
+
+            // Allocate whatever is avaliable
+            let allocate_count = avaliable_orbs.min(diff);
+            active_orbs.iter_mut().filter(|(_, orb, _)| orb.avaliable()).take(allocate_count).enumerate().for_each(|(i, (_, mut orb, mut image_handle))| {
+              orb.state = OrbState::Dash(active_dash_count + i, DashState::Counter);
+              *image_handle = asset_server.load(orb.get_texture_path_by_state());
+            });
+
+            // Check if remainder to allocate, if so spawn that number in as allocated.
+            if diff > avaliable_orbs {
+              let to_spawn = diff - avaliable_orbs;
+              for i in 0..to_spawn {
+                build_orb(&mut commands, &asset_server, player, PlayerOrb::from_state(OrbState::Dash(active_dash_count + avaliable_orbs + i, DashState::Counter)));
+              }
+            }
+          }
+        },
+        PlayerOrbCommand::UseDashCount => {
+          // Attempt to find crosshair first
+          if let Some((_, mut orb, mut image_handle)) = active_orbs.iter_mut().filter(|(_, orb, _)| orb.is_dash_crosshair()).next() {
+            orb.state = PlayerOrb::default().state;
+            *image_handle = asset_server.load(orb.get_texture_path_by_state());
+          } else {
+            // If no crosshair, default to a dash counter
+            let orb = active_orbs.iter_mut().filter(|(_, orb, _)| orb.is_dash_counter()).max_by(|x, y| x.1.get_dash_id().unwrap().cmp(&y.1.get_dash_id().unwrap()));
+            if let Some((_, mut orb, mut image_handle)) = orb {
+              orb.state = PlayerOrb::default().state;
+              *image_handle = asset_server.load(orb.get_texture_path_by_state());
+            }
+          }
+        },
+        PlayerOrbCommand::AllocCrosshair => {
+          // Return if crosshair is already allocated
+          if active_orbs.iter_mut().filter(|(_, orb, _)| orb.is_dash_crosshair()).next().is_some() {
+            return;
+          }
+
+          let orb = active_orbs.iter_mut().filter(|(_, orb, _)| orb.is_dash_counter()).max_by(|x, y| x.1.get_dash_id().unwrap().cmp(&y.1.get_dash_id().unwrap()));
+          if let Some((_, mut orb, _)) = orb {
+            orb.state = OrbState::Dash(orb.get_dash_id().unwrap(), DashState::CrossHair);
+          }
         },
       }
     }
   }
 }
 
-fn handle_orb_state(player: Query<&Transform, (With<Player>, Without<PlayerOrb>)>, mut orbs: Query<(&mut PlayerOrb, &mut Transform), Without<Player>>, time: Res<Time>) {
+fn move_orb_tick(orb_trans: &Vec2, target: &Vec2, orb: &PlayerOrb, time: &Res<Time>) -> Vec2 {
+  let movement_vec = target.clone() - orb_trans.clone();
+  let move_dist = movement_vec.length() / orb.dist;
+
+  if move_dist > 10.0 {
+    return target.clone();
+  } else {
+    let accel = orb.accel * (move_dist).min(1.0);
+    let vel = accel * (move_dist).powf(2.0);
+    return orb_trans.clone() + (movement_vec.normalize_or_zero() * vel * time.delta_seconds());
+  }
+}
+
+fn handle_orb_state(
+  player: Query<&Transform, (With<Player>, Without<PlayerOrb>, Without<DashCrosshair>)>, 
+  mut orbs: Query<(&mut PlayerOrb, &mut Transform), (Without<DashCrosshair>, Without<Player>)>, 
+  crosshair: Query<&Transform, (With<DashCrosshair>, Without<PlayerOrb>, Without<Player>)>,
+  time: Res<Time>
+) {
   if let Ok(player_trans) = player.get_single() {
     orbs.for_each_mut(|(mut orb, mut trans)| {
-      match orb.state {
+      match &orb.state {
         OrbState::FollowPlayer(offset) => {
-          let movement_vec = (player_trans.translation.truncate() + offset) - trans.translation.truncate();
+          trans.translation = move_orb_tick(&trans.translation.truncate(), &(player_trans.translation.truncate() + offset.clone()), &orb, &time).extend(trans.translation.z);
+          let movement_vec = (player_trans.translation.truncate() + offset.clone()) - trans.translation.truncate();
           let move_dist = movement_vec.length() / orb.dist;
-
-          if move_dist > 10.0 {
-            trans.translation = player_trans.translation.truncate().extend(trans.translation.z);
-          } else {
-            let accel = orb.accel * (move_dist).min(1.0);
-            let vel = accel * (move_dist).powf(2.0);
-            trans.translation = (trans.translation.truncate() + (movement_vec.normalize_or_zero() * vel * time.delta_seconds())).extend(trans.translation.z);
-          }
-
 
           // Update orbit
           orb.orbit_t += time.delta_seconds() / orb.orbit_speed;
@@ -169,7 +282,20 @@ fn handle_orb_state(player: Query<&Transform, (With<Player>, Without<PlayerOrb>)
 
           orb.state = OrbState::FollowPlayer([x, y].into());
         },
-        OrbState::Dash(_, _) => todo!(),
+        OrbState::Dash(id, state) => match state {
+          DashState::Counter => {
+            let target = player_trans.translation + Vec3::new(0.0, (SPRITE_SIZE as f32 / 1.5) + 3.0 * *id as f32, 0.0);
+            trans.translation = move_orb_tick(&trans.translation.truncate(), &target.truncate(), &orb, &time).extend(trans.translation.z);
+          },
+          DashState::CrossHair => {
+            if let Ok(cross_trans) = crosshair.get_single() {
+              trans.translation = move_orb_tick(&trans.translation.truncate(), &cross_trans.translation.truncate(), &orb, &time).extend(trans.translation.z);
+            } else {
+              let target = trans.translation + Vec3::new(0.0, (SPRITE_SIZE as f32 / 1.5) + 3.0 * *id as f32, 0.0);
+              trans.translation = move_orb_tick(&trans.translation.truncate(), &target.truncate(), &orb, &time).extend(trans.translation.z);
+            }
+          },
+        },
       }
     });
   }

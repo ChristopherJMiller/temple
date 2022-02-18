@@ -147,7 +147,6 @@ pub fn load_level(
   channels: Res<AudioChannels>,
   mut overlay_commands: ResMut<OverlayCommands>,
   mut cursor_commands: ResMut<CursorCommands>,
-  mut orb_commands: ResMut<PlayerOrbCommands>,
 ) {
   query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
@@ -240,7 +239,6 @@ pub fn load_level(
       overlay_commands.command(OverlayCommand::FadeOut(1.0));
     }
     commands.entity(e).insert(LevelLoadComplete);
-    orb_commands.set_orb_count(24);
   });
 }
 
@@ -255,9 +253,13 @@ pub fn apply_save_on_load(
   level: Query<(Entity, &LoadLevel), (With<LevelLoadComplete>, Without<LevelSaveApplied>)>,
   temple_state: Res<TempleState>,
   active_save: Res<ActiveSave>,
+  mut orb_commands: ResMut<PlayerOrbCommands>,
 ) {
   if let Ok((ent, load_level)) = level.get_single() {
     if let GameMode::InLevel(id) = temple_state.game_mode {
+      if let Some(save) = &active_save.0 {
+        orb_commands.set_orb_count(save.num_cleared_exits());
+      }
       if let Some(level_state) = active_save.get_level_state(id) {
         if let Some((id, x, y)) = level_state.checkpoint() {
           if let Ok((mut trans, mut player)) = player.get_single_mut() {

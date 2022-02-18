@@ -11,8 +11,9 @@ use bevy_rapier2d::na::Vector2;
 use bevy_rapier2d::prelude::*;
 use kurinji::Kurinji;
 
-use super::attributes::{Dash, DashCounter, DashCrosshair, MovingSprite, Player};
+use super::attributes::{Dash, DashCrosshair, MovingSprite, Player};
 use super::collision_groups::*;
+use super::orbs::PlayerOrbCommands;
 use super::physics::PlayerSimulationSteps;
 use super::sfx::{AudioChannels, SfxHandles};
 use crate::input::{DASH_DOWN, DASH_LEFT, DASH_RIGHT, DASH_UP, DOWN, JUMP, LEFT, RIGHT, SELECT, UP};
@@ -217,6 +218,7 @@ fn handle_dash(
   player_input_commands: Res<PlayerInputCommands>,
   crosshair_spawned: Query<Entity, With<DashCrosshair>>,
   asset_server: Res<AssetServer>,
+  mut orb_commands: ResMut<PlayerOrbCommands>,
 ) {
   if !player_input_commands.player_has_input() {
     return;
@@ -225,6 +227,7 @@ fn handle_dash(
   if let Ok((player, mut vel, mut dash)) = player.get_single_mut() {
     if player.grounded {
       dash.reset_charges();
+      orb_commands.set_dash_count(dash.charges().try_into().unwrap());
     }
 
     if input.is_action_active(SELECT) && dash.can_dash() {
@@ -236,6 +239,7 @@ fn handle_dash(
             ..Default::default()
           })
           .insert(DashCrosshair);
+        orb_commands.alloc_crosshair();
       }
 
       let y = if input.is_action_active(DASH_UP) {
@@ -261,6 +265,7 @@ fn handle_dash(
         crosshair_spawned.for_each(|ent| commands.entity(ent).despawn());
         let vel_vec = dash.release() / 1.5;
         vel.linvel = vel_vec.into();
+        orb_commands.use_dash_count();
       }
     }
   }
@@ -275,37 +280,6 @@ fn handle_dash_crosshair(
     let dash_vec = dash.holding_vec().extend(0.0);
     if let Ok(mut cross_trans) = crosshair.get_single_mut() {
       cross_trans.translation = translation + dash_vec;
-    }
-  }
-}
-
-fn handle_dash_indictors(
-  mut commands: Commands,
-  dash: Query<(&Transform, &Dash), With<Player>>,
-  mut dash_counter: Query<(Entity, &mut Transform, &DashCounter), Without<Player>>,
-  asset_server: Res<AssetServer>,
-) {
-  if let Ok((trans, dash)) = dash.get_single() {
-    let origin = trans.translation.clone();
-    let dash_count = dash.charges();
-    let mut count = 0;
-    for (ent, mut trans, counter) in dash_counter.iter_mut() {
-      if counter.0 > dash_count {
-        commands.entity(ent).despawn();
-      } else {
-        count += 1;
-        trans.translation = origin + Vec3::new(0.0, (SPRITE_SIZE as f32 / 1.5) + 3.0 * counter.0 as f32, 0.0);
-      }
-    }
-
-    for i in count + 1..=dash_count {
-      commands
-        .spawn_bundle(SpriteBundle {
-          texture: asset_server.load(get_texture_path(&"aspectorb.png".to_string())),
-          transform: Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-          ..Default::default()
-        })
-        .insert(DashCounter(i));
     }
   }
 }
@@ -376,7 +350,6 @@ impl Plugin for PlayerPlugin {
       .add_system(handle_player_jump.label(PlayerSimulationSteps::ApplyJumping))
       .add_system(handle_dash)
       .add_system(handle_dash_crosshair)
-      .add_system(handle_dash_indictors)
       .add_system(handle_player_input_commands);
   }
 }
