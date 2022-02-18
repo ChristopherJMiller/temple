@@ -367,6 +367,7 @@
 <span id="366">366</span>
 <span id="367">367</span>
 <span id="368">368</span>
+<span id="369">369</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -627,6 +628,7 @@
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ent</span>, <span class="ident">load_level</span>)) <span class="op">=</span> <span class="ident">level</span>.<span class="ident">get_single</span>() {
     <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">id</span>) <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">game_mode</span> {
       <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">save</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">active_save</span>.<span class="number">0</span> {
+        <span class="macro">info!</span>(<span class="ident">target</span>: <span class="string">&quot;apply_save_on_load&quot;</span>, <span class="string">&quot;Granted player starting orbs&quot;</span>);
         <span class="ident">orb_commands</span>.<span class="ident">set_orb_count</span>(<span class="ident">save</span>.<span class="ident">num_cleared_exits</span>());
       }
       <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level_state</span>) <span class="op">=</span> <span class="ident">active_save</span>.<span class="ident">get_level_state</span>(<span class="ident">id</span>) {

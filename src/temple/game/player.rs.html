@@ -386,6 +386,7 @@
 <span id="385">385</span>
 <span id="386">386</span>
 <span id="387">387</span>
+<span id="388">388</span>
 </pre><pre class="rust"><code><span class="doccomment">//! [Player] attribute systems</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! TODO: This plugin should be moved into the same file as the [Player]</span>
@@ -614,8 +615,9 @@
 
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">player</span>, <span class="kw-2">mut</span> <span class="ident">vel</span>, <span class="kw-2">mut</span> <span class="ident">dash</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">get_single_mut</span>() {
     <span class="kw">if</span> <span class="ident">player</span>.<span class="ident">grounded</span> {
-      <span class="ident">dash</span>.<span class="ident">reset_charges</span>();
-      <span class="ident">orb_commands</span>.<span class="ident">set_dash_count</span>(<span class="ident">dash</span>.<span class="ident">charges</span>().<span class="ident">try_into</span>().<span class="ident">unwrap</span>());
+      <span class="kw">if</span> <span class="ident">dash</span>.<span class="ident">reset_charges</span>() {
+        <span class="ident">orb_commands</span>.<span class="ident">set_dash_count</span>(<span class="ident">dash</span>.<span class="ident">charges</span>().<span class="ident">try_into</span>().<span class="ident">unwrap</span>());
+      }
     }
 
     <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">is_action_active</span>(<span class="ident">SELECT</span>) <span class="op">&amp;&amp;</span> <span class="ident">dash</span>.<span class="ident">can_dash</span>() {

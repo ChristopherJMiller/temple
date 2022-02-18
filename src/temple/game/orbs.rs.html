@@ -314,6 +314,88 @@
 <span id="313">313</span>
 <span id="314">314</span>
 <span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Manages the FSM for the player&#39;s orbs</span>
 <span class="doccomment">//! </span>
 <span class="doccomment">//! # System Architecture</span>
@@ -334,16 +416,28 @@
 
 <span class="kw">type</span> <span class="ident">DashId</span> <span class="op">=</span> <span class="ident">usize</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">DashState</span> {
   <span class="ident">Counter</span>,
   <span class="ident">CrossHair</span>
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">OrbState</span> {
   <span class="doccomment">/// Follow player, params is offset from player center (home position)</span>
   <span class="ident">FollowPlayer</span>(<span class="ident">Vec2</span>),
   <span class="doccomment">/// Become a dash orb</span>
   <span class="ident">Dash</span>(<span class="ident">DashId</span>, <span class="ident">DashState</span>),
+}
+
+<span class="kw">impl</span> <span class="ident">OrbState</span> {
+  <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">variant_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">b</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="ident">bool</span> {
+    <span class="kw">match</span> (<span class="self">self</span>, <span class="ident">b</span>) {
+        (<span class="ident">OrbState::FollowPlayer</span>(<span class="kw">_</span>), <span class="ident">OrbState::FollowPlayer</span>(<span class="kw">_</span>)) =&gt; <span class="bool-val">true</span>,
+        (<span class="ident">OrbState::Dash</span>(<span class="kw">_</span>, <span class="kw">_</span>), <span class="ident">OrbState::Dash</span>(<span class="kw">_</span>, <span class="kw">_</span>)) =&gt; <span class="bool-val">true</span>,
+        <span class="kw">_</span> =&gt; <span class="bool-val">false</span>
+    }
+  }
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Component</span>)]</span>
@@ -355,6 +449,7 @@
   <span class="kw">pub</span> <span class="ident">orbit_dist</span>: <span class="ident">f32</span>,
   <span class="kw">pub</span> <span class="ident">orbit_speed</span>: <span class="ident">f32</span>,
   <span class="kw">pub</span> <span class="ident">orbit_t</span>: <span class="ident">f32</span>,
+  <span class="kw">pub</span> <span class="ident">last_textured_state</span>: <span class="ident">OrbState</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">PlayerOrb</span> {
@@ -376,6 +471,7 @@
       <span class="ident">orbit_dist</span>: <span class="ident">dist</span>,
       <span class="ident">orbit_speed</span>: <span class="ident">rng</span>.<span class="ident">gen_range</span>(<span class="number">8.0</span>..<span class="number">16.0</span>),
       <span class="ident">orbit_t</span>: <span class="ident">angle_t</span>,
+      <span class="ident">last_textured_state</span>: <span class="ident">OrbState::FollowPlayer</span>([<span class="ident">x</span>, <span class="ident">y</span>].<span class="ident">into</span>()),
     }
   }
 }
@@ -435,6 +531,7 @@
   }
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PlayerOrbCommand</span> {
   <span class="ident">SetOrbCount</span>(<span class="ident">usize</span>),
   <span class="ident">SetDashCount</span>(<span class="ident">usize</span>),
@@ -469,90 +566,100 @@
   }
 }
 
-<span class="kw">fn</span> <span class="ident">build_orb</span>(<span class="ident">commands</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Commands</span>, <span class="ident">asset_server</span>: <span class="kw-2">&amp;</span><span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>, <span class="ident">player_trans</span>: <span class="kw-2">&amp;</span><span class="ident">Transform</span>, <span class="ident">orb</span>: <span class="ident">PlayerOrb</span>) {
-  <span class="ident">commands</span>
-    .<span class="ident">spawn_bundle</span>(<span class="ident">SpriteBundle</span> {
-      <span class="ident">texture</span>: <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">orb</span>.<span class="ident">get_texture_path_by_state</span>()),
-      <span class="ident">transform</span>: <span class="ident">player_trans</span>.<span class="ident">clone</span>(),
-      ..<span class="ident">Default::default</span>()
-    }).<span class="ident">insert</span>(<span class="ident">orb</span>);
+<span class="kw">fn</span> <span class="ident">handle_orb_sprite</span>(
+  <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>, 
+  <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>, 
+  <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Transform</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+  <span class="ident">orbs_to_create</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span>), <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, 
+  <span class="kw-2">mut</span> <span class="ident">changed_orbs</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="kw-2">&amp;mut</span> <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span>, <span class="kw-2">&amp;mut</span> <span class="ident">PlayerOrb</span>), <span class="ident">Changed</span><span class="op">&lt;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span><span class="op">&gt;</span>
+) {
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">player_trans</span>) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">get_single</span>() {
+    <span class="ident">orbs_to_create</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">ent</span>, <span class="ident">orb</span>)<span class="op">|</span> {
+      <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">insert_bundle</span>(<span class="ident">SpriteBundle</span> {
+        <span class="ident">texture</span>: <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">orb</span>.<span class="ident">get_texture_path_by_state</span>()),
+        <span class="ident">transform</span>: <span class="ident">player_trans</span>.<span class="ident">clone</span>(),
+        ..<span class="ident">Default::default</span>()
+      });
+    });
+  }
+
+  <span class="ident">changed_orbs</span>.<span class="ident">for_each_mut</span>(<span class="op">|</span>(<span class="kw-2">mut</span> <span class="ident">image_handle</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>)<span class="op">|</span> {
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">orb</span>.<span class="ident">state</span>.<span class="ident">variant_eq</span>(<span class="kw-2">&amp;</span><span class="ident">orb</span>.<span class="ident">last_textured_state</span>) {
+      <span class="kw-2">*</span><span class="ident">image_handle</span> <span class="op">=</span> <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">orb</span>.<span class="ident">get_texture_path_by_state</span>());
+      <span class="ident">orb</span>.<span class="ident">last_textured_state</span> <span class="op">=</span> <span class="ident">orb</span>.<span class="ident">state</span>.<span class="ident">clone</span>();
+    }
+    
+  });
 }
 
 <span class="kw">fn</span> <span class="ident">handle_orb_command_queue</span>(
   <span class="kw-2">mut</span> <span class="ident">commands</span>: <span class="ident">Commands</span>,
-  <span class="ident">asset_server</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AssetServer</span><span class="op">&gt;</span>,
-  <span class="ident">player</span>: <span class="ident">Query</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Transform</span>, <span class="ident">With</span><span class="op">&lt;</span><span class="ident">Player</span><span class="op">&gt;</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">queue</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>,
-  <span class="kw-2">mut</span> <span class="ident">active_orbs</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;mut</span> <span class="ident">PlayerOrb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">Handle</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">active_orbs</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;mut</span> <span class="ident">PlayerOrb</span>)<span class="op">&gt;</span>,
 ) {
-  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">player</span>) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">get_single</span>() {
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">command</span>) <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">pop</span>() {
-      <span class="kw">match</span> <span class="ident">command</span> {
-        <span class="ident">PlayerOrbCommand::SetOrbCount</span>(<span class="ident">count</span>) =&gt; {
-          <span class="kw">let</span> <span class="ident">current_count</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">count</span>();
-          <span class="kw">if</span> <span class="ident">count</span> <span class="op">&gt;</span> <span class="ident">current_count</span> {
-            <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">count</span> <span class="op">-</span> <span class="ident">current_count</span>;
-            <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">diff</span> {
-              <span class="ident">build_orb</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="kw-2">&amp;</span><span class="ident">asset_server</span>, <span class="ident">player</span>, <span class="ident">PlayerOrb::default</span>());
-            }
-          } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">current_count</span> <span class="op">&gt;</span> <span class="ident">count</span> {
-            <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">current_count</span> <span class="op">-</span> <span class="ident">count</span>;
-            <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">avaliable</span>()).<span class="ident">take</span>(<span class="ident">diff</span>).<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">ent</span>, <span class="kw">_</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>());
+  <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">command</span>) <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">pop</span>() {
+    <span class="kw">match</span> <span class="ident">command</span> {
+      <span class="ident">PlayerOrbCommand::SetOrbCount</span>(<span class="ident">count</span>) =&gt; {
+        <span class="kw">let</span> <span class="ident">current_count</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">count</span>();
+        <span class="kw">if</span> <span class="ident">count</span> <span class="op">&gt;</span> <span class="ident">current_count</span> {
+          <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">count</span> <span class="op">-</span> <span class="ident">current_count</span>;
+          <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">diff</span> {
+            <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">PlayerOrb::default</span>());
           }
-        },
-        <span class="ident">PlayerOrbCommand::SetDashCount</span>(<span class="ident">count</span>) =&gt; {
-          <span class="comment">// Find current number of dash orbs</span>
-          <span class="kw">let</span> <span class="ident">active_dash_count</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_orb</span>()).<span class="ident">count</span>();
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">current_count</span> <span class="op">&gt;</span> <span class="ident">count</span> {
+          <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">current_count</span> <span class="op">-</span> <span class="ident">count</span>;
+          <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">avaliable</span>()).<span class="ident">take</span>(<span class="ident">diff</span>).<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">ent</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">ent</span>).<span class="ident">despawn</span>());
+        }
+      },
+      <span class="ident">PlayerOrbCommand::SetDashCount</span>(<span class="ident">count</span>) =&gt; {
+        <span class="comment">// Find current number of dash orbs</span>
+        <span class="kw">let</span> <span class="ident">active_dash_count</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_orb</span>()).<span class="ident">count</span>();
 
-          <span class="comment">// If more set, allocate more dash orbs</span>
-          <span class="kw">if</span> <span class="ident">count</span> <span class="op">&gt;</span> <span class="ident">active_dash_count</span> {
-            <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">count</span> <span class="op">-</span> <span class="ident">active_dash_count</span>;
+        <span class="comment">// If more set, allocate more dash orbs</span>
+        <span class="kw">if</span> <span class="ident">count</span> <span class="op">&gt;</span> <span class="ident">active_dash_count</span> {
+          <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">count</span> <span class="op">-</span> <span class="ident">active_dash_count</span>;
 
-            <span class="comment">// Ensure there is enough avaliable orbs</span>
-            <span class="kw">let</span> <span class="ident">avaliable_orbs</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">avaliable</span>()).<span class="ident">count</span>();
+          <span class="comment">// Ensure there is enough avaliable orbs</span>
+          <span class="kw">let</span> <span class="ident">avaliable_orbs</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">avaliable</span>()).<span class="ident">count</span>();
 
-            <span class="comment">// Allocate whatever is avaliable</span>
-            <span class="kw">let</span> <span class="ident">allocate_count</span> <span class="op">=</span> <span class="ident">avaliable_orbs</span>.<span class="ident">min</span>(<span class="ident">diff</span>);
-            <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">avaliable</span>()).<span class="ident">take</span>(<span class="ident">allocate_count</span>).<span class="ident">enumerate</span>().<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, (<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>, <span class="kw-2">mut</span> <span class="ident">image_handle</span>))<span class="op">|</span> {
-              <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">OrbState::Dash</span>(<span class="ident">active_dash_count</span> <span class="op">+</span> <span class="ident">i</span>, <span class="ident">DashState::Counter</span>);
-              <span class="kw-2">*</span><span class="ident">image_handle</span> <span class="op">=</span> <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">orb</span>.<span class="ident">get_texture_path_by_state</span>());
-            });
+          <span class="comment">// Allocate whatever is avaliable</span>
+          <span class="kw">let</span> <span class="ident">allocate_count</span> <span class="op">=</span> <span class="ident">avaliable_orbs</span>.<span class="ident">min</span>(<span class="ident">diff</span>);
+          <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">avaliable</span>()).<span class="ident">take</span>(<span class="ident">allocate_count</span>).<span class="ident">enumerate</span>().<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">i</span>, (<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>))<span class="op">|</span> {
+            <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">OrbState::Dash</span>(<span class="ident">active_dash_count</span> <span class="op">+</span> <span class="ident">i</span>, <span class="ident">DashState::Counter</span>);
+          });
 
-            <span class="comment">// Check if remainder to allocate, if so spawn that number in as allocated.</span>
-            <span class="kw">if</span> <span class="ident">diff</span> <span class="op">&gt;</span> <span class="ident">avaliable_orbs</span> {
-              <span class="kw">let</span> <span class="ident">to_spawn</span> <span class="op">=</span> <span class="ident">diff</span> <span class="op">-</span> <span class="ident">avaliable_orbs</span>;
-              <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">to_spawn</span> {
-                <span class="ident">build_orb</span>(<span class="kw-2">&amp;mut</span> <span class="ident">commands</span>, <span class="kw-2">&amp;</span><span class="ident">asset_server</span>, <span class="ident">player</span>, <span class="ident">PlayerOrb::from_state</span>(<span class="ident">OrbState::Dash</span>(<span class="ident">active_dash_count</span> <span class="op">+</span> <span class="ident">avaliable_orbs</span> <span class="op">+</span> <span class="ident">i</span>, <span class="ident">DashState::Counter</span>)));
-              }
+          <span class="comment">// Check if remainder to allocate, if so spawn that number in as allocated.</span>
+          <span class="kw">if</span> <span class="ident">diff</span> <span class="op">&gt;</span> <span class="ident">avaliable_orbs</span> {
+            <span class="kw">let</span> <span class="ident">to_spawn</span> <span class="op">=</span> <span class="ident">diff</span> <span class="op">-</span> <span class="ident">avaliable_orbs</span>;
+            <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">to_spawn</span> {
+              <span class="ident">commands</span>.<span class="ident">spawn</span>().<span class="ident">insert</span>(<span class="ident">PlayerOrb::from_state</span>(<span class="ident">OrbState::Dash</span>(<span class="ident">active_dash_count</span> <span class="op">+</span> <span class="ident">avaliable_orbs</span> <span class="op">+</span> <span class="ident">i</span>, <span class="ident">DashState::Counter</span>)));
             }
           }
-        },
-        <span class="ident">PlayerOrbCommand::UseDashCount</span> =&gt; {
-          <span class="comment">// Attempt to find crosshair first</span>
-          <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>, <span class="kw-2">mut</span> <span class="ident">image_handle</span>)) <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">next</span>() {
+        }
+      },
+      <span class="ident">PlayerOrbCommand::UseDashCount</span> =&gt; {
+        <span class="comment">// Attempt to find crosshair first</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>)) <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">next</span>() {
+          <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">PlayerOrb::default</span>().<span class="ident">state</span>;
+        } <span class="kw">else</span> {
+          <span class="comment">// If no crosshair, default to a dash counter</span>
+          <span class="kw">let</span> <span class="ident">orb</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">max_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>().<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>()));
+          <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>)) <span class="op">=</span> <span class="ident">orb</span> {
             <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">PlayerOrb::default</span>().<span class="ident">state</span>;
-            <span class="kw-2">*</span><span class="ident">image_handle</span> <span class="op">=</span> <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">orb</span>.<span class="ident">get_texture_path_by_state</span>());
-          } <span class="kw">else</span> {
-            <span class="comment">// If no crosshair, default to a dash counter</span>
-            <span class="kw">let</span> <span class="ident">orb</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">max_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>().<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>()));
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>, <span class="kw-2">mut</span> <span class="ident">image_handle</span>)) <span class="op">=</span> <span class="ident">orb</span> {
-              <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">PlayerOrb::default</span>().<span class="ident">state</span>;
-              <span class="kw-2">*</span><span class="ident">image_handle</span> <span class="op">=</span> <span class="ident">asset_server</span>.<span class="ident">load</span>(<span class="ident">orb</span>.<span class="ident">get_texture_path_by_state</span>());
-            }
           }
-        },
-        <span class="ident">PlayerOrbCommand::AllocCrosshair</span> =&gt; {
-          <span class="comment">// Return if crosshair is already allocated</span>
-          <span class="kw">if</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">next</span>().<span class="ident">is_some</span>() {
-            <span class="kw">return</span>;
-          }
+        }
+      },
+      <span class="ident">PlayerOrbCommand::AllocCrosshair</span> =&gt; {
+        <span class="comment">// Return if crosshair is already allocated</span>
+        <span class="kw">if</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">next</span>().<span class="ident">is_some</span>() {
+          <span class="kw">return</span>;
+        }
 
-          <span class="kw">let</span> <span class="ident">orb</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">max_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>().<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>()));
-          <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>, <span class="kw">_</span>)) <span class="op">=</span> <span class="ident">orb</span> {
-            <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">OrbState::Dash</span>(<span class="ident">orb</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>(), <span class="ident">DashState::CrossHair</span>);
-          }
-        },
-      }
+        <span class="kw">let</span> <span class="ident">orb</span> <span class="op">=</span> <span class="ident">active_orbs</span>.<span class="ident">iter_mut</span>().<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">orb</span>)<span class="op">|</span> <span class="ident">orb</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">max_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>().<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="number">1</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>()));
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="kw-2">mut</span> <span class="ident">orb</span>)) <span class="op">=</span> <span class="ident">orb</span> {
+          <span class="ident">orb</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">OrbState::Dash</span>(<span class="ident">orb</span>.<span class="ident">get_dash_id</span>().<span class="ident">unwrap</span>(), <span class="ident">DashState::CrossHair</span>);
+        }
+      },
     }
   }
 }
@@ -625,10 +732,67 @@
     <span class="ident">app</span>
       .<span class="ident">init_resource</span>::<span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>()
       .<span class="ident">add_system</span>(<span class="ident">handle_orb_command_queue</span>)
-      .<span class="ident">add_system</span>(<span class="ident">handle_orb_state</span>);
+      .<span class="ident">add_system</span>(<span class="ident">handle_orb_state</span>)
+      .<span class="ident">add_system</span>(<span class="ident">handle_orb_sprite</span>);
   }
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+  <span class="kw">use</span> <span class="ident">bevy::prelude</span>::<span class="kw-2">*</span>;
+  <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+  <span class="attribute">#[<span class="ident">test</span>]</span>
+  <span class="kw">fn</span> <span class="ident">test_orb_system</span>() {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">world</span> <span class="op">=</span> <span class="ident">World::default</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">update_stage</span> <span class="op">=</span> <span class="ident">SystemStage::parallel</span>();
+
+    <span class="comment">// Setup Systems and Res</span>
+    <span class="ident">world</span>.<span class="ident">insert_resource</span>(<span class="ident">PlayerOrbCommands::default</span>());
+    <span class="ident">world</span>.<span class="ident">insert_resource</span>(<span class="ident">Time::default</span>());
+    <span class="ident">update_stage</span>.<span class="ident">add_system</span>(<span class="ident">handle_orb_command_queue</span>);
+    <span class="ident">update_stage</span>.<span class="ident">add_system</span>(<span class="ident">handle_orb_state</span>);
+
+    <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
+
+    <span class="comment">// Asset Default State</span>
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">count</span>(), <span class="number">0</span>);
+
+    <span class="comment">// Spawn orbs</span>
+    <span class="ident">world</span>.<span class="ident">get_resource_mut</span>::<span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>().<span class="ident">set_orb_count</span>(<span class="number">4</span>);
+    <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">count</span>(), <span class="number">4</span>);
+
+    <span class="comment">// Allocate some to dashes</span>
+    <span class="ident">world</span>.<span class="ident">get_resource_mut</span>::<span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>().<span class="ident">set_dash_count</span>(<span class="number">2</span>);
+    <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">count</span>(), <span class="number">4</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">count</span>(), <span class="number">2</span>);
+
+    <span class="comment">// Allocate a crosshair</span>
+    <span class="ident">world</span>.<span class="ident">get_resource_mut</span>::<span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>().<span class="ident">alloc_crosshair</span>();
+    <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">count</span>(), <span class="number">4</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">avaliable</span>()).<span class="ident">count</span>(), <span class="number">2</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">count</span>(), <span class="number">1</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">count</span>(), <span class="number">1</span>);
+
+    <span class="comment">// Consume crosshair orb</span>
+    <span class="ident">world</span>.<span class="ident">get_resource_mut</span>::<span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>().<span class="ident">use_dash_count</span>();
+    <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">count</span>(), <span class="number">4</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">avaliable</span>()).<span class="ident">count</span>(), <span class="number">3</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">count</span>(), <span class="number">1</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">count</span>(), <span class="number">0</span>);
+
+    <span class="comment">// Despawn unused orbs</span>
+    <span class="ident">world</span>.<span class="ident">get_resource_mut</span>::<span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>().<span class="ident">set_orb_count</span>(<span class="number">1</span>);
+    <span class="ident">update_stage</span>.<span class="ident">run</span>(<span class="kw-2">&amp;mut</span> <span class="ident">world</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">avaliable</span>()).<span class="ident">count</span>(), <span class="number">0</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_counter</span>()).<span class="ident">count</span>(), <span class="number">1</span>);
+    <span class="macro">assert_eq!</span>(<span class="ident">world</span>.<span class="ident">query</span>::<span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">PlayerOrb</span><span class="op">&gt;</span>().<span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="ident">world</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">is_dash_crosshair</span>()).<span class="ident">count</span>(), <span class="number">0</span>);
+  }
+}
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="temple" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
 </body></html>
