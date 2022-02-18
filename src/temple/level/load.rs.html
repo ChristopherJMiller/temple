@@ -365,6 +365,8 @@
 <span id="364">364</span>
 <span id="365">365</span>
 <span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Handles level loading for gameplay.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
@@ -514,7 +516,6 @@
   <span class="ident">channels</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">AudioChannels</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">overlay_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">OverlayCommands</span><span class="op">&gt;</span>,
   <span class="kw-2">mut</span> <span class="ident">cursor_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">CursorCommands</span><span class="op">&gt;</span>,
-  <span class="kw-2">mut</span> <span class="ident">orb_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>,
 ) {
   <span class="ident">query</span>.<span class="ident">for_each</span>(<span class="op">|</span>(<span class="ident">e</span>, <span class="ident">load_level</span>, <span class="ident">prepared_level</span>)<span class="op">|</span> {
     <span class="kw">let</span> <span class="ident">level_id</span> <span class="op">=</span> <span class="ident">load_level</span>.<span class="number">0</span>;
@@ -607,7 +608,6 @@
       <span class="ident">overlay_commands</span>.<span class="ident">command</span>(<span class="ident">OverlayCommand::FadeOut</span>(<span class="number">1.0</span>));
     }
     <span class="ident">commands</span>.<span class="ident">entity</span>(<span class="ident">e</span>).<span class="ident">insert</span>(<span class="ident">LevelLoadComplete</span>);
-    <span class="ident">orb_commands</span>.<span class="ident">set_orb_count</span>(<span class="number">24</span>);
   });
 }
 
@@ -622,9 +622,13 @@
   <span class="ident">level</span>: <span class="ident">Query</span><span class="op">&lt;</span>(<span class="ident">Entity</span>, <span class="kw-2">&amp;</span><span class="ident">LoadLevel</span>), (<span class="ident">With</span><span class="op">&lt;</span><span class="ident">LevelLoadComplete</span><span class="op">&gt;</span>, <span class="ident">Without</span><span class="op">&lt;</span><span class="ident">LevelSaveApplied</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
   <span class="ident">temple_state</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">TempleState</span><span class="op">&gt;</span>,
   <span class="ident">active_save</span>: <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">ActiveSave</span><span class="op">&gt;</span>,
+  <span class="kw-2">mut</span> <span class="ident">orb_commands</span>: <span class="ident">ResMut</span><span class="op">&lt;</span><span class="ident">PlayerOrbCommands</span><span class="op">&gt;</span>,
 ) {
   <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ent</span>, <span class="ident">load_level</span>)) <span class="op">=</span> <span class="ident">level</span>.<span class="ident">get_single</span>() {
     <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GameMode::InLevel</span>(<span class="ident">id</span>) <span class="op">=</span> <span class="ident">temple_state</span>.<span class="ident">game_mode</span> {
+      <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">save</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">active_save</span>.<span class="number">0</span> {
+        <span class="ident">orb_commands</span>.<span class="ident">set_orb_count</span>(<span class="ident">save</span>.<span class="ident">num_cleared_exits</span>());
+      }
       <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">level_state</span>) <span class="op">=</span> <span class="ident">active_save</span>.<span class="ident">get_level_state</span>(<span class="ident">id</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">id</span>, <span class="ident">x</span>, <span class="ident">y</span>)) <span class="op">=</span> <span class="ident">level_state</span>.<span class="ident">checkpoint</span>() {
           <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="kw-2">mut</span> <span class="ident">trans</span>, <span class="kw-2">mut</span> <span class="ident">player</span>)) <span class="op">=</span> <span class="ident">player</span>.<span class="ident">get_single_mut</span>() {
