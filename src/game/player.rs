@@ -226,8 +226,9 @@ fn handle_dash(
 
   if let Ok((player, mut vel, mut dash)) = player.get_single_mut() {
     if player.grounded {
-      dash.reset_charges();
-      orb_commands.set_dash_count(dash.charges().try_into().unwrap());
+      if dash.reset_charges() {
+        orb_commands.set_dash_count(dash.charges().try_into().unwrap());
+      }
     }
 
     if input.is_action_active(SELECT) && dash.can_dash() {

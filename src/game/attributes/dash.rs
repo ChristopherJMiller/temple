@@ -21,7 +21,7 @@ impl Default for Dash {
   fn default() -> Self {
     const STARTING_CAP: u32 = 1;
     Self {
-      charges: STARTING_CAP,
+      charges: 0,
       capacity: STARTING_CAP,
       holding: Default::default(),
       hold_vector: Default::default(),
@@ -68,8 +68,10 @@ impl Dash {
     result
   }
 
-  pub fn reset_charges(&mut self) {
+  pub fn reset_charges(&mut self) -> bool {
+    let charge_changing = self.charges != self.capacity;
     self.charges = self.capacity;
+    charge_changing
   }
 
   #[allow(dead_code)]

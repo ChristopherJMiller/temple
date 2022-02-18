@@ -258,6 +258,7 @@ pub fn apply_save_on_load(
   if let Ok((ent, load_level)) = level.get_single() {
     if let GameMode::InLevel(id) = temple_state.game_mode {
       if let Some(save) = &active_save.0 {
+        info!(target: "apply_save_on_load", "Granted player starting orbs");
         orb_commands.set_orb_count(save.num_cleared_exits());
       }
       if let Some(level_state) = active_save.get_level_state(id) {
