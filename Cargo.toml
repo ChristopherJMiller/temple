@@ -21,6 +21,7 @@ dialoguer = "^0.8"
 rmp-serde = "0.15"
 const_format = "0.2.22"
 pulldown-cmark = "0.9.1"
+rand = "0.8"
 
 [build-dependencies]
 chrono = "^0.4"

@@ -9,6 +9,7 @@ use physics::ModifyPhysicsPlugin;
 use player::PlayerPlugin;
 
 use self::credits::CreditsPlugin;
+use self::orbs::PlayerOrbPlugin;
 use self::sfx::SfxPlugin;
 use crate::level::load::LoadLevel;
 use crate::state::game_state::{ActiveSave, GameMode, GameSaveState, TempleState};
@@ -23,6 +24,7 @@ pub mod credits;
 pub mod physics;
 pub mod player;
 pub mod sfx;
+pub mod orbs;
 
 /// Command to begin the game
 #[derive(Component)]
@@ -98,6 +100,7 @@ impl PluginGroup for GamePlugins {
       .add(ModifyPhysicsPlugin)
       .add(BootstrapPlugin)
       .add(SfxPlugin)
-      .add(CreditsPlugin);
+      .add(CreditsPlugin)
+      .add(PlayerOrbPlugin);
   }
 }

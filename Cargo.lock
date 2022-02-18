@@ -3383,6 +3383,7 @@ dependencies = [
  "log",
  "png",
  "pulldown-cmark",
+ "rand",
  "rmp-serde",
  "serde",
  "toml",

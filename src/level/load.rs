@@ -19,6 +19,7 @@ use super::LevelId;
 use crate::editor::camera::EditorCamera;
 use crate::game::attributes::*;
 use crate::game::camera::MainCamera;
+use crate::game::orbs::PlayerOrbCommands;
 use crate::game::sfx::AudioChannels;
 use crate::input::CursorCommands;
 use crate::level::config::SPRITE_SIZE;
@@ -146,6 +147,7 @@ pub fn load_level(
   channels: Res<AudioChannels>,
   mut overlay_commands: ResMut<OverlayCommands>,
   mut cursor_commands: ResMut<CursorCommands>,
+  mut orb_commands: ResMut<PlayerOrbCommands>,
 ) {
   query.for_each(|(e, load_level, prepared_level)| {
     let level_id = load_level.0;
@@ -238,6 +240,7 @@ pub fn load_level(
       overlay_commands.command(OverlayCommand::FadeOut(1.0));
     }
     commands.entity(e).insert(LevelLoadComplete);
+    orb_commands.set_orb_count(24);
   });
 }
 
